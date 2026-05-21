@@ -3,6 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { api } from '../../api/client'
 import { useAppStore } from '../../store/useAppStore'
 
+const PRESETS = [50, 100, 200, 500]
+const MIN = 10
+const MAX = 500
+const STEP = 10
+
 export default function BetFlow() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -13,6 +18,7 @@ export default function BetFlow() {
   const [amount, setAmount] = useState(100)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
 
   if (!match || !teamChoice) {
     navigate('/matches')
@@ -21,20 +27,21 @@ export default function BetFlow() {
 
   const teamName = teamChoice === 1 ? match.team1_name : match.team2_name
   const odds = teamChoice === 1 ? match.odds_team1 : match.odds_team2
+  const maxAllowed = Math.min(MAX, user?.balance ?? MAX)
   const potentialWin = Math.floor(amount * odds)
-  const isValid = amount >= 10 && amount <= 500 && (user?.balance ?? 0) >= amount
+  const isValid = amount >= MIN && amount <= maxAllowed
+
+  const adjust = (delta: number) => {
+    setAmount((prev) => Math.max(MIN, Math.min(maxAllowed, prev + delta)))
+  }
 
   const handleConfirm = async () => {
     setLoading(true)
     setError('')
     try {
-      await api.post('/api/bets/', {
-        match_id: match.id,
-        team_choice: teamChoice,
-        amount,
-      })
+      await api.post('/api/bets/', { match_id: match.id, team_choice: teamChoice, amount })
       updateBalance((user?.balance ?? 0) - amount)
-      navigate('/matches', { replace: true })
+      setSuccess(true)
     } catch (e: any) {
       setError(e.message)
     } finally {
@@ -42,52 +49,86 @@ export default function BetFlow() {
     }
   }
 
+  // Success screen
+  if (success) {
+    return (
+      <div className="flex flex-col min-h-screen p-5 gap-5 bg-tg-bg items-center justify-center text-center">
+        <div className="text-6xl">✅</div>
+        <div>
+          <h2 className="text-xl font-bold text-tg-text">Ставка принята!</h2>
+          <p className="text-tg-hint mt-1 text-sm">
+            {amount} очков на{' '}
+            <span className="font-semibold text-tg-text">{teamName}</span>
+          </p>
+        </div>
+        <div className="tg-card w-full text-center">
+          <p className="text-tg-hint text-sm">Потенциальный выигрыш</p>
+          <p className="text-3xl font-bold text-tg-link">{potentialWin} 🪙</p>
+        </div>
+        <button onClick={() => navigate('/matches', { replace: true })} className="tg-btn w-full">
+          К матчам
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col min-h-screen p-5 gap-5 bg-tg-bg">
-      <button
-        onClick={() => navigate(-1)}
-        className="text-tg-link text-sm self-start"
-      >
+      <button onClick={() => navigate(-1)} className="text-tg-link text-sm self-start">
         ← Назад
       </button>
 
+      {/* Match & team */}
       <div>
-        <h1 className="text-xl font-bold text-tg-text">
-          {match.team1_name} vs {match.team2_name}
+        <p className="text-tg-hint text-xs">{match.team1_name} vs {match.team2_name}</p>
+        <h1 className="text-xl font-bold text-tg-text mt-0.5">
+          За <span className="text-tg-link">{teamName}</span>
         </h1>
-        <p className="text-tg-hint mt-1">
-          Вы выбрали: <span className="font-semibold text-tg-text">{teamName}</span>{' '}
-          (× {odds})
-        </p>
+        <p className="text-tg-hint text-sm">Коэффициент × {odds}</p>
       </div>
 
       {/* Balance */}
-      <div className="tg-card">
-        <p className="text-sm text-tg-hint mb-1">Ваш баланс</p>
-        <p className="text-2xl font-bold text-tg-text">{user?.balance ?? '…'} очков</p>
+      <div className="tg-card flex justify-between items-center">
+        <span className="text-tg-hint text-sm">Ваш баланс</span>
+        <span className="font-bold text-tg-text">{user?.balance ?? '…'} очков</span>
       </div>
 
-      {/* Amount input */}
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-tg-hint">
-          Сумма ставки (10 – 500 очков)
-        </label>
-        <input
-          type="number"
-          min={10}
-          max={Math.min(500, user?.balance ?? 500)}
-          value={amount}
-          onChange={(e) => setAmount(Number(e.target.value))}
-          className="tg-input text-xl font-bold"
-        />
+      {/* Stepper */}
+      <div className="tg-card flex flex-col items-center gap-4 py-6">
+        <p className="text-tg-hint text-xs uppercase tracking-wide">Сумма ставки</p>
+        <div className="flex items-center gap-6">
+          <button
+            onClick={() => adjust(-STEP)}
+            disabled={amount <= MIN}
+            className="w-12 h-12 rounded-full text-2xl font-bold disabled:opacity-30 active:scale-90 transition-transform"
+            style={{ background: 'var(--tg-theme-bg-color)', color: 'var(--tg-theme-text-color)' }}
+          >
+            −
+          </button>
+          <span className="text-5xl font-bold text-tg-text w-28 text-center tabular-nums">
+            {amount}
+          </span>
+          <button
+            onClick={() => adjust(+STEP)}
+            disabled={amount >= maxAllowed}
+            className="w-12 h-12 rounded-full text-2xl font-bold disabled:opacity-30 active:scale-90 transition-transform"
+            style={{ background: 'var(--tg-theme-bg-color)', color: 'var(--tg-theme-text-color)' }}
+          >
+            +
+          </button>
+        </div>
 
-        {/* Quick amounts */}
-        <div className="flex gap-2 mt-1">
-          {[50, 100, 200, 500].map((v) => (
+        {/* Presets */}
+        <div className="flex gap-2 w-full">
+          {PRESETS.map((v) => (
             <button
               key={v}
-              onClick={() => setAmount(Math.min(v, user?.balance ?? v))}
-              className="flex-1 text-sm tg-card py-2 text-tg-text active:scale-95 transition-transform rounded-xl"
+              onClick={() => setAmount(Math.min(v, maxAllowed))}
+              className={`flex-1 py-2 rounded-xl text-sm font-medium transition-all active:scale-95 ${
+                amount === Math.min(v, maxAllowed) && v <= maxAllowed
+                  ? 'bg-tg-btn text-tg-btn-text'
+                  : 'bg-tg-bg text-tg-hint'
+              }`}
             >
               {v}
             </button>
@@ -96,19 +137,19 @@ export default function BetFlow() {
       </div>
 
       {/* Potential win */}
-      <div className="tg-card">
-        <p className="text-sm text-tg-hint">Потенциальный выигрыш</p>
-        <p className="text-2xl font-bold text-tg-link">{potentialWin} очков</p>
+      <div className="tg-card flex justify-between items-center">
+        <span className="text-tg-hint text-sm">Потенциальный выигрыш</span>
+        <span className="text-xl font-bold text-tg-link">{potentialWin} 🪙</span>
       </div>
 
-      {error && <p className="text-tg-destructive text-sm">{error}</p>}
+      {error && <p className="text-tg-destructive text-sm text-center">{error}</p>}
 
       <button
         onClick={handleConfirm}
         disabled={!isValid || loading}
         className="tg-btn mt-auto"
       >
-        {loading ? 'Отправка...' : 'Подтвердить ставку'}
+        {loading ? 'Отправка...' : `Поставить ${amount} очков`}
       </button>
     </div>
   )

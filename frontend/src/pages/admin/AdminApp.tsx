@@ -13,15 +13,19 @@ function AdminNav() {
     { to: '/admin/users', label: '👥 Участники' },
   ]
   return (
-    <nav className="bg-gray-900 text-white px-4 py-3 flex gap-4 items-center">
-      <span className="font-bold text-sm mr-2">⚙️ Организатор</span>
+    <nav className="flex gap-1 p-3" style={{ background: 'var(--tg-theme-secondary-bg-color)', borderBottom: '1px solid var(--tg-separator)' }}>
+      <span className="text-tg-hint text-xs font-bold mr-2 self-center">⚙️</span>
       {links.map((l) => (
         <NavLink
           key={l.to}
           to={l.to}
           end={l.end}
           className={({ isActive }) =>
-            `text-sm px-3 py-1 rounded-lg transition-colors ${isActive ? 'bg-white text-gray-900 font-medium' : 'text-gray-300 hover:text-white'}`
+            `flex-1 text-center text-xs px-2 py-2 rounded-lg transition-colors font-medium ${
+              isActive
+                ? 'bg-tg-btn text-tg-btn-text'
+                : 'text-tg-hint'
+            }`
           }
         >
           {l.label}
@@ -34,9 +38,9 @@ function AdminNav() {
 export default function AdminApp() {
   return (
     <AdminAuthGate>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-tg-bg">
         <AdminNav />
-        <div className="p-5 max-w-4xl mx-auto">
+        <div className="p-4 max-w-2xl mx-auto">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/matches" element={<MatchList />} />

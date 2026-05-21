@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
+import Spinner from '../../components/Spinner'
 
 interface User {
   id: number
@@ -31,10 +32,10 @@ export default function UserList() {
   )
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Участники</h1>
-        <span className="text-sm text-gray-500">{users.length} чел.</span>
+    <div className="pt-2">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-lg font-bold text-tg-text">Участники</h1>
+        <span className="text-sm text-tg-hint">{users.length} чел.</span>
       </div>
 
       <input
@@ -42,30 +43,30 @@ export default function UserList() {
         placeholder="Поиск по имени или Telegram ID..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm mb-4"
+        className="tg-input mb-4"
       />
 
-      {loading && <p className="text-gray-400">Загрузка...</p>}
+      {loading && <div className="flex justify-center py-8"><Spinner inline /></div>}
       {!loading && filtered.length === 0 && (
-        <p className="text-gray-400 text-center mt-10">Участников не найдено</p>
+        <p className="text-tg-hint text-center mt-10">Участников не найдено</p>
       )}
 
       <div className="flex flex-col gap-3">
         {filtered.map((u, i) => (
-          <div key={u.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+          <div key={u.id} className="tg-card">
             <div className="flex justify-between items-start">
               <div>
-                <p className="font-semibold">{u.full_name}</p>
-                <p className="text-xs text-gray-400 mt-0.5">TG: {u.telegram_id}</p>
+                <p className="font-semibold text-tg-text text-sm">{u.full_name}</p>
+                <p className="text-xs text-tg-hint mt-0.5">TG: {u.telegram_id}</p>
               </div>
               <div className="text-right">
-                <p className="font-bold text-blue-600">{u.balance} очков</p>
-                <p className="text-xs text-gray-400">#{i + 1} по регистрации</p>
+                <p className="font-bold text-tg-link text-sm">{u.balance} очков</p>
+                <p className="text-xs text-tg-hint">#{i + 1}</p>
               </div>
             </div>
-            <div className="flex gap-4 mt-3 text-sm text-gray-500">
+            <div className="flex gap-4 mt-2 text-xs text-tg-hint">
               <span>Ставок: {u.bets_count}</span>
-              <span>Зарегистрирован: {formatDate(u.registered_at)}</span>
+              <span>{formatDate(u.registered_at)}</span>
             </div>
           </div>
         ))}

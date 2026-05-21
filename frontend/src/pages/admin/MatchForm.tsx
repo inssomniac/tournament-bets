@@ -33,7 +33,6 @@ export default function MatchForm() {
       const match = data.find((m: any) => m.id === Number(id))
       if (!match) return
       const deadline = new Date(match.bet_deadline)
-      // Формат для datetime-local input
       const local = new Date(deadline.getTime() - deadline.getTimezoneOffset() * 60000)
         .toISOString().slice(0, 16)
       setForm({
@@ -81,75 +80,51 @@ export default function MatchForm() {
     form.bet_deadline
 
   return (
-    <div>
-      <div className="flex items-center gap-3 mb-6">
-        <button onClick={() => navigate(-1)} className="text-blue-500">← Назад</button>
-        <h1 className="text-2xl font-bold">{isEdit ? 'Редактировать матч' : 'Новый матч'}</h1>
+    <div className="pt-2">
+      <div className="flex items-center gap-3 mb-4">
+        <button onClick={() => navigate(-1)} className="text-tg-link text-sm">← Назад</button>
+        <h1 className="text-lg font-bold text-tg-text">
+          {isEdit ? 'Редактировать матч' : 'Новый матч'}
+        </h1>
       </div>
 
-      <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex flex-col gap-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-600">Команда 1</label>
-            <input
-              className="border border-gray-300 rounded-xl px-3 py-2 text-sm"
-              placeholder="Лаптевцы"
-              value={form.team1_name}
-              onChange={set('team1_name')}
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-600">Коэф. команды 1</label>
-            <input
-              type="number" step="0.01" min="1.01" max="10"
-              className="border border-gray-300 rounded-xl px-3 py-2 text-sm"
-              value={form.odds_team1}
-              onChange={set('odds_team1')}
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-600">Команда 2</label>
-            <input
-              className="border border-gray-300 rounded-xl px-3 py-2 text-sm"
-              placeholder="Медведи"
-              value={form.team2_name}
-              onChange={set('team2_name')}
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-600">Коэф. команды 2</label>
-            <input
-              type="number" step="0.01" min="1.01" max="10"
-              className="border border-gray-300 rounded-xl px-3 py-2 text-sm"
-              value={form.odds_team2}
-              onChange={set('odds_team2')}
-            />
-          </div>
+      <div className="tg-card flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-medium text-tg-hint">Команда 1</label>
+          <input className="tg-input" placeholder="Лаптевцы" value={form.team1_name} onChange={set('team1_name')} />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-medium text-tg-hint">Коэффициент команды 1</label>
+          <input type="number" step="0.01" min="1.01" max="10" className="tg-input" value={form.odds_team1} onChange={set('odds_team1')} />
         </div>
 
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-600">Ставки принимаются до</label>
-          <input
-            type="datetime-local"
-            className="border border-gray-300 rounded-xl px-3 py-2 text-sm"
-            value={form.bet_deadline}
-            onChange={set('bet_deadline')}
-          />
+          <label className="text-xs font-medium text-tg-hint">Команда 2</label>
+          <input className="tg-input" placeholder="Медведи" value={form.team2_name} onChange={set('team2_name')} />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-medium text-tg-hint">Коэффициент команды 2</label>
+          <input type="number" step="0.01" min="1.01" max="10" className="tg-input" value={form.odds_team2} onChange={set('odds_team2')} />
         </div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        <div className="flex flex-col gap-1">
+          <label className="text-xs font-medium text-tg-hint">Ставки принимаются до</label>
+          <input type="datetime-local" className="tg-input" value={form.bet_deadline} onChange={set('bet_deadline')} />
+        </div>
 
-        <div className="flex gap-3 mt-2">
+        {error && <p className="text-tg-destructive text-sm">{error}</p>}
+
+        <div className="flex gap-3 mt-1">
           <button
             onClick={() => navigate(-1)}
-            className="flex-1 border border-gray-300 rounded-xl py-3 text-gray-600 font-medium"
+            className="flex-1 tg-card text-tg-hint font-medium text-sm py-3 text-center active:scale-95 transition-transform rounded-xl"
           >
             Отмена
           </button>
           <button
             onClick={handleSubmit}
             disabled={!isValid || loading}
-            className="flex-1 bg-blue-500 text-white rounded-xl py-3 font-semibold disabled:opacity-40"
+            className="flex-1 tg-btn py-3 rounded-xl text-sm"
           >
             {loading ? 'Сохранение...' : 'Сохранить'}
           </button>

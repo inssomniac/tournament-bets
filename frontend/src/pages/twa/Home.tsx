@@ -1,67 +1,98 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../api/client'
 import { useAppStore } from '../../store/useAppStore'
 import TabBar from '../../components/TabBar'
+import Spinner from '../../components/Spinner'
+
+interface MyStats {
+  bets_won: number
+  bets_lost: number
+  bets_pending: number
+  rank: number | null
+  total_players: number
+}
 
 export default function Home() {
   const { user, setUser, isAdmin } = useAppStore()
   const navigate = useNavigate()
+  const [stats, setStats] = useState<MyStats | null>(null)
 
   useEffect(() => {
     api.get('/api/users/me').then(({ data }) => setUser(data)).catch(() => {})
+    // rank from leaderboard
+    api.get('/api/leaderboard/').then(({ data }) => {
+      const rank = data.current_user_rank ?? null
+      const total = data.total_players ?? 0
+      const myBets: any[] = []
+      // also fetch bets for stats
+      api.get('/api/bets/my').then(({ data: bets }) => {
+        setStats({
+          bets_won: bets.filter((b: any) => b.status === 'won').length,
+          bets_lost: bets.filter((b: any) => b.status === 'lost').length,
+          bets_pending: bets.filter((b: any) => b.status === 'pending').length,
+          rank,
+          total_players: total,
+        })
+      }).catch(() => {
+        setStats({ bets_won: 0, bets_lost: 0, bets_pending: 0, rank, total_players: total })
+      })
+    }).catch(() => {})
   }, [])
 
-  const navItems = [
-    { icon: '🏆', label: 'Матчи',   path: '/matches' },
-    { icon: '💰', label: 'Баланс',  path: '/balance' },
-    { icon: '🎁', label: 'Бонусы',  path: '/bonuses' },
-    { icon: '📊', label: 'Рейтинг', path: '/leaderboard' },
-  ]
+  const firstName = user?.full_name.split(' ')[1] || user?.full_name.split(' ')[0] || ''
 
   return (
     <div className="flex flex-col min-h-screen pb-16 bg-tg-bg">
-      <div className="p-5 flex flex-col gap-5">
-        <div className="mt-4">
-          <h1 className="text-xl font-bold text-tg-text">🏏 Летний Кубок по лапте 2026</h1>
-          {user && (
-            <p className="text-tg-hint mt-1">
-              Привет,{' '}
-              <span className="font-semibold text-tg-text">
-                {user.full_name.split(' ')[1] || user.full_name}
-              </span>
-              !
+      <div className="p-5 flex flex-col gap-4">
+
+        {/* Greeting + balance */}
+        <div className="mt-3">
+          <p className="text-tg-hint text-sm">
+            {firstName ? `Привет, ${firstName}! 👋` : '👋 Добро пожаловать!'}
+          </p>
+          <div className="flex items-end gap-2 mt-1">
+            <span className="text-4xl font-bold text-tg-text">
+              {user?.balance ?? '…'}
+            </span>
+            <span className="text-tg-hint mb-1">очков</span>
+          </div>
+          {stats?.rank && (
+            <p className="text-tg-link text-sm mt-1">
+              #{stats.rank} из {stats.total_players} в рейтинге
             </p>
           )}
         </div>
 
-        {/* Balance card */}
-        <div className="tg-card flex items-center gap-4">
-          <span className="text-4xl">💰</span>
-          <div>
-            <p className="text-sm text-tg-hint">Ваш баланс</p>
-            <p className="text-2xl font-bold text-tg-link">
-              {user?.balance ?? '…'}{' '}
-              <span className="text-base font-normal text-tg-hint">очков</span>
-            </p>
+        {/* Bet stats */}
+        {stats ? (
+          <div className="grid grid-cols-3 gap-2">
+            <div className="tg-card text-center py-3">
+              <p className="text-xl font-bold text-green-600">{stats.bets_won}</p>
+              <p className="text-xs text-tg-hint">Выиграно</p>
+            </div>
+            <div className="tg-card text-center py-3">
+              <p className="text-xl font-bold text-tg-hint">{stats.bets_pending}</p>
+              <p className="text-xs text-tg-hint">В игре</p>
+            </div>
+            <div className="tg-card text-center py-3">
+              <p className="text-xl font-bold text-red-500">{stats.bets_lost}</p>
+              <p className="text-xs text-tg-hint">Проиграно</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex justify-center py-4"><Spinner inline /></div>
+        )}
 
-        {/* Nav grid */}
-        <div className="grid grid-cols-2 gap-3">
-          {navItems.map((item) => (
-            <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className="tg-card flex flex-col items-center gap-2 py-5 active:scale-95 transition-transform"
-            >
-              <span className="text-3xl">{item.icon}</span>
-              <span className="font-medium text-tg-text text-sm">{item.label}</span>
-            </button>
-          ))}
-        </div>
+        {/* CTA */}
+        <button
+          onClick={() => navigate('/matches')}
+          className="tg-btn mt-1"
+        >
+          🏆 Сделать ставку
+        </button>
 
-        {/* Admin panel link — visible only to admins */}
+        {/* Admin */}
         {isAdmin && (
           <button
             onClick={() => navigate('/admin')}
@@ -74,6 +105,14 @@ export default function Home() {
             </div>
           </button>
         )}
+
+        {/* Tournament info */}
+        <div className="tg-card text-center py-4">
+          <p className="text-2xl mb-1">🏏</p>
+          <p className="font-semibold text-tg-text text-sm">Летний Кубок по лапте 2026</p>
+          <p className="text-tg-hint text-xs mt-1">Университетский турнир</p>
+        </div>
+
       </div>
       <TabBar />
     </div>

@@ -18,43 +18,40 @@ export default function Dashboard() {
   }, [])
 
   const cards = stats ? [
-    { label: 'Участников', value: stats.total_users, icon: '👥' },
-    { label: 'Активных матчей', value: stats.active_matches, icon: '🟢' },
-    { label: 'Завершённых матчей', value: stats.finished_matches, icon: '✅' },
-    { label: 'Всего ставок', value: stats.total_bets, icon: '🎯' },
+    { label: 'Участников',          value: stats.total_users,      icon: '👥' },
+    { label: 'Активных матчей',     value: stats.active_matches,   icon: '🟢' },
+    { label: 'Завершённых матчей',  value: stats.finished_matches, icon: '✅' },
+    { label: 'Всего ставок',        value: stats.total_bets,       icon: '🎯' },
   ] : []
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-6">Дашборд</h1>
+    <div className="pt-2">
+      <h1 className="text-lg font-bold text-tg-text mb-4">Дашборд</h1>
 
-      <div className="grid grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-2 gap-3 mb-6">
         {cards.map((c) => (
-          <div key={c.label} className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-            <p className="text-3xl mb-1">{c.icon}</p>
-            <p className="text-2xl font-bold">{c.value}</p>
-            <p className="text-sm text-gray-500">{c.label}</p>
+          <div key={c.label} className="tg-card">
+            <p className="text-2xl mb-1">{c.icon}</p>
+            <p className="text-2xl font-bold text-tg-text">{c.value}</p>
+            <p className="text-xs text-tg-hint">{c.label}</p>
           </div>
         ))}
-        {!stats && <p className="col-span-2 text-gray-400">Загрузка...</p>}
+        {!stats && <p className="col-span-2 text-tg-hint text-sm">Загрузка...</p>}
       </div>
 
-      <div className="flex flex-col gap-3">
-        <button
-          onClick={() => navigate('/admin/matches/new')}
-          className="bg-blue-500 text-white rounded-xl py-3 font-semibold"
-        >
+      <div className="flex flex-col gap-2">
+        <button onClick={() => navigate('/admin/matches/new')} className="tg-btn">
           + Создать матч
         </button>
         <button
           onClick={() => navigate('/admin/matches')}
-          className="bg-white border border-gray-200 rounded-xl py-3 font-medium text-gray-700"
+          className="tg-card text-tg-text font-medium text-sm py-3 text-center active:scale-95 transition-transform"
         >
           📋 Все матчи
         </button>
         <button
           onClick={() => navigate('/admin/users')}
-          className="bg-white border border-gray-200 rounded-xl py-3 font-medium text-gray-700"
+          className="tg-card text-tg-text font-medium text-sm py-3 text-center active:scale-95 transition-transform"
         >
           👥 Участники
         </button>
