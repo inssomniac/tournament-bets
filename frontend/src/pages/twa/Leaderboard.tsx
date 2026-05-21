@@ -51,7 +51,7 @@ export default function Leaderboard() {
   const myInTop = myEntry !== undefined
 
   return (
-    <div className="flex flex-col min-h-screen pb-tabbar bg-tg-bg">
+    <div className="flex flex-col min-h-screen pb-tabbar pt-tg-header bg-tg-bg">
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-xl font-bold text-tg-text">📊 Рейтинг</h1>
@@ -108,12 +108,4 @@ export default function Leaderboard() {
             </span>
             <span className="flex-1 text-sm font-medium text-tg-link truncate">
               Вы 👈
-            </span>
-          </div>
-        </div>
-      )}
-
-      <TabBar />
-    </div>
-  )
-}
+  

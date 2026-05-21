@@ -43,7 +43,7 @@ export default function Bonuses() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen pb-tabbar bg-tg-bg">
+    <div className="flex flex-col min-h-screen pb-tabbar pt-tg-header bg-tg-bg">
       <div className="p-5">
         <h1 className="text-xl font-bold text-tg-text mb-1">🎁 Бонусы</h1>
         <p className="text-sm text-tg-hint mb-5">

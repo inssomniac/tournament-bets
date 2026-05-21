@@ -34,7 +34,7 @@ export default function Balance() {
   }, [])
 
   return (
-    <div className="flex flex-col min-h-screen pb-tabbar bg-tg-bg">
+    <div className="flex flex-col min-h-screen pb-tabbar pt-tg-header bg-tg-bg">
       <div className="p-5">
         <h1 className="text-xl font-bold text-tg-text mb-4">💰 Баланс</h1>
 

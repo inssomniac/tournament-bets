@@ -43,7 +43,7 @@ export default function Home() {
   const firstName = user?.full_name.split(' ')[1] || user?.full_name.split(' ')[0] || ''
 
   return (
-    <div className="flex flex-col min-h-screen pb-tabbar bg-tg-bg">
+    <div className="flex flex-col min-h-screen pb-tabbar pt-tg-header bg-tg-bg">
       <div className="p-5 flex flex-col gap-4">
 
         {/* Greeting + balance */}
