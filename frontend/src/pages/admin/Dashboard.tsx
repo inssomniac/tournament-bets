@@ -9,6 +9,23 @@ interface Stats {
   finished_matches: number
 }
 
+const CARD_DEFS = [
+  { key: 'total_users',       label: 'Участников',         icon: '👥' },
+  { key: 'active_matches',    label: 'Активных матчей',    icon: '🟢' },
+  { key: 'finished_matches',  label: 'Завершённых матчей', icon: '✅' },
+  { key: 'total_bets',        label: 'Всего ставок',       icon: '🎯' },
+] as const
+
+function StatCardSkeleton() {
+  return (
+    <div className="tg-card flex flex-col gap-2">
+      <div className="sk rounded-md h-7 w-7" />
+      <div className="sk rounded-md h-7 w-12" />
+      <div className="sk rounded-md h-3 w-24" />
+    </div>
+  )
+}
+
 export default function Dashboard() {
   const [stats, setStats] = useState<Stats | null>(null)
   const navigate = useNavigate()
@@ -17,26 +34,21 @@ export default function Dashboard() {
     api.get('/api/admin/stats').then(({ data }) => setStats(data)).catch(() => {})
   }, [])
 
-  const cards = stats ? [
-    { label: 'Участников',          value: stats.total_users,      icon: '👥' },
-    { label: 'Активных матчей',     value: stats.active_matches,   icon: '🟢' },
-    { label: 'Завершённых матчей',  value: stats.finished_matches, icon: '✅' },
-    { label: 'Всего ставок',        value: stats.total_bets,       icon: '🎯' },
-  ] : []
-
   return (
     <div className="pt-2">
       <h1 className="text-lg font-bold text-tg-text mb-4">Дашборд</h1>
 
       <div className="grid grid-cols-2 gap-3 mb-6">
-        {cards.map((c) => (
-          <div key={c.label} className="tg-card">
-            <p className="text-2xl mb-1">{c.icon}</p>
-            <p className="text-2xl font-bold text-tg-text">{c.value}</p>
-            <p className="text-xs text-tg-hint">{c.label}</p>
-          </div>
-        ))}
-        {!stats && <p className="col-span-2 text-tg-hint text-sm">Загрузка...</p>}
+        {stats
+          ? CARD_DEFS.map((c) => (
+              <div key={c.key} className="tg-card">
+                <p className="text-2xl mb-1">{c.icon}</p>
+                <p className="text-2xl font-bold text-tg-text">{stats[c.key]}</p>
+                <p className="text-xs text-tg-hint">{c.label}</p>
+              </div>
+            ))
+          : [0, 1, 2, 3].map((i) => <StatCardSkeleton key={i} />)
+        }
       </div>
 
       <div className="flex flex-col gap-2">

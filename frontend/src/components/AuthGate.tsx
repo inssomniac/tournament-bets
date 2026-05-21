@@ -2,16 +2,39 @@ import { useEffect, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { api, setAuthToken } from '../api/client'
 import { useAppStore } from '../store/useAppStore'
-import Spinner from './Spinner'
 
 function getInitData(): string {
-  // Реальный TWA
   if (window.Telegram?.WebApp?.initData) {
     return window.Telegram.WebApp.initData
   }
-  // Dev bypass — подставь свой telegram_id
   const devId = import.meta.env.VITE_DEV_TG_ID || '0'
   return `dev:${devId}`
+}
+
+function AuthLoadingScreen() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen gap-6 bg-tg-bg pt-tg-header pb-tabbar">
+      {/* Заголовок */}
+      <div className="flex flex-col items-center gap-2">
+        <div className="sk rounded-2xl w-16 h-16" />
+        <div className="sk rounded-md w-48 h-5 mt-2" />
+        <div className="sk rounded-md w-32 h-3" />
+      </div>
+      {/* Статы */}
+      <div className="grid grid-cols-3 gap-2 w-full px-6">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="tg-card text-center py-3 flex flex-col items-center gap-2">
+            <div className="sk rounded-lg h-6 w-8" />
+            <div className="sk rounded-md h-3 w-10" />
+          </div>
+        ))}
+      </div>
+      {/* Кнопка */}
+      <div className="w-full px-6">
+        <div className="sk rounded-xl h-14 w-full" />
+      </div>
+    </div>
+  )
 }
 
 export default function AuthGate() {
@@ -47,7 +70,7 @@ export default function AuthGate() {
   }, [])
 
   if (status === 'loading') {
-    return <Spinner />
+    return <AuthLoadingScreen />
   }
 
   if (status === 'error') {
