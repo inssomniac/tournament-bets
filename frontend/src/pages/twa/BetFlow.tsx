@@ -34,10 +34,6 @@ export default function BetFlow() {
     setAmount((prev) => Math.max(MIN, Math.min(maxAllowed, prev + delta)))
   }
 
-  const setAllIn = () => {
-    setAmount(maxAllowed)
-  }
-
   const handleConfirm = async () => {
     setLoading(true)
     setError('')
@@ -52,10 +48,9 @@ export default function BetFlow() {
     }
   }
 
-  // Success screen
   if (success) {
     return (
-      <div className="flex flex-col min-h-screen p-5 gap-5 bg-tg-bg items-center justify-center text-center">
+      <div className="flex flex-col min-h-screen p-5 gap-5 bg-tg-bg items-center justify-center text-center pt-tg-header">
         <div className="text-6xl">✅</div>
         <div>
           <h2 className="text-xl font-bold text-tg-text">Ставка принята!</h2>
@@ -76,12 +71,11 @@ export default function BetFlow() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen p-5 gap-5 bg-tg-bg">
+    <div className="flex flex-col min-h-screen p-5 gap-5 bg-tg-bg pt-tg-header">
       <button onClick={() => navigate(-1)} className="text-tg-link text-sm self-start">
         ← Назад
       </button>
 
-      {/* Match & team */}
       <div>
         <p className="text-tg-hint text-xs">{match.team1_name} vs {match.team2_name}</p>
         <h1 className="text-xl font-bold text-tg-text mt-0.5">
@@ -90,13 +84,11 @@ export default function BetFlow() {
         <p className="text-tg-hint text-sm">Коэффициент × {odds}</p>
       </div>
 
-      {/* Balance */}
       <div className="tg-card flex justify-between items-center">
         <span className="text-tg-hint text-sm">Ваш баланс</span>
         <span className="font-bold text-tg-text">{user?.balance ?? '…'} очков</span>
       </div>
 
-      {/* Stepper */}
       <div className="tg-card flex flex-col items-center gap-4 py-6">
         <p className="text-tg-hint text-xs uppercase tracking-wide">Сумма ставки</p>
         <div className="flex items-center gap-6">
@@ -121,7 +113,6 @@ export default function BetFlow() {
           </button>
         </div>
 
-        {/* Presets + All-in */}
         <div className="flex gap-2 w-full">
           {PRESETS.filter((v) => v <= maxAllowed).map((v) => (
             <button
@@ -135,7 +126,7 @@ export default function BetFlow() {
             </button>
           ))}
           <button
-            onClick={setAllIn}
+            onClick={() => setAmount(maxAllowed)}
             className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all active:scale-95 ${
               amount === maxAllowed ? 'bg-tg-btn text-tg-btn-text' : 'bg-tg-bg text-tg-link'
             }`}
@@ -145,7 +136,6 @@ export default function BetFlow() {
         </div>
       </div>
 
-      {/* Potential win */}
       <div className="tg-card flex justify-between items-center">
         <span className="text-tg-hint text-sm">Потенциальный выигрыш</span>
         <span className="text-xl font-bold text-tg-link">{potentialWin} 🪙</span>

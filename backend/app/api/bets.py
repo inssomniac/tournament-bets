@@ -54,16 +54,8 @@ def place_bet(
     if not match:
         raise HTTPException(404, "Матч не найден")
 
-    # Матч не завершён
-    if match.status == "finished":
-        raise HTTPException(400, "Матч уже завершён")
-
-    # Дедлайн не прошёл
-    now = datetime.now(timezone.utc)
-    deadline = match.bet_deadline
-    if deadline.tzinfo is None:
-        deadline = deadline.replace(tzinfo=timezone.utc)
-    if deadline < now:
+    # Ставки принимаются только пока матч в статусе active
+    if match.status != "active":
         raise HTTPException(400, "Приём ставок закрыт")
 
     # Валидация team_choice
