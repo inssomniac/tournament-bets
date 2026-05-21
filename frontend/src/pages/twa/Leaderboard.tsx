@@ -108,4 +108,12 @@ export default function Leaderboard() {
             </span>
             <span className="flex-1 text-sm font-medium text-tg-link truncate">
               Вы 👈
-  
+              </span>
+          </div>
+        </div>
+      )}
+
+      <TabBar />
+    </div>
+  )
+}
