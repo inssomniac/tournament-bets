@@ -71,7 +71,6 @@ def list_matches(
 ):
     matches = (
         db.query(Match)
-        .filter(Match.status != "finished")
         .order_by(Match.created_at.desc())
         .all()
     )

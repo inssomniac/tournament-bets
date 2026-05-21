@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { api } from '../../api/client'
 import TabBar from '../../components/TabBar'
-import Spinner from '../../components/Spinner'
 
 interface Entry {
   rank: number
@@ -21,6 +20,20 @@ const rankMedal = (rank: number) => {
   if (rank === 2) return '🥈'
   if (rank === 3) return '🥉'
   return `#${rank}`
+}
+
+function LeaderboardSkeleton() {
+  return (
+    <div className="flex flex-col gap-2">
+      {[0, 1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-tg-sbg">
+          <div className="sk rounded-md w-8 h-5 shrink-0" />
+          <div className="sk rounded-md flex-1 h-4" />
+          <div className="sk rounded-md w-16 h-4 shrink-0" />
+        </div>
+      ))}
+    </div>
+  )
 }
 
 export default function Leaderboard() {
@@ -60,36 +73,38 @@ export default function Leaderboard() {
           )}
         </div>
 
-        {loading && <Spinner />}
-
-        <div className="flex flex-col gap-2">
-          {data?.leaderboard.map((entry) => (
-            <div
-              key={entry.rank}
-              ref={entry.is_current_user ? myRowRef : undefined}
-              className={`flex items-center gap-3 p-3 rounded-xl ${
-                entry.is_current_user
-                  ? 'ring-2 ring-tg-link bg-tg-sbg'
-                  : 'bg-tg-sbg'
-              }`}
-            >
-              <span className="text-base font-bold w-8 text-center shrink-0 text-tg-text">
-                {rankMedal(entry.rank)}
-              </span>
-              <span className={`flex-1 text-sm font-medium truncate ${
-                entry.is_current_user ? 'text-tg-link' : 'text-tg-text'
-              }`}>
-                {entry.full_name}
-                {entry.is_current_user && ' 👈'}
-              </span>
-              <span className={`text-sm font-bold shrink-0 ${
-                entry.is_current_user ? 'text-tg-link' : 'text-tg-hint'
-              }`}>
-                {entry.balance} 🪙
-              </span>
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <LeaderboardSkeleton />
+        ) : (
+          <div className="flex flex-col gap-2">
+            {data?.leaderboard.map((entry) => (
+              <div
+                key={entry.rank}
+                ref={entry.is_current_user ? myRowRef : undefined}
+                className={`flex items-center gap-3 p-3 rounded-xl ${
+                  entry.is_current_user
+                    ? 'ring-2 ring-tg-link bg-tg-sbg'
+                    : 'bg-tg-sbg'
+                }`}
+              >
+                <span className="text-base font-bold w-8 text-center shrink-0 text-tg-text">
+                  {rankMedal(entry.rank)}
+                </span>
+                <span className={`flex-1 text-sm font-medium truncate ${
+                  entry.is_current_user ? 'text-tg-link' : 'text-tg-text'
+                }`}>
+                  {entry.full_name}
+                  {entry.is_current_user && ' 👈'}
+                </span>
+                <span className={`text-sm font-bold shrink-0 ${
+                  entry.is_current_user ? 'text-tg-link' : 'text-tg-hint'
+                }`}>
+                  {entry.balance} 🪙
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Pinned row for users outside top list */}
@@ -108,7 +123,7 @@ export default function Leaderboard() {
             </span>
             <span className="flex-1 text-sm font-medium text-tg-link truncate">
               Вы 👈
-              </span>
+            </span>
           </div>
         </div>
       )}

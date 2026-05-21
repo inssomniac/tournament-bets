@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { useAppStore } from '../../store/useAppStore'
 import TabBar from '../../components/TabBar'
-import Spinner from '../../components/Spinner'
 
 interface BetItem {
   id: number
@@ -19,6 +18,21 @@ const statusConfig: Record<string, { icon: string; label: string; cls: string }>
   won:     { icon: '✅', label: 'Выиграл',  cls: 'bg-green-100 text-green-700' },
   lost:    { icon: '❌', label: 'Проиграл', cls: 'bg-red-100 text-red-700' },
   pending: { icon: '⏳', label: 'Ожидание', cls: 'bg-yellow-100 text-yellow-700' },
+}
+
+function BetCardSkeleton() {
+  return (
+    <div className="tg-card flex flex-col gap-3">
+      <div className="flex justify-between items-start">
+        <div className="flex-1 pr-2 flex flex-col gap-2">
+          <div className="sk rounded-md h-4 w-3/4" />
+          <div className="sk rounded-md h-3 w-1/2" />
+        </div>
+        <div className="sk rounded-full h-6 w-20 shrink-0" />
+      </div>
+      <div className="sk rounded-md h-4 w-1/3" />
+    </div>
+  )
 }
 
 export default function Balance() {
@@ -53,46 +67,54 @@ export default function Balance() {
           История ставок
         </h2>
 
-        {loading && <div className="flex justify-center py-8"><Spinner inline /></div>}
+        {loading && (
+          <div className="flex flex-col gap-3">
+            <BetCardSkeleton />
+            <BetCardSkeleton />
+            <BetCardSkeleton />
+          </div>
+        )}
 
         {!loading && bets.length === 0 && (
           <p className="text-tg-hint text-center mt-6">Ставок ещё нет</p>
         )}
 
-        <div className="flex flex-col gap-3">
-          {bets.map((bet) => {
-            const teamName = bet.team_choice === 1 ? bet.team1_name : bet.team2_name
-            const cfg = statusConfig[bet.status] ?? statusConfig.pending
-            return (
-              <div key={bet.id} className="tg-card">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1 pr-2">
-                    <p className="font-medium text-tg-text text-sm">
-                      {bet.team1_name} vs {bet.team2_name}
-                    </p>
-                    <p className="text-tg-hint text-sm">Ставка на: {teamName}</p>
-                  </div>
-                  <span className={`text-xs px-2 py-1 rounded-full shrink-0 ${cfg.cls}`}>
-                    {cfg.icon} {cfg.label}
-                  </span>
-                </div>
-                <div className="mt-2 text-sm">
-                  {bet.status === 'won' && (
-                    <span className="text-green-600 font-medium">+{bet.potential_win} очков</span>
-                  )}
-                  {bet.status === 'lost' && (
-                    <span className="text-red-500 font-medium">-{bet.amount} очков</span>
-                  )}
-                  {bet.status === 'pending' && (
-                    <span className="text-tg-hint">
-                      {bet.amount} очков → {bet.potential_win} потенциально
+        {!loading && (
+          <div className="flex flex-col gap-3">
+            {bets.map((bet) => {
+              const teamName = bet.team_choice === 1 ? bet.team1_name : bet.team2_name
+              const cfg = statusConfig[bet.status] ?? statusConfig.pending
+              return (
+                <div key={bet.id} className="tg-card">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1 pr-2">
+                      <p className="font-medium text-tg-text text-sm">
+                        {bet.team1_name} vs {bet.team2_name}
+                      </p>
+                      <p className="text-tg-hint text-sm">Ставка на: {teamName}</p>
+                    </div>
+                    <span className={`text-xs px-2 py-1 rounded-full shrink-0 ${cfg.cls}`}>
+                      {cfg.icon} {cfg.label}
                     </span>
-                  )}
+                  </div>
+                  <div className="mt-2 text-sm">
+                    {bet.status === 'won' && (
+                      <span className="text-green-600 font-medium">+{bet.potential_win} очков</span>
+                    )}
+                    {bet.status === 'lost' && (
+                      <span className="text-red-500 font-medium">-{bet.amount} очков</span>
+                    )}
+                    {bet.status === 'pending' && (
+                      <span className="text-tg-hint">
+                        {bet.amount} очков → {bet.potential_win} потенциально
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        )}
       </div>
       <TabBar />
     </div>

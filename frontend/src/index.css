@@ -105,3 +105,28 @@ body {
     var(--tg-content-safe-area-inset-top, 0px)
   );
 }
+
+/* ── Skeleton loading ─────────────────────────────────────────────────────────
+   Используй класс .sk + rounded-* на любом div.
+   Shimmer-полоска скользит слева направо, работает в dark и light теме. */
+.sk {
+  position: relative;
+  overflow: hidden;
+  background: var(--tg-theme-secondary-bg-color);
+}
+.sk::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: sk-shimmer 1.6s ease-in-out infinite;
+}
+@keyframes sk-shimmer {
+  100% { transform: translateX(200%); }
+}

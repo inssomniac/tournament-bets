@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../../api/client'
 import { useAppStore } from '../../store/useAppStore'
 import TabBar from '../../components/TabBar'
-import Spinner from '../../components/Spinner'
 
 interface MyStats {
   bets_won: number
@@ -13,6 +12,19 @@ interface MyStats {
   total_players: number
 }
 
+function StatsGridSkeleton() {
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="tg-card text-center py-3 flex flex-col items-center gap-2">
+          <div className="sk rounded-lg h-7 w-8" />
+          <div className="sk rounded-md h-3 w-10" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function Home() {
   const { user, setUser, isAdmin } = useAppStore()
   const navigate = useNavigate()
@@ -20,12 +32,9 @@ export default function Home() {
 
   useEffect(() => {
     api.get('/api/users/me').then(({ data }) => setUser(data)).catch(() => {})
-    // rank from leaderboard
     api.get('/api/leaderboard/').then(({ data }) => {
       const rank = data.current_user_rank ?? null
       const total = data.total_players ?? 0
-      const myBets: any[] = []
-      // also fetch bets for stats
       api.get('/api/bets/my').then(({ data: bets }) => {
         setStats({
           bets_won: bets.filter((b: any) => b.status === 'won').length,
@@ -64,7 +73,7 @@ export default function Home() {
           )}
         </div>
 
-        {/* Bet stats */}
+        {/* Bet stats or skeleton */}
         {stats ? (
           <div className="grid grid-cols-3 gap-2">
             <div className="tg-card text-center py-3">
@@ -81,7 +90,7 @@ export default function Home() {
             </div>
           </div>
         ) : (
-          <div className="flex justify-center py-4"><Spinner inline /></div>
+          <StatsGridSkeleton />
         )}
 
         {/* CTA */}

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { useAppStore } from '../../store/useAppStore'
 import TabBar from '../../components/TabBar'
-import Spinner from '../../components/Spinner'
 
 interface Channel {
   id: number
@@ -10,6 +9,23 @@ interface Channel {
   channel_url: string
   bonus_points: number
   is_claimed: boolean
+}
+
+function ChannelCardSkeleton() {
+  return (
+    <div className="tg-card flex flex-col gap-3">
+      <div className="flex justify-between items-center">
+        <div className="flex flex-col gap-2">
+          <div className="sk rounded-md h-5 w-36" />
+          <div className="sk rounded-md h-4 w-20" />
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <div className="sk rounded-xl flex-1 h-10" />
+        <div className="sk rounded-xl flex-1 h-10" />
+      </div>
+    </div>
+  )
 }
 
 export default function Bonuses() {
@@ -50,55 +66,62 @@ export default function Bonuses() {
           Подпишитесь на каналы и получите дополнительные очки
         </p>
 
-        {loading && <div className="flex justify-center py-8"><Spinner inline /></div>}
+        {loading && (
+          <div className="flex flex-col gap-4">
+            <ChannelCardSkeleton />
+            <ChannelCardSkeleton />
+          </div>
+        )}
 
         {!loading && channels.length === 0 && (
           <p className="text-tg-hint text-center mt-10">Бонусных каналов нет</p>
         )}
 
-        <div className="flex flex-col gap-4">
-          {channels.map((ch) => (
-            <div key={ch.id} className="tg-card">
-              <div className="flex justify-between items-center mb-3">
-                <div>
-                  <p className="font-semibold text-tg-text">{ch.channel_name}</p>
-                  <p className="text-tg-link font-bold text-sm">+{ch.bonus_points} 🪙</p>
+        {!loading && (
+          <div className="flex flex-col gap-4">
+            {channels.map((ch) => (
+              <div key={ch.id} className="tg-card">
+                <div className="flex justify-between items-center mb-3">
+                  <div>
+                    <p className="font-semibold text-tg-text">{ch.channel_name}</p>
+                    <p className="text-tg-link font-bold text-sm">+{ch.bonus_points} 🪙</p>
+                  </div>
+                  {ch.is_claimed && (
+                    <span className="text-green-600 text-sm font-medium">✅ Получено</span>
+                  )}
                 </div>
-                {ch.is_claimed && (
-                  <span className="text-green-600 text-sm font-medium">✅ Получено</span>
+
+                {!ch.is_claimed && (
+                  <div className="flex gap-2">
+                    <a
+                      href={ch.channel_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 text-center tg-btn-outline py-2"
+                    >
+                      Подписаться
+                    </a>
+                    <button
+                      onClick={() => handleClaim(ch)}
+                      disabled={claiming === ch.id}
+                      className="flex-1 tg-btn py-2 text-sm rounded-xl disabled:opacity-50"
+                    >
+                      {claiming === ch.id ? '...' : 'Получить'}
+                    </button>
+                  </div>
+                )}
+
+                {messages[ch.id] && (
+                  <p className={`text-sm mt-2 ${
+                    messages[ch.id].startsWith('+') ? 'text-green-600' : 'text-tg-destructive'
+                  }`}>
+                    {messages[ch.id]}
+                  </p>
                 )}
               </div>
-
-              {!ch.is_claimed && (
-                <div className="flex gap-2">
-                  <a
-                    href={ch.channel_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex-1 text-center tg-btn-outline py-2"
-                  >
-                    Подписаться
-                  </a>
-                  <button
-                    onClick={() => handleClaim(ch)}
-                    disabled={claiming === ch.id}
-                    className="flex-1 tg-btn py-2 text-sm rounded-xl disabled:opacity-50"
-                  >
-                    {claiming === ch.id ? '...' : 'Получить'}
-                  </button>
-                </div>
-              )}
-
-              {messages[ch.id] && (
-                <p className={`text-sm mt-2 ${
-                  messages[ch.id].startsWith('+') ? 'text-green-600' : 'text-tg-destructive'
-                }`}>
-                  {messages[ch.id]}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
       <TabBar />
     </div>

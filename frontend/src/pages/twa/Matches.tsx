@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../api/client'
 import TabBar from '../../components/TabBar'
-import Spinner from '../../components/Spinner'
 
 interface UserBet {
   team_choice: number
@@ -35,6 +34,21 @@ function formatDeadline(iso: string): string {
   return d.toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 }
 
+function MatchCardSkeleton() {
+  return (
+    <div className="tg-card">
+      <div className="flex justify-between items-center mb-3">
+        <div className="sk rounded-full h-5 w-24" />
+        <div className="sk rounded-md h-4 w-16" />
+      </div>
+      <div className="flex gap-2">
+        <div className="sk rounded-xl flex-1 h-16" />
+        <div className="sk rounded-xl flex-1 h-16" />
+      </div>
+    </div>
+  )
+}
+
 export default function Matches() {
   const [matches, setMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
@@ -43,8 +57,6 @@ export default function Matches() {
   useEffect(() => {
     api.get('/api/matches/').then(({ data }) => setMatches(data)).finally(() => setLoading(false))
   }, [])
-
-  if (loading) return <Spinner />
 
   const open = matches.filter((m) => m.status === 'active')
   const live = matches.filter((m) => m.status === 'live')
@@ -55,43 +67,55 @@ export default function Matches() {
       <div className="p-4">
         <h1 className="text-xl font-bold text-tg-text mb-4">🏆 Матчи</h1>
 
-        {matches.length === 0 && (
+        {loading && (
+          <div className="flex flex-col gap-3">
+            <MatchCardSkeleton />
+            <MatchCardSkeleton />
+            <MatchCardSkeleton />
+          </div>
+        )}
+
+        {!loading && matches.length === 0 && (
           <p className="text-tg-hint text-center mt-16">Активных матчей нет</p>
         )}
 
-        {/* Live matches */}
-        {live.length > 0 && (
+        {!loading && (
           <>
-            <p className="text-red-500 text-xs uppercase tracking-wide font-bold mb-2">🔴 Сейчас идут</p>
-            <div className="flex flex-col gap-3 mb-4">
-              {live.map((match) => (
-                <MatchCard key={match.id} match={match} navigate={navigate} />
-              ))}
-            </div>
-          </>
-        )}
+            {/* Live matches */}
+            {live.length > 0 && (
+              <>
+                <p className="text-red-500 text-xs uppercase tracking-wide font-bold mb-2">🔴 Сейчас идут</p>
+                <div className="flex flex-col gap-3 mb-4">
+                  {live.map((match) => (
+                    <MatchCard key={match.id} match={match} navigate={navigate} />
+                  ))}
+                </div>
+              </>
+            )}
 
-        {/* Open matches */}
-        {open.length > 0 && (
-          <>
-            {live.length > 0 && <p className="text-tg-hint text-xs uppercase tracking-wide mb-2 mt-2">Принимаем ставки</p>}
-            <div className="flex flex-col gap-3 mb-4">
-              {open.map((match) => (
-                <MatchCard key={match.id} match={match} navigate={navigate} />
-              ))}
-            </div>
-          </>
-        )}
+            {/* Open matches */}
+            {open.length > 0 && (
+              <>
+                {live.length > 0 && <p className="text-tg-hint text-xs uppercase tracking-wide mb-2 mt-2">Принимаем ставки</p>}
+                <div className="flex flex-col gap-3 mb-4">
+                  {open.map((match) => (
+                    <MatchCard key={match.id} match={match} navigate={navigate} />
+                  ))}
+                </div>
+              </>
+            )}
 
-        {/* Closed/finished */}
-        {closed.length > 0 && (
-          <>
-            <p className="text-tg-hint text-xs uppercase tracking-wide mb-2 mt-2">Завершённые</p>
-            <div className="flex flex-col gap-3">
-              {closed.map((match) => (
-                <MatchCard key={match.id} match={match} navigate={navigate} />
-              ))}
-            </div>
+            {/* Closed/finished */}
+            {closed.length > 0 && (
+              <>
+                <p className="text-tg-hint text-xs uppercase tracking-wide mb-2 mt-2">Завершённые</p>
+                <div className="flex flex-col gap-3">
+                  {closed.map((match) => (
+                    <MatchCard key={match.id} match={match} navigate={navigate} />
+                  ))}
+                </div>
+              </>
+            )}
           </>
         )}
       </div>

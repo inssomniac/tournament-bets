@@ -39,10 +39,12 @@ export default function MatchList() {
   const [matches, setMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState<number | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<number | null>(null)
   const [errors, setErrors] = useState<Record<number, string>>({})
   const navigate = useNavigate()
 
   const reload = () => {
+    setLoading(true)
     api.get('/api/admin/matches').then(({ data }) => setMatches(data)).finally(() => setLoading(false))
   }
 
@@ -53,6 +55,19 @@ export default function MatchList() {
     setErrors((e) => ({ ...e, [id]: '' }))
     try {
       await api.post(`/api/admin/matches/${id}/go_live`)
+      reload()
+    } catch (e: any) {
+      setErrors((prev) => ({ ...prev, [id]: e.message }))
+    } finally {
+      setActionLoading(null)
+    }
+  }
+
+  const deleteMatch = async (id: number) => {
+    setActionLoading(id)
+    setConfirmDelete(null)
+    try {
+      await api.delete(`/api/admin/matches/${id}`)
       reload()
     } catch (e: any) {
       setErrors((prev) => ({ ...prev, [id]: e.message }))
@@ -102,9 +117,32 @@ export default function MatchList() {
             )}
 
             {m.status === 'finished' && (
-              <p className="text-sm font-medium text-tg-text">
+              <p className="text-sm font-medium text-tg-text mb-3">
                 🏆 Победитель: {m.winner === 1 ? m.team1_name : m.team2_name}
               </p>
+            )}
+
+            {/* Confirm delete inline */}
+            {confirmDelete === m.id && (
+              <div className="rounded-xl p-3 mb-2" style={{ background: 'var(--tg-theme-bg-color)' }}>
+                <p className="text-sm text-tg-text mb-2">
+                  Удалить матч{m.bets_count > 0 ? ` и ${m.bets_count} ставок` : ''}?
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setConfirmDelete(null)}
+                    className="flex-1 tg-card text-tg-hint text-xs py-2 text-center rounded-xl"
+                  >
+                    Отмена
+                  </button>
+                  <button
+                    onClick={() => deleteMatch(m.id)}
+                    className="flex-1 bg-red-500 text-white rounded-xl py-2 text-xs font-medium"
+                  >
+                    Удалить
+                  </button>
+                </div>
+              </div>
             )}
 
             {m.status === 'active' && (
@@ -120,7 +158,14 @@ export default function MatchList() {
                   disabled={actionLoading === m.id}
                   className="flex-1 bg-orange-500 text-white rounded-xl py-2 text-xs font-medium active:scale-95 transition-transform disabled:opacity-50"
                 >
-                  {actionLoading === m.id ? '...' : '▶️ Начать матч'}
+                  {actionLoading === m.id ? '...' : '▶️ Начать'}
+                </button>
+                <button
+                  onClick={() => setConfirmDelete(m.id)}
+                  disabled={actionLoading === m.id}
+                  className="w-9 tg-card text-tg-destructive text-sm py-2 text-center active:scale-95 transition-transform rounded-xl"
+                >
+                  🗑
                 </button>
               </div>
             )}
@@ -131,6 +176,16 @@ export default function MatchList() {
                 className="w-full bg-red-500 text-white rounded-xl py-2 text-xs font-medium active:scale-95 transition-transform"
               >
                 🏁 Записать результат
+              </button>
+            )}
+
+            {m.status === 'finished' && confirmDelete !== m.id && (
+              <button
+                onClick={() => setConfirmDelete(m.id)}
+                disabled={actionLoading === m.id}
+                className="w-full tg-card text-tg-destructive text-xs py-2 text-center active:scale-95 transition-transform rounded-xl"
+              >
+                🗑 Удалить матч
               </button>
             )}
           </div>

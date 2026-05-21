@@ -201,6 +201,23 @@ def go_live(
     return _match_response(match, db)
 
 
+@router.delete("/matches/{match_id}", status_code=204)
+def delete_match(
+    match_id: int,
+    _: User = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    match = db.query(Match).filter(Match.id == match_id).first()
+    if not match:
+        raise HTTPException(404, "Матч не найден")
+    if match.status == "live":
+        raise HTTPException(400, "Нельзя удалить матч во время игры")
+    # Удаляем связанные ставки, затем матч
+    db.query(Bet).filter(Bet.match_id == match_id).delete()
+    db.delete(match)
+    db.commit()
+
+
 @router.post("/matches/{match_id}/result", response_model=ResultResponse)
 async def set_result(
     match_id: int,
