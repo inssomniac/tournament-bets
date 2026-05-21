@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import TabBar from '../../components/TabBar'
+import Spinner from '../../components/Spinner'
 
 interface Entry {
   rank: number
@@ -48,23 +49,20 @@ export default function Leaderboard() {
           )}
         </div>
 
-        {/* Current user rank */}
         {data?.current_user_rank && (
           <div className="tg-card mb-4 text-sm font-medium text-tg-link">
             Ваша позиция: #{data.current_user_rank}
           </div>
         )}
 
-        {loading && <p className="text-tg-hint">Загрузка...</p>}
+        {loading && <div className="flex justify-center py-8"><Spinner inline /></div>}
 
         <div className="flex flex-col gap-2">
           {data?.leaderboard.map((entry) => (
             <div
               key={entry.rank}
               className={`flex items-center gap-3 p-3 rounded-xl ${
-                entry.is_current_user
-                  ? 'bg-tg-sbg ring-2 ring-tg-link'
-                  : 'bg-tg-sbg'
+                entry.is_current_user ? 'bg-tg-sbg ring-2 ring-tg-link' : 'bg-tg-sbg'
               }`}
             >
               <span className="text-lg font-bold w-8 text-center shrink-0 text-tg-text">

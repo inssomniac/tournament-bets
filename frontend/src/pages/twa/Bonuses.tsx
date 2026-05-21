@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { useAppStore } from '../../store/useAppStore'
 import TabBar from '../../components/TabBar'
+import Spinner from '../../components/Spinner'
 
 interface Channel {
   id: number
@@ -49,7 +50,7 @@ export default function Bonuses() {
           Подпишитесь на каналы и получите дополнительные очки
         </p>
 
-        {loading && <p className="text-tg-hint">Загрузка...</p>}
+        {loading && <div className="flex justify-center py-8"><Spinner inline /></div>}
 
         {!loading && channels.length === 0 && (
           <p className="text-tg-hint text-center mt-10">Бонусных каналов нет</p>

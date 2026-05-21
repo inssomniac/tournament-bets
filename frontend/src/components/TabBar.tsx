@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 
 const tabs = [
+  { path: '/home',        icon: '🏠', label: 'Главная' },
   { path: '/matches',     icon: '🏆', label: 'Матчи' },
   { path: '/balance',     icon: '💰', label: 'Баланс' },
   { path: '/bonuses',     icon: '🎁', label: 'Бонусы' },

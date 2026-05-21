@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../api/client'
 import TabBar from '../../components/TabBar'
+import Spinner from '../../components/Spinner'
 
 interface UserBet {
   team_choice: number
@@ -38,9 +39,7 @@ export default function Matches() {
     api.get('/api/matches/').then(({ data }) => setMatches(data)).finally(() => setLoading(false))
   }, [])
 
-  if (loading) {
-    return <div className="p-5 text-tg-hint">Загрузка...</div>
-  }
+  if (loading) return <Spinner />
 
   return (
     <div className="flex flex-col min-h-screen pb-16 bg-tg-bg">

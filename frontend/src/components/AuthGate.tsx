@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { api, setAuthToken } from '../api/client'
 import { useAppStore } from '../store/useAppStore'
+import Spinner from './Spinner'
 
 function getInitData(): string {
   // Реальный TWA
@@ -46,11 +47,7 @@ export default function AuthGate() {
   }, [])
 
   if (status === 'loading') {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-tg-bg">
-        <p className="text-tg-hint">Загрузка...</p>
-      </div>
-    )
+    return <Spinner />
   }
 
   if (status === 'error') {

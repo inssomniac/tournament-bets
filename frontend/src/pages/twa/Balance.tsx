@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { useAppStore } from '../../store/useAppStore'
 import TabBar from '../../components/TabBar'
+import Spinner from '../../components/Spinner'
 
 interface BetItem {
   id: number
@@ -15,9 +16,9 @@ interface BetItem {
 }
 
 const statusConfig: Record<string, { icon: string; label: string; cls: string }> = {
-  won:     { icon: '✅', label: 'Выиграл',   cls: 'bg-green-100 text-green-700' },
-  lost:    { icon: '❌', label: 'Проиграл',  cls: 'bg-red-100 text-red-700' },
-  pending: { icon: '⏳', label: 'Ожидание',  cls: 'bg-yellow-100 text-yellow-700' },
+  won:     { icon: '✅', label: 'Выиграл',  cls: 'bg-green-100 text-green-700' },
+  lost:    { icon: '❌', label: 'Проиграл', cls: 'bg-red-100 text-red-700' },
+  pending: { icon: '⏳', label: 'Ожидание', cls: 'bg-yellow-100 text-yellow-700' },
 }
 
 export default function Balance() {
@@ -37,7 +38,6 @@ export default function Balance() {
       <div className="p-5">
         <h1 className="text-xl font-bold text-tg-text mb-4">💰 Баланс</h1>
 
-        {/* Balance card */}
         <div className="tg-card flex items-center gap-4 mb-6">
           <span className="text-4xl">💰</span>
           <div>
@@ -53,7 +53,7 @@ export default function Balance() {
           История ставок
         </h2>
 
-        {loading && <p className="text-tg-hint">Загрузка...</p>}
+        {loading && <div className="flex justify-center py-8"><Spinner inline /></div>}
 
         {!loading && bets.length === 0 && (
           <p className="text-tg-hint text-center mt-6">Ставок ещё нет</p>
@@ -81,7 +81,7 @@ export default function Balance() {
                     <span className="text-green-600 font-medium">+{bet.potential_win} очков</span>
                   )}
                   {bet.status === 'lost' && (
-                    <span className="text-red-500 font-medium">−{bet.amount} очков</span>
+                    <span className="text-red-500 font-medium">-{bet.amount} очков</span>
                   )}
                   {bet.status === 'pending' && (
                     <span className="text-tg-hint">
