@@ -27,7 +27,9 @@ export default function Leaderboard() {
   const [loading, setLoading] = useState(true)
 
   const fetchData = () => {
-    api.get('/api/leaderboard/').then(({ data }) => setData(data)).finally(() => setLoading(false))
+    api.get('/api/leaderboard/')
+      .then(({ data }) => setData(data))
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => {
@@ -37,22 +39,23 @@ export default function Leaderboard() {
   }, [])
 
   return (
-    <div className="flex flex-col min-h-screen pb-16">
+    <div className="flex flex-col min-h-screen pb-16 bg-tg-bg">
       <div className="p-5">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xl font-bold">📊 Лидерборд</h1>
+          <h1 className="text-xl font-bold text-tg-text">📊 Лидерборд</h1>
           {data && (
-            <span className="text-sm text-gray-400">{data.total_players} участников</span>
+            <span className="text-sm text-tg-hint">{data.total_players} участников</span>
           )}
         </div>
 
+        {/* Current user rank */}
         {data?.current_user_rank && (
-          <div className="bg-blue-50 rounded-xl p-3 mb-4 text-sm text-blue-700 font-medium">
+          <div className="tg-card mb-4 text-sm font-medium text-tg-link">
             Ваша позиция: #{data.current_user_rank}
           </div>
         )}
 
-        {loading && <p className="text-gray-400">Загрузка...</p>}
+        {loading && <p className="text-tg-hint">Загрузка...</p>}
 
         <div className="flex flex-col gap-2">
           {data?.leaderboard.map((entry) => (
@@ -60,21 +63,21 @@ export default function Leaderboard() {
               key={entry.rank}
               className={`flex items-center gap-3 p-3 rounded-xl ${
                 entry.is_current_user
-                  ? 'bg-blue-50 border border-blue-200'
-                  : 'bg-white border border-gray-100'
+                  ? 'bg-tg-sbg ring-2 ring-tg-link'
+                  : 'bg-tg-sbg'
               }`}
             >
-              <span className="text-lg font-bold w-8 text-center shrink-0">
+              <span className="text-lg font-bold w-8 text-center shrink-0 text-tg-text">
                 {rankMedal(entry.rank)}
               </span>
               <span className={`flex-1 text-sm font-medium truncate ${
-                entry.is_current_user ? 'text-blue-700' : 'text-gray-800'
+                entry.is_current_user ? 'text-tg-link' : 'text-tg-text'
               }`}>
                 {entry.full_name}
                 {entry.is_current_user && ' (вы)'}
               </span>
               <span className={`text-sm font-bold shrink-0 ${
-                entry.is_current_user ? 'text-blue-600' : 'text-gray-700'
+                entry.is_current_user ? 'text-tg-link' : 'text-tg-hint'
               }`}>
                 {entry.balance} 🪙
               </span>

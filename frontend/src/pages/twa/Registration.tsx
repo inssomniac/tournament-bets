@@ -27,29 +27,32 @@ export default function Registration() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen p-5 gap-5">
+    <div className="flex flex-col min-h-screen p-5 gap-6 bg-tg-bg">
       <div className="mt-8">
-        <h1 className="text-2xl font-bold mb-2">🏏 Летний Кубок по лапте 2026</h1>
-        <p className="text-gray-600 text-sm leading-relaxed">
-          Твой стартовый банк — <strong>1100 очков</strong>. Делай ставки на матчи,
-          набирай очки и попади в топ рейтинга для получения призов!
+        <h1 className="text-2xl font-bold text-tg-text mb-2">
+          🏏 Летний Кубок по лапте 2026
+        </h1>
+        <p className="text-tg-hint text-sm leading-relaxed">
+          Твой стартовый банк — <strong className="text-tg-text">1100 очков</strong>.
+          Делай ставки на матчи, набирай очки и попади в топ рейтинга для получения призов!
         </p>
       </div>
 
-      <div className="flex flex-col gap-3">
-        <label className="text-sm font-medium text-gray-700">Введите ФИО</label>
+      <div className="flex flex-col gap-2">
+        <label className="text-sm font-medium text-tg-hint">Введите ФИО</label>
         <input
-          className="border border-gray-300 rounded-xl px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="tg-input"
           placeholder="Иванов Иван Иванович"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && isValid && handleSubmit()}
         />
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && <p className="text-tg-destructive text-sm">{error}</p>}
+        <p className="text-tg-hint text-xs">Укажите полное имя — оно будет видно в рейтинге</p>
       </div>
 
       <button
-        className="bg-blue-500 text-white rounded-xl py-4 font-semibold text-base disabled:opacity-40 mt-auto"
+        className="tg-btn mt-auto"
         onClick={handleSubmit}
         disabled={!isValid || loading}
       >

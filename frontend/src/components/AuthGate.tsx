@@ -47,16 +47,16 @@ export default function AuthGate() {
 
   if (status === 'loading') {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-500">Загрузка...</p>
+      <div className="flex items-center justify-center min-h-screen bg-tg-bg">
+        <p className="text-tg-hint">Загрузка...</p>
       </div>
     )
   }
 
   if (status === 'error') {
     return (
-      <div className="flex items-center justify-center min-h-screen p-4">
-        <p className="text-red-500 text-center">⚠️ {errorMsg}</p>
+      <div className="flex items-center justify-center min-h-screen p-4 bg-tg-bg">
+        <p className="text-tg-destructive text-center">⚠️ {errorMsg}</p>
       </div>
     )
   }

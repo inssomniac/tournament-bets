@@ -9,8 +9,8 @@ $EnvFile  = "$Root\.env"
 if ($Stop) {
     Write-Host "Stopping all processes..." -ForegroundColor Yellow
     Get-Process -Name "node"         -ErrorAction SilentlyContinue | Stop-Process -Force
-    Get-Process -Name "python"       -ErrorAction SilentlyContinue | Stop-Process -Force
     Get-Process -Name "cloudflared"  -ErrorAction SilentlyContinue | Stop-Process -Force
+    Get-Process | Where-Object { $_.Name -match "python" } | Stop-Process -Force -ErrorAction SilentlyContinue
     docker compose -f "$Root\docker-compose.dev.yml" stop 2>&1 | Out-Null
     Write-Host "Done." -ForegroundColor Green
     exit

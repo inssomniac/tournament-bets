@@ -2,10 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fallback values for browser preview — Telegram overrides these at runtime */
+:root {
+  --tg-theme-bg-color: #ffffff;
+  --tg-theme-secondary-bg-color: #f1f1f1;
+  --tg-theme-text-color: #000000;
+  --tg-theme-hint-color: #999999;
+  --tg-theme-link-color: #2481cc;
+  --tg-theme-button-color: #2481cc;
+  --tg-theme-button-text-color: #ffffff;
+  --tg-theme-destructive-text-color: #cc2929;
+  --tg-separator: rgba(84, 84, 88, 0.2);
+}
+
 body {
-  background-color: var(--tg-theme-bg-color, #ffffff);
-  color: var(--tg-theme-text-color, #000000);
+  background-color: var(--tg-theme-bg-color);
+  color: var(--tg-theme-text-color);
   font-family: system-ui, -apple-system, sans-serif;
   margin: 0;
   padding: 0;
+}
+
+@layer components {
+  /* Input styled for Telegram theme — fixes white-on-white bug */
+  .tg-input {
+    @apply w-full rounded-xl px-4 py-3 text-base focus:outline-none;
+    background: var(--tg-theme-secondary-bg-color);
+    color: var(--tg-theme-text-color);
+    border: 1.5px solid var(--tg-separator);
+  }
+
+  .tg-input::placeholder {
+    color: var(--tg-theme-hint-color);
+  }
+
+  /* Number input — hide browser arrows */
+  .tg-input[type='number']::-webkit-inner-spin-button,
+  .tg-input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .tg-input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  /* Primary action button */
+  .tg-btn {
+    @apply w-full rounded-xl py-4 font-semibold text-base disabled:opacity-40 active:scale-95 transition-transform;
+    background: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+  }
+
+  /* Outline button (secondary action) */
+  .tg-btn-outline {
+    @apply rounded-xl py-2 px-4 text-sm font-medium active:scale-95 transition-transform;
+    border: 1.5px solid var(--tg-theme-button-color);
+    color: var(--tg-theme-link-color);
+    background: transparent;
+  }
+
+  /* Card / section block */
+  .tg-card {
+    @apply rounded-2xl p-4;
+    background: var(--tg-theme-secondary-bg-color);
+  }
 }
