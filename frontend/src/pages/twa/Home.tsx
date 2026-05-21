@@ -66,11 +66,16 @@ export default function Home() {
             </span>
             <span className="text-tg-hint mb-1">очков</span>
           </div>
-          {stats?.rank && (
-            <p className="text-tg-link text-sm mt-1">
-              #{stats.rank} из {stats.total_players} в рейтинге
-            </p>
-          )}
+
+          {/* Фиксированная высота — skeleton пока данные грузятся, реальный текст после */}
+          <div className="mt-1" style={{ minHeight: '1.25rem' }}>
+            {stats === null && <div className="sk rounded-md h-4 w-36" />}
+            {stats !== null && stats.rank && (
+              <p className="text-tg-link text-sm">
+                #{stats.rank} из {stats.total_players} в рейтинге
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Bet stats or skeleton */}

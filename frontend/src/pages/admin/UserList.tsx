@@ -55,7 +55,10 @@ export default function UserList() {
     <div className="pt-2">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-lg font-bold text-tg-text">Участники</h1>
-        {!loading && <span className="text-sm text-tg-hint">{users.length} чел.</span>}
+        {loading
+          ? <div className="sk rounded-md h-4 w-12" />
+          : <span className="text-sm text-tg-hint">{users.length} чел.</span>
+        }
       </div>
 
       <input

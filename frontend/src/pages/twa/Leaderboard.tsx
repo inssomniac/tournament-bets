@@ -53,7 +53,6 @@ export default function Leaderboard() {
     return () => clearInterval(interval)
   }, [])
 
-  // scroll to current user row on first load
   useEffect(() => {
     if (data && myRowRef.current) {
       myRowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -68,9 +67,13 @@ export default function Leaderboard() {
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-xl font-bold text-tg-text">📊 Рейтинг</h1>
-          {data && (
-            <span className="text-sm text-tg-hint">{data.total_players} участников</span>
-          )}
+          {/* Placeholder фиксированной ширины чтобы заголовок не прыгал */}
+          {loading
+            ? <div className="sk rounded-md h-4 w-24" />
+            : data
+              ? <span className="text-sm text-tg-hint">{data.total_players} участников</span>
+              : null
+          }
         </div>
 
         {loading ? (
@@ -107,7 +110,6 @@ export default function Leaderboard() {
         )}
       </div>
 
-      {/* Pinned row for users outside top list */}
       {!loading && data && !myInTop && data.current_user_rank && (
         <div
           className="fixed left-0 right-0 px-4 py-2"
