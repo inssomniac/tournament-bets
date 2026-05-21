@@ -111,6 +111,9 @@ def my_bets(
     )
     result = []
     for bet in bets:
+        # Защита от осиротевших ставок: если матч был удалён, пропускаем
+        if bet.match is None:
+            continue
         result.append(BetHistoryItem(
             id=bet.id,
             match_id=bet.match_id,

@@ -82,13 +82,15 @@ export default function MatchList() {
 
   const deleteMatch = async (id: number) => {
     setActionLoading(id)
-    setConfirmDelete(null)
+    setErrors((prev) => ({ ...prev, [id]: '' }))
     try {
       await api.delete(`/api/admin/matches/${id}`)
+      // Сначала убираем confirm, потом перезагружаем список
+      setConfirmDelete(null)
       reload()
     } catch (e: any) {
-      setErrors((prev) => ({ ...prev, [id]: e.message }))
-    } finally {
+      // Оставляем confirm открытым — пользователь видит ошибку прямо в диалоге
+      setErrors((prev) => ({ ...prev, [id]: e.message || 'Не удалось удалить матч' }))
       setActionLoading(null)
     }
   }
@@ -137,36 +139,43 @@ export default function MatchList() {
                 Ставок: {m.bets_count} ({m.total_bet_amount} очков)
               </div>
 
-              {errors[m.id] && (
-                <p className="text-xs text-tg-destructive mb-2">{errors[m.id]}</p>
-              )}
-
               {m.status === 'finished' && (
                 <p className="text-sm font-medium text-tg-text mb-3">
                   🏆 Победитель: {m.winner === 1 ? m.team1_name : m.team2_name}
                 </p>
               )}
 
+              {/* Confirm delete inline */}
               {confirmDelete === m.id && (
                 <div className="rounded-xl p-3 mb-2" style={{ background: 'var(--tg-theme-bg-color)' }}>
-                  <p className="text-sm text-tg-text mb-2">
+                  <p className="text-sm text-tg-text mb-1">
                     Удалить матч{m.bets_count > 0 ? ` и ${m.bets_count} ставок` : ''}?
                   </p>
+                  {errors[m.id] && (
+                    <p className="text-xs text-tg-destructive mb-2">{errors[m.id]}</p>
+                  )}
                   <div className="flex gap-2">
                     <button
-                      onClick={() => setConfirmDelete(null)}
-                      className="flex-1 tg-card text-tg-hint text-xs py-2 text-center rounded-xl"
+                      onClick={() => { setConfirmDelete(null); setErrors((e) => ({ ...e, [m.id]: '' })) }}
+                      disabled={actionLoading === m.id}
+                      className="flex-1 tg-card text-tg-hint text-xs py-2 text-center rounded-xl disabled:opacity-50"
                     >
                       Отмена
                     </button>
                     <button
                       onClick={() => deleteMatch(m.id)}
-                      className="flex-1 bg-red-500 text-white rounded-xl py-2 text-xs font-medium"
+                      disabled={actionLoading === m.id}
+                      className="flex-1 bg-red-500 text-white rounded-xl py-2 text-xs font-medium disabled:opacity-50"
                     >
-                      Удалить
+                      {actionLoading === m.id ? '...' : 'Удалить'}
                     </button>
                   </div>
                 </div>
+              )}
+
+              {/* Errors outside confirm dialog (e.g. go_live errors) */}
+              {errors[m.id] && confirmDelete !== m.id && (
+                <p className="text-xs text-tg-destructive mb-2">{errors[m.id]}</p>
               )}
 
               {m.status === 'active' && (
