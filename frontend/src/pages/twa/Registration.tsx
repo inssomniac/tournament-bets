@@ -27,10 +27,10 @@ export default function Registration() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen p-5 gap-6 bg-tg-bg">
-      <div className="mt-8">
+    <div className="flex flex-col min-h-screen p-5 gap-6 bg-tg-bg pt-tg-header">
+      <div>
         <h1 className="text-2xl font-bold text-tg-text mb-2">
-          🏏 Летний Кубок по лапте 2026
+          Летний Кубок по лапте 2026
         </h1>
         <p className="text-tg-hint text-sm leading-relaxed">
           Твой стартовый банк — <strong className="text-tg-text">1100 очков</strong>.

@@ -6,35 +6,35 @@ import MatchForm from './MatchForm'
 import MatchResult from './MatchResult'
 import UserList from './UserList'
 
-function AdminNav() {
-  const links = [
-    { to: '/admin', label: '📊 Дашборд', end: true },
-    { to: '/admin/matches', label: '🏆 Матчи' },
-    { to: '/admin/users', label: '👥 Участники' },
+function AdminTabBar() {
+  const tabs = [
+    { to: '/home',           label: '🏠', text: 'Главная',    end: false },
+    { to: '/admin',          label: '📊', text: 'Дашборд',    end: true  },
+    { to: '/admin/matches',  label: '🏆', text: 'Матчи',      end: false },
+    { to: '/admin/users',    label: '👥', text: 'Участники',  end: false },
   ]
   return (
-    <nav className="flex gap-1 p-3 items-center" style={{ background: 'var(--tg-theme-secondary-bg-color)', borderBottom: '1px solid var(--tg-separator)' }}>
-      <NavLink
-        to="/home"
-        className="text-tg-hint text-xs px-2 py-2 rounded-lg hover:text-tg-link transition-colors shrink-0"
-        title="На главную"
-      >
-        🏠
-      </NavLink>
-      {links.map((l) => (
+    <nav
+      className="fixed bottom-0 left-0 right-0 flex z-10"
+      style={{
+        background: 'var(--tg-theme-secondary-bg-color)',
+        borderTop: '1px solid var(--tg-separator)',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+      }}
+    >
+      {tabs.map((tab) => (
         <NavLink
-          key={l.to}
-          to={l.to}
-          end={l.end}
+          key={tab.to}
+          to={tab.to}
+          end={tab.end}
           className={({ isActive }) =>
-            `flex-1 text-center text-xs px-2 py-2 rounded-lg transition-colors font-medium ${
-              isActive
-                ? 'bg-tg-btn text-tg-btn-text'
-                : 'text-tg-hint'
+            `flex-1 flex flex-col items-center py-2 text-xs gap-1 transition-colors ${
+              isActive ? 'text-tg-link' : 'text-tg-hint'
             }`
           }
         >
-          {l.label}
+          <span className="text-xl">{tab.label}</span>
+          <span>{tab.text}</span>
         </NavLink>
       ))}
     </nav>
@@ -44,8 +44,7 @@ function AdminNav() {
 export default function AdminApp() {
   return (
     <AdminAuthGate>
-      <div className="min-h-screen bg-tg-bg">
-        <AdminNav />
+      <div className="min-h-screen bg-tg-bg pt-tg-header pb-tabbar">
         <div className="p-4 max-w-2xl mx-auto">
           <Routes>
             <Route path="/" element={<Dashboard />} />
@@ -57,6 +56,7 @@ export default function AdminApp() {
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Routes>
         </div>
+        <AdminTabBar />
       </div>
     </AdminAuthGate>
   )
