@@ -28,10 +28,10 @@ export default function AdminAuthGate({ children }: { children: ReactNode }) {
     init()
   }, [])
 
-  if (status === 'loading') return <div className="p-8 text-gray-400">Проверка доступа...</div>
+  if (status === 'loading') return <div className="p-8 text-gray-400"></div>
   if (status === 'forbidden') return (
     <div className="flex items-center justify-center min-h-screen">
-      <p className="text-red-500 text-center text-lg">⛔ Доступ запрещён</p>
+      <p className="text-red-500 text-center text-lg"></p>
     </div>
   )
   return <>{children}</>
