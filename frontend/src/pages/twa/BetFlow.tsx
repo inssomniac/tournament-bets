@@ -3,10 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { api } from '../../api/client'
 import { useAppStore } from '../../store/useAppStore'
 
-const PRESETS = [50, 100, 200, 500]
-const MIN = 10
-const MAX = 500
-const STEP = 10
+const PRESETS = [50, 100, 250, 500]
+const MIN = 50
+const STEP = 50
 
 export default function BetFlow() {
   const location = useLocation()
@@ -27,12 +26,16 @@ export default function BetFlow() {
 
   const teamName = teamChoice === 1 ? match.team1_name : match.team2_name
   const odds = teamChoice === 1 ? match.odds_team1 : match.odds_team2
-  const maxAllowed = Math.min(MAX, user?.balance ?? MAX)
+  const maxAllowed = user?.balance ?? 0
   const potentialWin = Math.floor(amount * odds)
   const isValid = amount >= MIN && amount <= maxAllowed
 
   const adjust = (delta: number) => {
     setAmount((prev) => Math.max(MIN, Math.min(maxAllowed, prev + delta)))
+  }
+
+  const setAllIn = () => {
+    setAmount(maxAllowed)
   }
 
   const handleConfirm = async () => {
@@ -105,7 +108,7 @@ export default function BetFlow() {
           >
             −
           </button>
-          <span className="text-5xl font-bold text-tg-text w-28 text-center tabular-nums">
+          <span className="text-5xl font-bold text-tg-text w-32 text-center tabular-nums">
             {amount}
           </span>
           <button
@@ -118,21 +121,27 @@ export default function BetFlow() {
           </button>
         </div>
 
-        {/* Presets */}
+        {/* Presets + All-in */}
         <div className="flex gap-2 w-full">
-          {PRESETS.map((v) => (
+          {PRESETS.filter((v) => v <= maxAllowed).map((v) => (
             <button
               key={v}
-              onClick={() => setAmount(Math.min(v, maxAllowed))}
+              onClick={() => setAmount(v)}
               className={`flex-1 py-2 rounded-xl text-sm font-medium transition-all active:scale-95 ${
-                amount === Math.min(v, maxAllowed) && v <= maxAllowed
-                  ? 'bg-tg-btn text-tg-btn-text'
-                  : 'bg-tg-bg text-tg-hint'
+                amount === v ? 'bg-tg-btn text-tg-btn-text' : 'bg-tg-bg text-tg-hint'
               }`}
             >
               {v}
             </button>
           ))}
+          <button
+            onClick={setAllIn}
+            className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all active:scale-95 ${
+              amount === maxAllowed ? 'bg-tg-btn text-tg-btn-text' : 'bg-tg-bg text-tg-link'
+            }`}
+          >
+            All-in
+          </button>
         </div>
       </div>
 

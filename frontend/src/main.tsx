@@ -5,8 +5,14 @@ import './index.css'
 
 // Инициализация Telegram WebApp
 if (window.Telegram?.WebApp) {
-  window.Telegram.WebApp.ready()
-  window.Telegram.WebApp.expand()
+  const twa = window.Telegram.WebApp
+  twa.ready()
+  // Bot API 8.0+: fullscreen убирает хедер с именем бота
+  if (typeof (twa as any).requestFullscreen === 'function') {
+    ;(twa as any).requestFullscreen()
+  } else {
+    twa.expand()
+  }
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

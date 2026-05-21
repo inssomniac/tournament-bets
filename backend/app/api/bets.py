@@ -71,8 +71,8 @@ def place_bet(
         raise HTTPException(400, "team_choice должен быть 1 или 2")
 
     # Валидация суммы
-    if body.amount < 10 or body.amount > 500:
-        raise HTTPException(400, "Сумма ставки: от 10 до 500 очков")
+    if body.amount < 50:
+        raise HTTPException(400, "Минимальная ставка — 50 очков")
 
     # Баланс
     if current_user.balance < body.amount:

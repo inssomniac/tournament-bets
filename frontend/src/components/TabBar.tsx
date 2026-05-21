@@ -15,6 +15,7 @@ export default function TabBar() {
       style={{
         background: 'var(--tg-theme-secondary-bg-color)',
         borderTop: '1px solid var(--tg-separator)',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}
     >
       {tabs.map((tab) => (

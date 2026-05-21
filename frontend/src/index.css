@@ -90,3 +90,8 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* iPhone safe area: компенсируем высоту TabBar + домашний индикатор */
+.pb-tabbar {
+  padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+}

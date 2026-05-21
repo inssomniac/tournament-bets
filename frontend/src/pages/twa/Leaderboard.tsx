@@ -51,7 +51,7 @@ export default function Leaderboard() {
   const myInTop = myEntry !== undefined
 
   return (
-    <div className="flex flex-col min-h-screen pb-16 bg-tg-bg">
+    <div className="flex flex-col min-h-screen pb-tabbar bg-tg-bg">
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-xl font-bold text-tg-text">📊 Рейтинг</h1>
@@ -95,8 +95,12 @@ export default function Leaderboard() {
       {/* Pinned row for users outside top list */}
       {!loading && data && !myInTop && data.current_user_rank && (
         <div
-          className="fixed bottom-16 left-0 right-0 px-4 py-2"
-          style={{ background: 'var(--tg-theme-secondary-bg-color)', borderTop: '1px solid var(--tg-separator)' }}
+          className="fixed left-0 right-0 px-4 py-2"
+          style={{
+            bottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))',
+            background: 'var(--tg-theme-secondary-bg-color)',
+            borderTop: '1px solid var(--tg-separator)',
+          }}
         >
           <div className="flex items-center gap-3 p-2 rounded-xl ring-2 ring-tg-link bg-tg-bg">
             <span className="text-base font-bold w-8 text-center shrink-0 text-tg-text">

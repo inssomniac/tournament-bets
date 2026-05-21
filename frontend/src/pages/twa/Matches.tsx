@@ -51,7 +51,7 @@ export default function Matches() {
   const closed = matches.filter((m) => m.is_deadline_passed && m.status !== 'live' && m.status !== 'active')
 
   return (
-    <div className="flex flex-col min-h-screen pb-16 bg-tg-bg">
+    <div className="flex flex-col min-h-screen pb-tabbar bg-tg-bg">
       <div className="p-4">
         <h1 className="text-xl font-bold text-tg-text mb-4">🏆 Матчи</h1>
 
