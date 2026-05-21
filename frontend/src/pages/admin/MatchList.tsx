@@ -9,27 +9,57 @@ interface Match {
   team2_name: string
   odds_team1: number
   odds_team2: number
-  bet_deadline: string
+  bet_deadline: string | null
   status: string
   winner: number | null
   bets_count: number
   total_bet_amount: number
 }
 
-function formatDate(iso: string) {
+function formatDate(iso: string | null) {
+  if (!iso) return '—'
   return new Date(iso).toLocaleString('ru-RU', {
     day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
   })
 }
 
+function StatusBadge({ status }: { status: string }) {
+  if (status === 'finished') return (
+    <span className="text-xs px-2 py-1 rounded-full bg-tg-bg text-tg-hint">✅ Завершён</span>
+  )
+  if (status === 'live') return (
+    <span className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-600 font-medium">🔴 Идёт</span>
+  )
+  return (
+    <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">🟢 Ставки открыты</span>
+  )
+}
+
 export default function MatchList() {
   const [matches, setMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
+  const [actionLoading, setActionLoading] = useState<number | null>(null)
+  const [errors, setErrors] = useState<Record<number, string>>({})
   const navigate = useNavigate()
 
-  useEffect(() => {
+  const reload = () => {
     api.get('/api/admin/matches').then(({ data }) => setMatches(data)).finally(() => setLoading(false))
-  }, [])
+  }
+
+  useEffect(() => { reload() }, [])
+
+  const goLive = async (id: number) => {
+    setActionLoading(id)
+    setErrors((e) => ({ ...e, [id]: '' }))
+    try {
+      await api.post(`/api/admin/matches/${id}/go_live`)
+      reload()
+    } catch (e: any) {
+      setErrors((prev) => ({ ...prev, [id]: e.message }))
+    } finally {
+      setActionLoading(null)
+    }
+  }
 
   return (
     <div className="pt-2">
@@ -52,28 +82,32 @@ export default function MatchList() {
               <h2 className="font-semibold text-tg-text text-sm flex-1 pr-2">
                 {m.team1_name} vs {m.team2_name}
               </h2>
-              <span className={`text-xs px-2 py-1 rounded-full shrink-0 ${
-                m.status === 'finished' ? 'bg-tg-bg text-tg-hint' : 'bg-green-100 text-green-700'
-              }`}>
-                {m.status === 'finished' ? '✅ Завершён' : '🟢 Активен'}
-              </span>
+              <StatusBadge status={m.status} />
             </div>
 
             <div className="text-xs text-tg-hint mb-1">
               Коэф: ×{m.odds_team1} / ×{m.odds_team2}
             </div>
-            <div className="text-xs text-tg-hint mb-1">
-              Дедлайн: {formatDate(m.bet_deadline)}
-            </div>
+            {m.bet_deadline && (
+              <div className="text-xs text-tg-hint mb-1">
+                Дедлайн: {formatDate(m.bet_deadline)}
+              </div>
+            )}
             <div className="text-xs text-tg-hint mb-3">
               Ставок: {m.bets_count} ({m.total_bet_amount} очков)
             </div>
 
-            {m.status === 'finished' ? (
+            {errors[m.id] && (
+              <p className="text-xs text-tg-destructive mb-2">{errors[m.id]}</p>
+            )}
+
+            {m.status === 'finished' && (
               <p className="text-sm font-medium text-tg-text">
-                Победитель: {m.winner === 1 ? m.team1_name : m.team2_name}
+                🏆 Победитель: {m.winner === 1 ? m.team1_name : m.team2_name}
               </p>
-            ) : (
+            )}
+
+            {m.status === 'active' && (
               <div className="flex gap-2">
                 <button
                   onClick={() => navigate(`/admin/matches/${m.id}/edit`)}
@@ -82,12 +116,22 @@ export default function MatchList() {
                   ✏️ Редактировать
                 </button>
                 <button
-                  onClick={() => navigate(`/admin/matches/${m.id}/result`, { state: { match: m } })}
-                  className="flex-1 bg-red-500 text-white rounded-xl py-2 text-xs font-medium active:scale-95 transition-transform"
+                  onClick={() => goLive(m.id)}
+                  disabled={actionLoading === m.id}
+                  className="flex-1 bg-orange-500 text-white rounded-xl py-2 text-xs font-medium active:scale-95 transition-transform disabled:opacity-50"
                 >
-                  🏁 Завершить
+                  {actionLoading === m.id ? '...' : '▶️ Начать матч'}
                 </button>
               </div>
+            )}
+
+            {m.status === 'live' && (
+              <button
+                onClick={() => navigate(`/admin/matches/${m.id}/result`, { state: { match: m } })}
+                className="w-full bg-red-500 text-white rounded-xl py-2 text-xs font-medium active:scale-95 transition-transform"
+              >
+                🏁 Записать результат
+              </button>
             )}
           </div>
         ))}

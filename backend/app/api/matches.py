@@ -27,7 +27,7 @@ class MatchResponse(BaseModel):
     team2_name: str
     odds_team1: float
     odds_team2: float
-    bet_deadline: datetime
+    bet_deadline: Optional[datetime] = None
     status: str
     winner: Optional[int] = None
     user_bet: Optional[BetInfo] = None
@@ -37,10 +37,9 @@ class MatchResponse(BaseModel):
 
 
 def build_match_response(match: Match, bet: Optional[Bet]) -> MatchResponse:
-    now = datetime.now(timezone.utc)
-    deadline = match.bet_deadline
-    if deadline.tzinfo is None:
-        deadline = deadline.replace(tzinfo=timezone.utc)
+    # Bets are closed when match is live or finished — not by deadline clock.
+    # Deadline is informational only.
+    is_closed = match.status in ("live", "finished")
 
     bet_info = None
     if bet:
@@ -57,11 +56,11 @@ def build_match_response(match: Match, bet: Optional[Bet]) -> MatchResponse:
         team2_name=match.team2_name,
         odds_team1=float(match.odds_team1),
         odds_team2=float(match.odds_team2),
-        bet_deadline=deadline,
+        bet_deadline=match.bet_deadline,
         status=match.status,
         winner=match.winner,
         user_bet=bet_info,
-        is_deadline_passed=deadline < now,
+        is_deadline_passed=is_closed,
     )
 
 
@@ -73,7 +72,7 @@ def list_matches(
     matches = (
         db.query(Match)
         .filter(Match.status != "finished")
-        .order_by(Match.bet_deadline)
+        .order_by(Match.created_at.desc())
         .all()
     )
 

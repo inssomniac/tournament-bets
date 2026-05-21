@@ -23,7 +23,7 @@ class MatchCreate(BaseModel):
     team2_name: str
     odds_team1: float
     odds_team2: float
-    bet_deadline: datetime
+    bet_deadline: Optional[datetime] = None  # informational only; bets close on go_live
 
     @field_validator("team1_name", "team2_name")
     @classmethod
@@ -38,15 +38,6 @@ class MatchCreate(BaseModel):
         if not (1.01 <= v <= 10.0):
             raise ValueError("Коэффициент должен быть от 1.01 до 10.0")
         return round(v, 2)
-
-    @field_validator("bet_deadline")
-    @classmethod
-    def deadline_in_future(cls, v: datetime) -> datetime:
-        if v.tzinfo is None:
-            v = v.replace(tzinfo=timezone.utc)
-        if v <= datetime.now(timezone.utc):
-            raise ValueError("Дедлайн должен быть в будущем")
-        return v
 
 
 class MatchUpdate(BaseModel):
@@ -63,7 +54,7 @@ class MatchAdminResponse(BaseModel):
     team2_name: str
     odds_team1: float
     odds_team2: float
-    bet_deadline: datetime
+    bet_deadline: Optional[datetime] = None
     status: str
     winner: Optional[int] = None
     bets_count: int
@@ -108,6 +99,27 @@ class StatsResponse(BaseModel):
     finished_matches: int
 
 
+# ── Helpers ───────────────────────────────────────────────────────────────────
+
+def _match_response(match: Match, db: Session) -> MatchAdminResponse:
+    agg = db.query(
+        func.count(Bet.id),
+        func.coalesce(func.sum(Bet.amount), 0),
+    ).filter(Bet.match_id == match.id).first()
+    return MatchAdminResponse(
+        id=match.id,
+        team1_name=match.team1_name,
+        team2_name=match.team2_name,
+        odds_team1=float(match.odds_team1),
+        odds_team2=float(match.odds_team2),
+        bet_deadline=match.bet_deadline,
+        status=match.status,
+        winner=match.winner,
+        bets_count=agg[0],
+        total_bet_amount=agg[1],
+    )
+
+
 # ── Matches ───────────────────────────────────────────────────────────────────
 
 @router.get("/matches", response_model=List[MatchAdminResponse])
@@ -116,25 +128,7 @@ def list_matches(
     db: Session = Depends(get_db),
 ):
     matches = db.query(Match).order_by(Match.created_at.desc()).all()
-    result = []
-    for m in matches:
-        agg = db.query(
-            func.count(Bet.id),
-            func.coalesce(func.sum(Bet.amount), 0),
-        ).filter(Bet.match_id == m.id).first()
-        result.append(MatchAdminResponse(
-            id=m.id,
-            team1_name=m.team1_name,
-            team2_name=m.team2_name,
-            odds_team1=float(m.odds_team1),
-            odds_team2=float(m.odds_team2),
-            bet_deadline=m.bet_deadline,
-            status=m.status,
-            winner=m.winner,
-            bets_count=agg[0],
-            total_bet_amount=agg[1],
-        ))
-    return result
+    return [_match_response(m, db) for m in matches]
 
 
 @router.post("/matches", response_model=MatchAdminResponse, status_code=201)
@@ -154,18 +148,7 @@ def create_match(
     db.add(match)
     db.commit()
     db.refresh(match)
-    return MatchAdminResponse(
-        id=match.id,
-        team1_name=match.team1_name,
-        team2_name=match.team2_name,
-        odds_team1=float(match.odds_team1),
-        odds_team2=float(match.odds_team2),
-        bet_deadline=match.bet_deadline,
-        status=match.status,
-        winner=match.winner,
-        bets_count=0,
-        total_bet_amount=0,
-    )
+    return _match_response(match, db)
 
 
 @router.put("/matches/{match_id}", response_model=MatchAdminResponse)
@@ -180,6 +163,8 @@ def update_match(
         raise HTTPException(404, "Матч не найден")
     if match.status == "finished":
         raise HTTPException(400, "Нельзя редактировать завершённый матч")
+    if match.status == "live":
+        raise HTTPException(400, "Матч идёт — редактирование недоступно")
 
     if body.team1_name is not None:
         match.team1_name = body.team1_name.strip()
@@ -194,24 +179,26 @@ def update_match(
 
     db.commit()
     db.refresh(match)
+    return _match_response(match, db)
 
-    agg = db.query(
-        func.count(Bet.id),
-        func.coalesce(func.sum(Bet.amount), 0),
-    ).filter(Bet.match_id == match.id).first()
 
-    return MatchAdminResponse(
-        id=match.id,
-        team1_name=match.team1_name,
-        team2_name=match.team2_name,
-        odds_team1=float(match.odds_team1),
-        odds_team2=float(match.odds_team2),
-        bet_deadline=match.bet_deadline,
-        status=match.status,
-        winner=match.winner,
-        bets_count=agg[0],
-        total_bet_amount=agg[1],
-    )
+@router.post("/matches/{match_id}/go_live", response_model=MatchAdminResponse)
+def go_live(
+    match_id: int,
+    _: User = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    """Закрыть приём ставок и перевести матч в статус 'идёт'."""
+    match = db.query(Match).filter(Match.id == match_id).first()
+    if not match:
+        raise HTTPException(404, "Матч не найден")
+    if match.status != "active":
+        raise HTTPException(400, f"Нельзя начать матч со статусом '{match.status}'")
+
+    match.status = "live"
+    db.commit()
+    db.refresh(match)
+    return _match_response(match, db)
 
 
 @router.post("/matches/{match_id}/result", response_model=ResultResponse)
@@ -227,6 +214,8 @@ async def set_result(
         raise HTTPException(404, "Матч не найден")
     if match.status == "finished":
         raise HTTPException(400, "Матч уже завершён")
+    if match.status == "active":
+        raise HTTPException(400, "Сначала начните матч (статус → идёт)")
 
     bets = db.query(Bet).filter(
         Bet.match_id == match_id,

@@ -17,7 +17,7 @@ interface Match {
   team2_name: string
   odds_team1: number
   odds_team2: number
-  bet_deadline: string
+  bet_deadline: string | null
   status: string
   is_deadline_passed: boolean
   user_bet: UserBet | null
@@ -46,8 +46,9 @@ export default function Matches() {
 
   if (loading) return <Spinner />
 
-  const open = matches.filter((m) => !m.is_deadline_passed && m.status !== 'finished')
-  const closed = matches.filter((m) => m.is_deadline_passed || m.status === 'finished')
+  const open = matches.filter((m) => m.status === 'active')
+  const live = matches.filter((m) => m.status === 'live')
+  const closed = matches.filter((m) => m.is_deadline_passed && m.status !== 'live' && m.status !== 'active')
 
   return (
     <div className="flex flex-col min-h-screen pb-16 bg-tg-bg">
@@ -58,16 +59,31 @@ export default function Matches() {
           <p className="text-tg-hint text-center mt-16">Активных матчей нет</p>
         )}
 
-        {/* Open matches */}
-        {open.length > 0 && (
-          <div className="flex flex-col gap-3 mb-4">
-            {open.map((match) => (
-              <MatchCard key={match.id} match={match} navigate={navigate} />
-            ))}
-          </div>
+        {/* Live matches */}
+        {live.length > 0 && (
+          <>
+            <p className="text-red-500 text-xs uppercase tracking-wide font-bold mb-2">🔴 Сейчас идут</p>
+            <div className="flex flex-col gap-3 mb-4">
+              {live.map((match) => (
+                <MatchCard key={match.id} match={match} navigate={navigate} />
+              ))}
+            </div>
+          </>
         )}
 
-        {/* Closed matches */}
+        {/* Open matches */}
+        {open.length > 0 && (
+          <>
+            {live.length > 0 && <p className="text-tg-hint text-xs uppercase tracking-wide mb-2 mt-2">Принимаем ставки</p>}
+            <div className="flex flex-col gap-3 mb-4">
+              {open.map((match) => (
+                <MatchCard key={match.id} match={match} navigate={navigate} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Closed/finished */}
         {closed.length > 0 && (
           <>
             <p className="text-tg-hint text-xs uppercase tracking-wide mb-2 mt-2">Завершённые</p>
@@ -85,8 +101,9 @@ export default function Matches() {
 }
 
 function MatchCard({ match, navigate }: { match: Match; navigate: (path: string, opts?: any) => void }) {
-  const isClosed = match.is_deadline_passed || match.status === 'finished'
+  const isLive = match.status === 'live'
   const isFinished = match.status === 'finished'
+  const isClosed = isLive || isFinished
 
   return (
     <div className="tg-card">
@@ -94,19 +111,22 @@ function MatchCard({ match, navigate }: { match: Match; navigate: (path: string,
       <div className="flex justify-between items-center mb-3">
         <span className={`text-xs font-medium px-2 py-1 rounded-full ${
           isFinished ? 'bg-tg-bg text-tg-hint'
-          : isClosed  ? 'bg-tg-bg text-tg-hint'
+          : isLive    ? 'bg-red-100 text-red-600'
           :             'bg-green-100 text-green-700'
         }`}>
-          {isFinished ? '✅ Завершён' : isClosed ? '🔒 Закрыто' : '🟢 Открыто'}
+          {isFinished ? '✅ Завершён' : isLive ? '🔴 Идёт матч' : '🟢 Открыто'}
         </span>
-        {!isFinished && (
+        {!isFinished && !isLive && match.bet_deadline && (
           <span className="text-xs text-tg-hint">
-            {isClosed ? 'Ставки закрыты' : `⏰ ${formatDeadline(match.bet_deadline)}`}
+            ⏰ {formatDeadline(match.bet_deadline)}
           </span>
+        )}
+        {isLive && (
+          <span className="text-xs text-tg-hint">Ставки закрыты</span>
         )}
       </div>
 
-      {/* Teams — two big tap targets */}
+      {/* Teams */}
       {!isClosed && !match.user_bet ? (
         <div className="flex gap-2">
           {([1, 2] as const).map((choice) => {
@@ -126,7 +146,6 @@ function MatchCard({ match, navigate }: { match: Match; navigate: (path: string,
           })}
         </div>
       ) : (
-        /* Closed or already bet — show names inline */
         <div className="flex justify-between items-center">
           <span className="font-semibold text-tg-text text-sm">
             {match.team1_name} <span className="text-tg-hint font-normal">vs</span> {match.team2_name}

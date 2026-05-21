@@ -13,8 +13,14 @@ function AdminNav() {
     { to: '/admin/users', label: '👥 Участники' },
   ]
   return (
-    <nav className="flex gap-1 p-3" style={{ background: 'var(--tg-theme-secondary-bg-color)', borderBottom: '1px solid var(--tg-separator)' }}>
-      <span className="text-tg-hint text-xs font-bold mr-2 self-center">⚙️</span>
+    <nav className="flex gap-1 p-3 items-center" style={{ background: 'var(--tg-theme-secondary-bg-color)', borderBottom: '1px solid var(--tg-separator)' }}>
+      <NavLink
+        to="/home"
+        className="text-tg-hint text-xs px-2 py-2 rounded-lg hover:text-tg-link transition-colors shrink-0"
+        title="На главную"
+      >
+        🏠
+      </NavLink>
       {links.map((l) => (
         <NavLink
           key={l.to}
