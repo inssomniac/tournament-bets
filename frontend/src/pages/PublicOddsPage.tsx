@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '../api/client'
 
 interface PublicMatch {
@@ -16,19 +16,22 @@ function formatTime(d: Date): string {
   return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
 }
 
-function MatchRowSkeleton() {
+function MatchCardSkeleton() {
   return (
-    <div
-      className="flex items-center gap-4 px-6 py-5 rounded-2xl"
-      style={{ background: '#1a1a1a' }}
-    >
-      <div className="flex-1 flex flex-col gap-2">
-        <div className="sk rounded-md h-5 w-48" />
-        <div className="sk rounded-md h-3 w-24" />
+    <div style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 20, padding: '24px 32px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+        <div className="sk" style={{ width: 80, height: 28, borderRadius: 20 }} />
       </div>
-      <div className="flex gap-6 shrink-0">
-        <div className="sk rounded-lg h-10 w-20" />
-        <div className="sk rounded-lg h-10 w-20" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
+          <div className="sk" style={{ width: 120, height: 22, borderRadius: 6 }} />
+          <div className="sk" style={{ width: 60, height: 32, borderRadius: 6 }} />
+        </div>
+        <div className="sk" style={{ width: 40, height: 22, borderRadius: 6, flexShrink: 0 }} />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8 }}>
+          <div className="sk" style={{ width: 120, height: 22, borderRadius: 6 }} />
+          <div className="sk" style={{ width: 60, height: 32, borderRadius: 6 }} />
+        </div>
       </div>
     </div>
   )
@@ -58,124 +61,162 @@ export default function PublicOddsPage() {
   }, [])
 
   return (
-    <div
-      className="min-h-screen flex flex-col"
-      style={{ background: '#0d0d0d', color: '#f0f0f0', fontFamily: 'system-ui, sans-serif' }}
-    >
+    <div style={{
+      minHeight: '100vh',
+      background: '#0d0d0d',
+      color: '#f0f0f0',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
       {/* Header */}
-      <div
-        className="px-6 py-5 flex justify-between items-center"
-        style={{ borderBottom: '1px solid #222' }}
-      >
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">🏏 Летний Кубок по лапте 2026</h1>
-          <p className="text-sm mt-0.5" style={{ color: '#666' }}>Университетский турнир — коэффициенты</p>
-        </div>
-        <div className="text-right">
-          {lastUpdated && (
-            <p className="text-sm tabular-nums" style={{ color: '#888' }}>
-              {networkError ? '⚠️ ' : ''}Обновлено: {formatTime(lastUpdated)}
-            </p>
-          )}
-          {loading && !lastUpdated && (
-            <p className="text-sm" style={{ color: '#555' }}>Загрузка...</p>
-          )}
-        </div>
+      <div style={{ textAlign: 'center', padding: '36px 24px 24px' }}>
+        <h1 style={{
+          fontSize: 'clamp(1.2rem, 4vw, 2rem)',
+          fontWeight: 800,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: '#fff',
+          margin: 0,
+        }}>
+          🏏 Летний Кубок по лапте 2026
+        </h1>
+        <p style={{ color: '#444', fontSize: 13, marginTop: 10 }}>
+          {networkError ? '⚠️ ' : ''}
+          {lastUpdated ? `Обновлено: ${formatTime(lastUpdated)}` : 'Загрузка...'}
+        </p>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 px-6 py-6 flex flex-col gap-4">
+      {/* Matches */}
+      <div style={{ flex: 1, padding: '0 24px 40px', maxWidth: 860, margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
         {loading && (
-          <>
-            <MatchRowSkeleton />
-            <MatchRowSkeleton />
-            <MatchRowSkeleton />
-          </>
-        )}
-
-        {!loading && matches.length === 0 && (
-          <div className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-5xl mb-4">🏏</p>
-              <p className="text-xl font-semibold" style={{ color: '#888' }}>Матчей нет</p>
-              <p className="text-sm mt-1" style={{ color: '#555' }}>Ожидайте начала турнира</p>
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <MatchCardSkeleton />
+            <MatchCardSkeleton />
+            <MatchCardSkeleton />
           </div>
         )}
 
-        {!loading && matches.map((match) => {
-          const isLive = match.status === 'live'
-          return (
-            <div
-              key={match.id}
-              className="flex items-center gap-4 px-6 py-5 rounded-2xl"
-              style={{ background: '#1a1a1a', border: isLive ? '1px solid #ef4444' : '1px solid #222' }}
-            >
-              {/* Status badge */}
-              <div className="shrink-0 w-20 text-center">
-                {isLive ? (
-                  <span
-                    className="text-xs font-bold px-2 py-1 rounded-full"
-                    style={{ background: '#ef4444', color: '#fff' }}
-                  >
-                    🔴 LIVE
-                  </span>
-                ) : (
-                  <span
-                    className="text-xs font-bold px-2 py-1 rounded-full"
-                    style={{ background: '#16a34a', color: '#fff' }}
-                  >
-                    🟢 OPEN
-                  </span>
-                )}
-              </div>
+        {!loading && matches.length === 0 && (
+          <div style={{ textAlign: 'center', marginTop: 80 }}>
+            <p style={{ fontSize: 48, margin: 0 }}>🏏</p>
+            <p style={{ color: '#555', fontSize: 18, marginTop: 16 }}>Матчей нет</p>
+          </div>
+        )}
 
-              {/* Teams + stats */}
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-lg truncate" style={{ color: '#f0f0f0' }}>
-                  {match.team1_name}
-                  <span style={{ color: '#555', margin: '0 8px' }}>vs</span>
-                  {match.team2_name}
-                </p>
-                <p className="text-xs mt-0.5" style={{ color: '#555' }}>
-                  {match.bets_count} ставок · {match.total_bets} очков в пуле
-                </p>
-              </div>
+        {!loading && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {matches.map((match) => {
+              const isLive = match.status === 'live'
+              return (
+                <div
+                  key={match.id}
+                  style={{
+                    background: '#1a1a1a',
+                    border: `1px solid ${isLive ? '#ef4444' : '#2a2a2a'}`,
+                    borderRadius: 20,
+                    padding: '24px 32px',
+                  }}
+                >
+                  {/* Status badge — centered top */}
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+                    <span style={{
+                      fontSize: 13,
+                      fontWeight: 700,
+                      letterSpacing: '0.06em',
+                      textTransform: 'uppercase',
+                      padding: '5px 18px',
+                      borderRadius: 20,
+                      background: isLive ? '#ef4444' : '#16a34a',
+                      color: '#fff',
+                    }}>
+                      {isLive ? '🔴 Live' : '🟢 Open'}
+                    </span>
+                  </div>
 
-              {/* Odds */}
-              <div className="flex gap-3 shrink-0">
-                <OddsBlock label={match.team1_name} odds={match.odds_team1} isLive={isLive} />
-                <OddsBlock label={match.team2_name} odds={match.odds_team2} isLive={isLive} />
-              </div>
-            </div>
-          )
-        })}
+                  {/* Teams row: Team1 | VS | Team2 */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    {/* Team 1 — right-aligned */}
+                    <div style={{ flex: 1, textAlign: 'right' }}>
+                      <p style={{
+                        fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)',
+                        fontWeight: 600,
+                        color: '#f0f0f0',
+                        margin: '0 0 6px',
+                        lineHeight: 1.3,
+                      }}>
+                        {match.team1_name}
+                      </p>
+                      <p style={{
+                        fontSize: 'clamp(1.4rem, 4vw, 2rem)',
+                        fontWeight: 800,
+                        color: isLive ? '#666' : '#22c55e',
+                        margin: 0,
+                        fontVariantNumeric: 'tabular-nums',
+                      }}>
+                        ×{match.odds_team1}
+                      </p>
+                    </div>
+
+                    {/* VS */}
+                    <div style={{
+                      flexShrink: 0,
+                      width: 48,
+                      textAlign: 'center',
+                      fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
+                      fontWeight: 700,
+                      color: '#444',
+                      letterSpacing: '0.04em',
+                    }}>
+                      VS
+                    </div>
+
+                    {/* Team 2 — left-aligned */}
+                    <div style={{ flex: 1, textAlign: 'left' }}>
+                      <p style={{
+                        fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)',
+                        fontWeight: 600,
+                        color: '#f0f0f0',
+                        margin: '0 0 6px',
+                        lineHeight: 1.3,
+                      }}>
+                        {match.team2_name}
+                      </p>
+                      <p style={{
+                        fontSize: 'clamp(1.4rem, 4vw, 2rem)',
+                        fontWeight: 800,
+                        color: isLive ? '#666' : '#22c55e',
+                        margin: 0,
+                        fontVariantNumeric: 'tabular-nums',
+                      }}>
+                        ×{match.odds_team2}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Pool info */}
+                  {match.bets_count > 0 && (
+                    <p style={{
+                      textAlign: 'center',
+                      color: '#444',
+                      fontSize: 12,
+                      marginTop: 16,
+                      marginBottom: 0,
+                    }}>
+                      {match.bets_count} ставок · {match.total_bets} очков в пуле
+                    </p>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Footer */}
-      <div
-        className="px-6 py-3 text-center text-xs"
-        style={{ color: '#333', borderTop: '1px solid #1a1a1a' }}
-      >
-        Авто-обновление каждые 5 секунд
+      <div style={{ textAlign: 'center', color: '#2a2a2a', fontSize: 12, padding: '0 0 20px' }}>
+        авто-обновление каждые 5 секунд
       </div>
-    </div>
-  )
-}
-
-function OddsBlock({ label, odds, isLive }: { label: string; odds: number; isLive: boolean }) {
-  return (
-    <div
-      className="flex flex-col items-center px-4 py-2 rounded-xl min-w-[80px]"
-      style={{ background: '#111' }}
-    >
-      <p className="text-xs truncate max-w-[72px] text-center" style={{ color: '#666' }}>{label}</p>
-      <p
-        className="text-2xl font-bold tabular-nums mt-0.5"
-        style={{ color: isLive ? '#888' : '#22c55e' }}
-      >
-        ×{odds}
-      </p>
     </div>
   )
 }
