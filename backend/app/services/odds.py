@@ -1,8 +1,9 @@
 """
 Pari-mutuel dynamic odds with anchoring.
 
-SEED virtual pool anchors odds to initial values when real bets are small.
-MARGIN is the bookmaker's edge applied uniformly.
+When no real bets exist, initial odds are shown exactly as set by the admin.
+Once bets arrive, odds shift proportionally using implied-probability seeding.
+MARGIN is the bookmaker's edge applied once bets are in play.
 """
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -17,6 +18,8 @@ def compute_dynamic_odds(match, db: Session) -> tuple[float, float]:
     """
     Return (odds1, odds2) for a match.
     For non-active matches returns the stored (frozen) odds.
+    For active matches with no bets returns initial odds unchanged.
+    For active matches with bets applies pari-mutuel adjustment.
     """
     if match.status != "active":
         return float(match.odds_team1), float(match.odds_team2)
@@ -33,8 +36,15 @@ def compute_dynamic_odds(match, db: Session) -> tuple[float, float]:
     total1 = float(row[0])
     total2 = float(row[1])
 
-    seed1 = SEED / float(match.initial_odds_team1)
-    seed2 = SEED / float(match.initial_odds_team2)
+    # No real bets yet — show initial odds as-is
+    if total1 == 0 and total2 == 0:
+        return float(match.initial_odds_team1), float(match.initial_odds_team2)
+
+    # Seed proportional to implied probability of each team
+    p1 = 1.0 / float(match.initial_odds_team1)
+    p2 = 1.0 / float(match.initial_odds_team2)
+    seed1 = SEED * p1
+    seed2 = SEED * p2
 
     eff1 = total1 + seed1
     eff2 = total2 + seed2
