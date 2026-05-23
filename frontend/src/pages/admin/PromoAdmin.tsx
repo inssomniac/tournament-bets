@@ -9,7 +9,7 @@ interface PromoCode {
   used_at: string | null
 }
 
-const AMOUNTS = [100, 200, 300, 400]
+const AMOUNTS = [100, 200, 300, 400, 500, 1000, 5000]
 
 function SkeletonRow() {
   return (

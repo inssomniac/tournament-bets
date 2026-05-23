@@ -59,8 +59,8 @@ def generate_codes(
     _: User = Depends(get_current_admin),
     db: Session = Depends(get_db),
 ):
-    if body.amount not in (100, 200, 300, 400):
-        raise HTTPException(400, "Допустимые номиналы: 100, 200, 300, 400")
+    if body.amount not in (100, 200, 300, 400, 500, 1000, 5000):
+        raise HTTPException(400, "Допустимые номиналы: 100, 200, 300, 400, 500, 1000, 5000")
     if not (1 <= body.count <= 1000):
         raise HTTPException(400, "count должен быть от 1 до 1000")
 
