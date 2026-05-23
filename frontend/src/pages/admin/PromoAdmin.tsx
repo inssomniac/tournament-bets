@@ -60,11 +60,23 @@ export default function PromoAdmin() {
     }
   }
 
-  const handleExport = () => {
+  const handleExport = async () => {
     const params = new URLSearchParams()
     if (filterAmount !== '') params.set('amount', String(filterAmount))
     if (filterUsed !== '') params.set('used', filterUsed)
-    window.open(`/api/admin/promo/export.csv?${params}`, '_blank')
+    try {
+      const response = await api.get(`/api/admin/promo/export.csv?${params}`, {
+        responseType: 'blob',
+      })
+      const url = URL.createObjectURL(new Blob([response.data], { type: 'text/csv' }))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'promo_codes.csv'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch (e: any) {
+      alert('Ошибка экспорта: ' + e.message)
+    }
   }
 
   const total = codes.length
