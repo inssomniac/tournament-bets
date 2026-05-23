@@ -11,8 +11,10 @@ class Match(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     team1_name: Mapped[str] = mapped_column(String(100), nullable=False)
     team2_name: Mapped[str] = mapped_column(String(100), nullable=False)
-    odds_team1: Mapped[float] = mapped_column(Numeric(4, 2), nullable=False)
-    odds_team2: Mapped[float] = mapped_column(Numeric(4, 2), nullable=False)
+    odds_team1: Mapped[float] = mapped_column(Numeric(5, 2), nullable=False)
+    odds_team2: Mapped[float] = mapped_column(Numeric(5, 2), nullable=False)
+    initial_odds_team1: Mapped[float] = mapped_column(Numeric(5, 2), nullable=False, server_default="2.00")
+    initial_odds_team2: Mapped[float] = mapped_column(Numeric(5, 2), nullable=False, server_default="2.00")
     bet_deadline: Mapped[Optional[DateTime]] = mapped_column(DateTime, nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
     # active | live | finished

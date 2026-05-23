@@ -5,6 +5,7 @@ import TabBar from '../../components/TabBar'
 
 interface BetItem {
   id: number
+  match_id: number
   team1_name: string
   team2_name: string
   team_choice: number
@@ -81,9 +82,10 @@ export default function Balance() {
 
         {!loading && (
           <div className="flex flex-col gap-3">
-            {bets.map((bet) => {
+            {bets.map((bet, idx) => {
               const teamName = bet.team_choice === 1 ? bet.team1_name : bet.team2_name
               const cfg = statusConfig[bet.status] ?? statusConfig.pending
+              const isTopUp = idx > 0 && bets[idx - 1].match_id === bet.match_id
               return (
                 <div key={bet.id} className="tg-card">
                   <div className="flex justify-between items-start">
@@ -91,7 +93,9 @@ export default function Balance() {
                       <p className="font-medium text-tg-text text-sm">
                         {bet.team1_name} vs {bet.team2_name}
                       </p>
-                      <p className="text-tg-hint text-sm">Ставка на: {teamName}</p>
+                      <p className="text-tg-hint text-sm">
+                      {isTopUp ? '+ Додеп: ' : 'Ставка на: '}{teamName}
+                    </p>
                     </div>
                     <span className={`text-xs px-2 py-1 rounded-full shrink-0 ${cfg.cls}`}>
                       {cfg.icon} {cfg.label}

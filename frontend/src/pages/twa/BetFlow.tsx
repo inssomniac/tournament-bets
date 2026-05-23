@@ -12,7 +12,7 @@ export default function BetFlow() {
   const navigate = useNavigate()
   const { user, updateBalance } = useAppStore()
 
-  const { match, teamChoice } = location.state || {}
+  const { match, teamChoice, isTopUp } = location.state || {}
 
   const [amount, setAmount] = useState(100)
   const [loading, setLoading] = useState(false)
@@ -29,6 +29,8 @@ export default function BetFlow() {
   const maxAllowed = user?.balance ?? 0
   const potentialWin = Math.floor(amount * odds)
   const isValid = amount >= MIN && amount <= maxAllowed
+
+  const existingBet = match.user_bet
 
   const adjust = (delta: number) => {
     setAmount((prev) => Math.max(MIN, Math.min(maxAllowed, prev + delta)))
@@ -53,14 +55,16 @@ export default function BetFlow() {
       <div className="flex flex-col min-h-screen p-5 gap-5 bg-tg-bg items-center justify-center text-center pt-tg-header">
         <div className="text-6xl">✅</div>
         <div>
-          <h2 className="text-xl font-bold text-tg-text">Ставка принята!</h2>
+          <h2 className="text-xl font-bold text-tg-text">
+            {isTopUp ? 'Додеп принят!' : 'Ставка принята!'}
+          </h2>
           <p className="text-tg-hint mt-1 text-sm">
             {amount} очков на{' '}
             <span className="font-semibold text-tg-text">{teamName}</span>
           </p>
         </div>
         <div className="tg-card w-full text-center">
-          <p className="text-tg-hint text-sm">Потенциальный выигрыш</p>
+          <p className="text-tg-hint text-sm">Потенциальный выигрыш (эта ставка)</p>
           <p className="text-3xl font-bold text-tg-link">{potentialWin} 🪙</p>
         </div>
         <button onClick={() => navigate('/matches', { replace: true })} className="tg-btn w-full">
@@ -79,10 +83,28 @@ export default function BetFlow() {
       <div>
         <p className="text-tg-hint text-xs">{match.team1_name} vs {match.team2_name}</p>
         <h1 className="text-xl font-bold text-tg-text mt-0.5">
-          За <span className="text-tg-link">{teamName}</span>
+          {isTopUp ? 'Додеп: ' : 'За '}
+          <span className="text-tg-link">{teamName}</span>
         </h1>
         <p className="text-tg-hint text-sm">Коэффициент × {odds}</p>
+        <p className="text-xs mt-1" style={{ color: 'var(--tg-theme-accent-text-color, #f59e0b)' }}>
+          ⚡ Коэф динамический — фиксируется в момент подтверждения
+        </p>
       </div>
+
+      {/* Current bet summary (top-up mode) */}
+      {isTopUp && existingBet && (
+        <div className="tg-card flex flex-col gap-1" style={{ background: 'var(--tg-theme-secondary-bg-color)' }}>
+          <p className="text-tg-hint text-xs uppercase tracking-wide">Уже поставлено</p>
+          <p className="font-semibold text-tg-text text-sm">
+            {existingBet.amount} очков
+            {existingBet.bets_count > 1 && (
+              <span className="text-tg-hint font-normal"> ({existingBet.bets_count} ставки)</span>
+            )}
+          </p>
+          <p className="text-tg-hint text-xs">потенциал: {existingBet.potential_win} очков</p>
+        </div>
+      )}
 
       <div className="tg-card flex justify-between items-center">
         <span className="text-tg-hint text-sm">Ваш баланс</span>
@@ -90,7 +112,9 @@ export default function BetFlow() {
       </div>
 
       <div className="tg-card flex flex-col items-center gap-4 py-6">
-        <p className="text-tg-hint text-xs uppercase tracking-wide">Сумма ставки</p>
+        <p className="text-tg-hint text-xs uppercase tracking-wide">
+          {isTopUp ? 'Сумма додепа' : 'Сумма ставки'}
+        </p>
         <div className="flex items-center gap-6">
           <button
             onClick={() => adjust(-STEP)}
@@ -148,7 +172,11 @@ export default function BetFlow() {
         disabled={!isValid || loading}
         className="tg-btn mt-auto"
       >
-        {loading ? 'Отправка...' : `Поставить ${amount} очков`}
+        {loading
+          ? 'Отправка...'
+          : isTopUp
+            ? `Додепнуть ${amount} очков`
+            : `Поставить ${amount} очков`}
       </button>
     </div>
   )

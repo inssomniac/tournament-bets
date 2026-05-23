@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../api/client'
 import TabBar from '../../components/TabBar'
@@ -8,6 +8,7 @@ interface UserBet {
   amount: number
   potential_win: number
   status: string
+  bets_count: number
 }
 
 interface Match {
@@ -16,6 +17,8 @@ interface Match {
   team2_name: string
   odds_team1: number
   odds_team2: number
+  initial_odds_team1: number
+  initial_odds_team2: number
   bet_deadline: string | null
   status: string
   is_deadline_passed: boolean
@@ -53,10 +56,31 @@ export default function Matches() {
   const [matches, setMatches] = useState<Match[]>([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const fetchMatches = () => {
+    api.get('/api/matches/').then(({ data }) => setMatches(data)).finally(() => setLoading(false))
+  }
 
   useEffect(() => {
-    api.get('/api/matches/').then(({ data }) => setMatches(data)).finally(() => setLoading(false))
+    fetchMatches()
   }, [])
+
+  // Poll every 3s only while there are active matches
+  useEffect(() => {
+    const hasActive = matches.some((m) => m.status === 'active')
+    if (hasActive) {
+      intervalRef.current = setInterval(fetchMatches, 3000)
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [matches])
 
   const open = matches.filter((m) => m.status === 'active')
   const live = matches.filter((m) => m.status === 'live')
@@ -81,7 +105,6 @@ export default function Matches() {
 
         {!loading && (
           <>
-            {/* Live matches */}
             {live.length > 0 && (
               <>
                 <p className="text-red-500 text-xs uppercase tracking-wide font-bold mb-2">🔴 Сейчас идут</p>
@@ -93,7 +116,6 @@ export default function Matches() {
               </>
             )}
 
-            {/* Open matches */}
             {open.length > 0 && (
               <>
                 {live.length > 0 && <p className="text-tg-hint text-xs uppercase tracking-wide mb-2 mt-2">Принимаем ставки</p>}
@@ -105,7 +127,6 @@ export default function Matches() {
               </>
             )}
 
-            {/* Closed/finished */}
             {closed.length > 0 && (
               <>
                 <p className="text-tg-hint text-xs uppercase tracking-wide mb-2 mt-2">Завершённые</p>
@@ -128,6 +149,7 @@ function MatchCard({ match, navigate }: { match: Match; navigate: (path: string,
   const isLive = match.status === 'live'
   const isFinished = match.status === 'finished'
   const isClosed = isLive || isFinished
+  const userBet = match.user_bet
 
   return (
     <div className="tg-card">
@@ -150,41 +172,66 @@ function MatchCard({ match, navigate }: { match: Match; navigate: (path: string,
         )}
       </div>
 
-      {/* Teams */}
-      {!isClosed && !match.user_bet ? (
+      {/* Team buttons (active match) */}
+      {!isClosed && (
         <div className="flex gap-2">
           {([1, 2] as const).map((choice) => {
             const name = choice === 1 ? match.team1_name : match.team2_name
             const odds = choice === 1 ? match.odds_team1 : match.odds_team2
+            const isMyTeam = userBet?.team_choice === choice
+            const isOtherTeam = userBet != null && !isMyTeam
+
             return (
               <button
                 key={choice}
-                onClick={() => navigate(`/matches/${match.id}`, { state: { match, teamChoice: choice } })}
-                className="flex-1 rounded-xl py-4 text-center active:scale-95 transition-transform"
+                onClick={() => {
+                  if (isOtherTeam) return
+                  navigate(`/matches/${match.id}`, {
+                    state: { match, teamChoice: choice, isTopUp: isMyTeam },
+                  })
+                }}
+                disabled={isOtherTeam}
+                className={`flex-1 rounded-xl py-4 text-center transition-all ${
+                  isOtherTeam
+                    ? 'opacity-30 cursor-not-allowed'
+                    : 'active:scale-95'
+                } ${isMyTeam ? 'ring-2 ring-tg-link' : ''}`}
                 style={{ background: 'var(--tg-theme-bg-color)' }}
               >
                 <p className="font-semibold text-tg-text text-sm leading-tight">{name}</p>
                 <p className="text-tg-link font-bold mt-1">× {odds}</p>
+                {isMyTeam && (
+                  <p className="text-xs text-tg-hint mt-0.5">+ додеп</p>
+                )}
               </button>
             )
           })}
         </div>
-      ) : (
+      )}
+
+      {/* Teams display (live/finished, no buttons) */}
+      {isClosed && (
         <div className="flex justify-between items-center">
           <span className="font-semibold text-tg-text text-sm">
             {match.team1_name} <span className="text-tg-hint font-normal">vs</span> {match.team2_name}
           </span>
+          <span className="text-xs text-tg-hint shrink-0 ml-2">
+            × {match.odds_team1} / × {match.odds_team2}
+          </span>
         </div>
       )}
 
-      {/* Existing bet */}
-      {match.user_bet && (
+      {/* Existing bet summary */}
+      {userBet && (
         <div className="mt-3 rounded-xl p-3 bg-green-50">
           <p className="text-green-700 font-medium text-sm">
-            ✅ {match.user_bet.team_choice === 1 ? match.team1_name : match.team2_name}
+            ✅ {userBet.team_choice === 1 ? match.team1_name : match.team2_name}
+            {userBet.bets_count > 1 && (
+              <span className="text-green-600 font-normal"> ({userBet.bets_count} ставки)</span>
+            )}
           </p>
           <p className="text-green-600 text-xs mt-0.5">
-            {match.user_bet.amount} → {match.user_bet.potential_win} очков потенциально
+            {userBet.amount} → {userBet.potential_win} очков потенциально
           </p>
         </div>
       )}

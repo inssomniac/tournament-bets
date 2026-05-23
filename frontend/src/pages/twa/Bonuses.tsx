@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { api } from '../../api/client'
 import { useAppStore } from '../../store/useAppStore'
 import TabBar from '../../components/TabBar'
@@ -27,6 +27,70 @@ function ChannelCardSkeleton() {
     </div>
   )
 }
+
+// ── Промокод ──────────────────────────────────────────────────────────────────
+
+type RedeemState = 'idle' | 'loading' | 'success' | 'error'
+
+function PromoSection() {
+  const [code, setCode] = useState('')
+  const [state, setState] = useState<RedeemState>('idle')
+  const [message, setMessage] = useState('')
+  const { updateBalance } = useAppStore()
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const handleRedeem = async () => {
+    if (!code.trim()) return
+    setState('loading')
+    setMessage('')
+    try {
+      const { data } = await api.post('/api/bonuses/redeem', { code: code.trim() })
+      updateBalance(data.new_balance)
+      setState('success')
+      setMessage(`+${data.amount} очков зачислено!`)
+      setCode('')
+    } catch (e: any) {
+      setState('error')
+      setMessage(e.message || 'Ошибка')
+    }
+  }
+
+  const handleChange = (v: string) => {
+    setCode(v.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5))
+    if (state !== 'idle') { setState('idle'); setMessage('') }
+  }
+
+  return (
+    <div className="tg-card mb-5">
+      <p className="font-semibold text-tg-text text-sm mb-3">🎟 Промокод</p>
+      <div className="flex gap-2">
+        <input
+          ref={inputRef}
+          className="tg-input flex-1 font-mono tracking-widest text-center text-lg uppercase"
+          placeholder="AB1C2"
+          value={code}
+          maxLength={5}
+          onChange={(e) => handleChange(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && code.length === 5 && handleRedeem()}
+        />
+        <button
+          onClick={handleRedeem}
+          disabled={code.length !== 5 || state === 'loading'}
+          className="tg-btn w-auto px-4 py-3 text-sm rounded-xl disabled:opacity-40"
+        >
+          {state === 'loading' ? '...' : 'Активировать'}
+        </button>
+      </div>
+      {message && (
+        <p className={`text-sm mt-2 ${state === 'success' ? 'text-green-600 font-medium' : 'text-tg-destructive'}`}>
+          {message}
+        </p>
+      )}
+    </div>
+  )
+}
+
+// ── Главная страница ───────────────────────────────────────────────────────────
 
 export default function Bonuses() {
   const [channels, setChannels] = useState<Channel[]>([])
@@ -63,9 +127,13 @@ export default function Bonuses() {
       <div className="p-5">
         <h1 className="text-xl font-bold text-tg-text mb-1">🎁 Бонусы</h1>
         <p className="text-sm text-tg-hint mb-5">
-          Подпишитесь на каналы и получите дополнительные очки
+          Подпишитесь на каналы или введите промокод
         </p>
 
+        {/* Промокод — всегда сверху */}
+        <PromoSection />
+
+        {/* Каналы */}
         {loading && (
           <div className="flex flex-col gap-4">
             <ChannelCardSkeleton />
@@ -74,7 +142,7 @@ export default function Bonuses() {
         )}
 
         {!loading && channels.length === 0 && (
-          <p className="text-tg-hint text-center mt-10">Бонусных каналов нет</p>
+          <p className="text-tg-hint text-center mt-6">Бонусных каналов нет</p>
         )}
 
         {!loading && (

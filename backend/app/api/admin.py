@@ -12,6 +12,7 @@ from app.models.bet import Bet
 from app.models.match import Match
 from app.models.user import User
 from app.services.notifications import send_result_notification
+from app.services.odds import compute_dynamic_odds
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
 
@@ -54,6 +55,8 @@ class MatchAdminResponse(BaseModel):
     team2_name: str
     odds_team1: float
     odds_team2: float
+    initial_odds_team1: float
+    initial_odds_team2: float
     bet_deadline: Optional[datetime] = None
     status: str
     winner: Optional[int] = None
@@ -106,12 +109,18 @@ def _match_response(match: Match, db: Session) -> MatchAdminResponse:
         func.count(Bet.id),
         func.coalesce(func.sum(Bet.amount), 0),
     ).filter(Bet.match_id == match.id).first()
+
+    # For active matches show live dynamic odds; otherwise stored (frozen)
+    dyn_odds1, dyn_odds2 = compute_dynamic_odds(match, db)
+
     return MatchAdminResponse(
         id=match.id,
         team1_name=match.team1_name,
         team2_name=match.team2_name,
-        odds_team1=float(match.odds_team1),
-        odds_team2=float(match.odds_team2),
+        odds_team1=dyn_odds1,
+        odds_team2=dyn_odds2,
+        initial_odds_team1=float(match.initial_odds_team1),
+        initial_odds_team2=float(match.initial_odds_team2),
         bet_deadline=match.bet_deadline,
         status=match.status,
         winner=match.winner,
@@ -142,6 +151,8 @@ def create_match(
         team2_name=body.team2_name,
         odds_team1=body.odds_team1,
         odds_team2=body.odds_team2,
+        initial_odds_team1=body.odds_team1,
+        initial_odds_team2=body.odds_team2,
         bet_deadline=body.bet_deadline,
         status="active",
     )
@@ -172,8 +183,11 @@ def update_match(
         match.team2_name = body.team2_name.strip()
     if body.odds_team1 is not None:
         match.odds_team1 = body.odds_team1
+        # Updating initial_odds while match is still active (not yet frozen)
+        match.initial_odds_team1 = body.odds_team1
     if body.odds_team2 is not None:
         match.odds_team2 = body.odds_team2
+        match.initial_odds_team2 = body.odds_team2
     if body.bet_deadline is not None:
         match.bet_deadline = body.bet_deadline
 
@@ -195,6 +209,10 @@ def go_live(
     if match.status != "active":
         raise HTTPException(400, f"Нельзя начать матч со статусом '{match.status}'")
 
+    # Freeze current dynamic odds into stored odds_team1/2
+    final_odds1, final_odds2 = compute_dynamic_odds(match, db)
+    match.odds_team1 = final_odds1
+    match.odds_team2 = final_odds2
     match.status = "live"
     db.commit()
     db.refresh(match)

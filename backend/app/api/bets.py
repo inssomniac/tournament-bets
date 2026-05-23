@@ -10,6 +10,7 @@ from app.core.database import get_db
 from app.models.bet import Bet
 from app.models.match import Match
 from app.models.user import User
+from app.services.odds import compute_dynamic_odds
 
 router = APIRouter(prefix="/api/bets", tags=["bets"])
 
@@ -70,16 +71,17 @@ def place_bet(
     if current_user.balance < body.amount:
         raise HTTPException(400, "Недостаточно очков на балансе")
 
-    # Проверка дубля
+    # Проверка: нельзя ставить на другую команду (на ту же — разрешено, это додеп)
     existing = db.query(Bet).filter(
         Bet.user_id == current_user.id,
         Bet.match_id == body.match_id,
     ).first()
-    if existing:
-        raise HTTPException(409, "Вы уже делали ставку на этот матч")
+    if existing and existing.team_choice != body.team_choice:
+        raise HTTPException(409, "Нельзя ставить на другую команду — вы уже поставили на эту")
 
-    # Рассчитать выигрыш
-    odds = float(match.odds_team1 if body.team_choice == 1 else match.odds_team2)
+    # Рассчитать выигрыш по актуальному динамическому коэфу
+    dyn_odds1, dyn_odds2 = compute_dynamic_odds(match, db)
+    odds = dyn_odds1 if body.team_choice == 1 else dyn_odds2
     potential_win = int(body.amount * odds)
 
     # Атомарно: списать баланс + создать ставку

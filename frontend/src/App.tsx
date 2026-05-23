@@ -8,15 +8,19 @@ import BetFlow from './pages/twa/BetFlow'
 import Balance from './pages/twa/Balance'
 import Bonuses from './pages/twa/Bonuses'
 import Leaderboard from './pages/twa/Leaderboard'
+import PublicOddsPage from './pages/PublicOddsPage'
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Admin panel — no AuthGate, AdminApp has its own AdminAuthGate */}
+        {/* Public - no auth required */}
+        <Route path="/odds" element={<PublicOddsPage />} />
+
+        {/* Admin panel - AdminApp has its own AdminAuthGate */}
         <Route path="/admin/*" element={<AdminApp />} />
 
-        {/* TWA */}
+        {/* TWA - requires Telegram auth */}
         <Route element={<AuthGate />}>
           <Route path="/register" element={<Registration />} />
           <Route path="/home" element={<Home />} />

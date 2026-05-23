@@ -5,13 +5,15 @@ import MatchList from './MatchList'
 import MatchForm from './MatchForm'
 import MatchResult from './MatchResult'
 import UserList from './UserList'
+import PromoAdmin from './PromoAdmin'
 
 function AdminTabBar() {
   const tabs = [
-    { to: '/home',           label: '🏠', text: 'Главная',    end: false },
-    { to: '/admin',          label: '📊', text: 'Дашборд',    end: true  },
-    { to: '/admin/matches',  label: '🏆', text: 'Матчи',      end: false },
-    { to: '/admin/users',    label: '👥', text: 'Участники',  end: false },
+    { to: '/home',          label: '🏠', text: 'Главная',   end: false },
+    { to: '/admin',         label: '📊', text: 'Дашборд',   end: true  },
+    { to: '/admin/matches', label: '🏆', text: 'Матчи',     end: false },
+    { to: '/admin/users',   label: '👥', text: 'Участники', end: false },
+    { to: '/admin/promo',   label: '🎟', text: 'Коды',      end: false },
   ]
   return (
     <nav
@@ -53,6 +55,7 @@ export default function AdminApp() {
             <Route path="/matches/:id/edit" element={<MatchForm />} />
             <Route path="/matches/:id/result" element={<MatchResult />} />
             <Route path="/users" element={<UserList />} />
+            <Route path="/promo" element={<PromoAdmin />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />
           </Routes>
         </div>
