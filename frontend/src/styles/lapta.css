@@ -1,0 +1,210 @@
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Oswald:wght@600;700&display=swap');
+
+/* ── VARIABLES ───────────────────────────────────────────────────── */
+:root {
+  --lp-primary:    #D90D32;
+  --lp-secondary:  #1B65A6;
+  --lp-bg:         #F2E6D8;
+  --lp-contrast:   #1E1D3F;
+  --lp-cream-dark: #D9C9B5;
+  --lp-text:       #2a1f18;
+  --lp-muted:      #8a7c6e;
+  --lp-on-dark:    #F2E6D8;
+}
+
+/* ── BASE ────────────────────────────────────────────────────────── */
+body { background: var(--lp-bg); }
+
+/* ── TYPOGRAPHY ──────────────────────────────────────────────────── */
+.russo  { font-family: 'Russo One', sans-serif; }
+.oswald { font-family: 'Oswald', sans-serif; font-weight: 700; }
+
+/* ── DIAGONAL HEADER ─────────────────────────────────────────────── */
+.lp-hdr {
+  flex-shrink: 0;
+  position: relative;
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+}
+.lp-hdr--red  { background: var(--lp-primary); }
+.lp-hdr--blue { background: var(--lp-secondary); }
+
+/* Large: Home, Balance, Leaderboard, Registration */
+.lp-hdr--lg { padding: 0 20px 56px; }
+
+/* Small: Matches, Bonuses — compact diagonal */
+.lp-hdr--sm { padding: 0 20px 38px; }
+
+/* Flat (nav bar with diagonal feel): BetFlow back-nav */
+.lp-hdr-flat {
+  flex-shrink: 0;
+  position: relative;
+  clip-path: polygon(0 0, 100% 0, 100% 78%, 0 100%);
+  padding: 0 16px 28px;
+}
+.lp-hdr-flat--red  { background: var(--lp-primary); }
+.lp-hdr-flat--blue { background: var(--lp-secondary); }
+
+/* Safe area: add to header inner wrapper */
+.lp-hdr-inner {
+  padding-top: calc(
+    var(--tg-safe-area-inset-top, env(safe-area-inset-top, 12px)) +
+    var(--tg-content-safe-area-inset-top, 0px) + 12px
+  );
+}
+
+/* ── BADGE CIRCLE ────────────────────────────────────────────────── */
+.lp-badge-circle {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: rgba(30,29,63,0.65);
+  border: 2px solid rgba(242,230,216,0.5);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  position: absolute; top: 0; right: 18px;
+}
+
+/* ── CARDS ───────────────────────────────────────────────────────── */
+.lp-card {
+  background: white;
+  border: 1.5px solid var(--lp-cream-dark);
+  border-radius: 6px;
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+}
+.lp-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: var(--lp-primary);
+}
+.lp-card--blue::before  { background: var(--lp-secondary); }
+.lp-card--none::before  { display: none; }
+
+/* ── BUTTONS ─────────────────────────────────────────────────────── */
+.lp-btn {
+  background: var(--lp-primary); color: white;
+  font-family: 'Oswald', sans-serif; font-weight: 700;
+  font-size: 15px; letter-spacing: 0.06em;
+  border-radius: 4px; padding: 13px 20px;
+  border: none; width: 100%; cursor: pointer;
+  display: block; text-align: center;
+  transition: transform 0.1s;
+}
+.lp-btn:active:not(:disabled) { transform: scale(0.97); }
+.lp-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.lp-btn--blue { background: var(--lp-secondary); }
+
+.lp-btn-outline {
+  background: transparent; color: var(--lp-text);
+  border: 2px solid var(--lp-text);
+  font-family: 'Oswald', sans-serif; font-weight: 700;
+  font-size: 14px; letter-spacing: 0.06em;
+  border-radius: 4px; padding: 10px 14px;
+  cursor: pointer; text-align: center;
+  transition: transform 0.1s;
+}
+.lp-btn-outline:active { transform: scale(0.97); }
+.lp-btn-outline--red { border-color: var(--lp-primary); color: var(--lp-primary); }
+
+/* ── INPUT ───────────────────────────────────────────────────────── */
+.lp-inp {
+  background: white;
+  border: 1.5px solid var(--lp-cream-dark);
+  border-radius: 4px; padding: 12px 14px;
+  font-size: 15px; color: var(--lp-text);
+  width: 100%; outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.lp-inp:focus { border-color: var(--lp-primary); }
+.lp-inp[type='number']::-webkit-inner-spin-button,
+.lp-inp[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; }
+.lp-inp[type='number'] { -moz-appearance: textfield; }
+
+/* ── SECTION LABEL ───────────────────────────────────────────────── */
+.lp-label {
+  font-family: 'Oswald', sans-serif; font-weight: 700;
+  font-size: 11px; letter-spacing: 0.1em;
+  color: var(--lp-muted); display: block; margin-bottom: 8px;
+}
+.lp-label--dk { color: rgba(242,230,216,0.5); }
+
+/* ── STATUS PILLS ────────────────────────────────────────────────── */
+.lp-pill {
+  font-family: 'Oswald', sans-serif; font-weight: 700;
+  font-size: 11px; letter-spacing: 0.07em;
+  padding: 3px 9px; border-radius: 3px; display: inline-block;
+}
+.lp-pill--live    { background: white; color: var(--lp-primary); }
+.lp-pill--open    { background: white; color: var(--lp-secondary); }
+.lp-pill--won     { background: var(--lp-secondary); color: white; }
+.lp-pill--lost    { background: rgba(217,13,50,.08); color: var(--lp-primary); border: 1px solid var(--lp-primary); }
+.lp-pill--pending { background: var(--lp-cream-dark); color: var(--lp-muted); }
+.lp-pill--done    { background: rgba(255,255,255,0.25); color: white; }
+.lp-pill--live-hd { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.35); }
+.lp-pill--open-hd { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.35); }
+
+/* ── MARQUEE ─────────────────────────────────────────────────────── */
+.lp-marquee { background: var(--lp-contrast); overflow: hidden; padding: 8px 0; white-space: nowrap; }
+.lp-marquee-inner { display: inline-block; animation: lp-mq 14s linear infinite; }
+.lp-marquee-text  {
+  font-family: 'Oswald', sans-serif; font-weight: 700;
+  font-size: 11px; letter-spacing: 0.1em; color: var(--lp-on-dark);
+}
+@keyframes lp-mq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── TABBAR ──────────────────────────────────────────────────────── */
+.lp-tabbar {
+  background: var(--lp-contrast);
+  border-top: 3px solid var(--lp-primary);
+  display: flex; flex-shrink: 0;
+  padding: 8px 0;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+}
+.lp-tab {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 2px; cursor: pointer;
+}
+.lp-tab-icon { font-size: 19px; }
+.lp-tab-label {
+  font-family: 'Oswald', sans-serif; font-weight: 700;
+  font-size: 9px; letter-spacing: 0.07em;
+  color: rgba(242,230,216,0.35);
+}
+.lp-tab--active .lp-tab-label { color: var(--lp-primary); }
+
+/* ── SKELETON ────────────────────────────────────────────────────── */
+.lp-sk {
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--lp-cream-dark) 25%, #e8d8c8 50%, var(--lp-cream-dark) 75%);
+  background-size: 200% 100%;
+  animation: lp-shimmer 1.4s infinite;
+}
+@keyframes lp-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* ── MATCH CARD ──────────────────────────────────────────────────── */
+.lp-mc { background: white; border: 1.5px solid var(--lp-cream-dark); border-radius: 6px; overflow: hidden; }
+.lp-mc-head { padding: 7px 14px; display: flex; align-items: center; justify-content: space-between; }
+.lp-mc-head--red  { background: var(--lp-primary); }
+.lp-mc-head--blue { background: var(--lp-secondary); }
+.lp-mc-head--muted { background: var(--lp-muted); }
+.lp-mc-body { padding: 13px 14px; }
+
+/* ── BET HISTORY ─────────────────────────────────────────────────── */
+.lp-bstripe { width: 4px; border-radius: 2px; flex-shrink: 0; align-self: stretch; }
+.lp-bstripe--won     { background: var(--lp-secondary); }
+.lp-bstripe--lost    { background: var(--lp-primary); }
+.lp-bstripe--pending { background: var(--lp-cream-dark); }
+
+/* ── WIN BLOCK (bet potential) ───────────────────────────────────── */
+.lp-win { background: var(--lp-secondary); border-radius: 6px; padding: 16px; text-align: center; }
+
+/* ── LEADERBOARD ─────────────────────────────────────────────────── */
+.lp-lb-row { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 5px; }
+.lp-lb-row:nth-child(odd)  { background: white; }
+.lp-lb-row:nth-child(even) { background: rgba(255,255,255,0.45); }
+.lp-lb-row--me { box-shadow: 0 0 0 2px var(--lp-primary) !important; background: white !important; }
+
+/* ── PAGE LAYOUT ─────────────────────────────────────────────────── */
+.lp-page { display: flex; flex-direction: column; min-height: 100dvh; background: var(--lp-bg); }
+.lp-scroll { flex: 1; overflow-y: auto; }
+.lp-scroll::-webkit-scrollbar { display: none; }

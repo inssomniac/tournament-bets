@@ -27,37 +27,64 @@ export default function Registration() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen p-5 gap-6 bg-tg-bg pt-tg-header">
-      <div>
-        <h1 className="text-2xl font-bold text-tg-text mb-2">
-          Летний Кубок по лапте 2026
-        </h1>
-        <p className="text-tg-hint text-sm leading-relaxed">
-          Твой стартовый банк — <strong className="text-tg-text">1100 очков</strong>.
-          Делай ставки на матчи, набирай очки и попади в топ рейтинга для получения призов!
-        </p>
+    <div className="lp-page">
+      {/* Diagonal red header */}
+      <div className="lp-hdr lp-hdr--red lp-hdr--lg">
+        <div className="lp-hdr-inner">
+          <p className="oswald" style={{ color: 'rgba(242,230,216,0.6)', fontSize: 12, letterSpacing: '0.1em', marginBottom: 4 }}>
+            ЛЕТНИЙ КУБОК
+          </p>
+          <p className="russo" style={{ fontSize: 40, lineHeight: 1, color: 'white', marginBottom: 2 }}>
+            ПО ЛАПТЕ
+          </p>
+          <p className="russo" style={{ fontSize: 40, lineHeight: 1, color: 'rgba(255,255,255,0.55)' }}>
+            2026
+          </p>
+        </div>
+        {/* Badge */}
+        <div className="lp-badge-circle" style={{ top: 0 }}>
+          <span style={{ fontSize: 22 }}>🏏</span>
+          <small className="oswald" style={{ fontSize: 7, color: 'var(--lp-bg)', letterSpacing: '0.1em', marginTop: 2 }}>LAPTA</small>
+        </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-medium text-tg-hint">Введите ФИО</label>
+      {/* Content */}
+      <div className="lp-scroll" style={{ marginTop: -26, padding: '0 16px 32px' }}>
+        <div style={{ marginBottom: 22, paddingTop: 10 }}>
+          <p style={{ color: 'var(--lp-muted)', fontSize: 13, marginBottom: 5 }}>Твой стартовый банк</p>
+          <p className="russo" style={{ fontSize: 58, color: 'var(--lp-primary)', lineHeight: 1 }}>1 100</p>
+          <p className="oswald" style={{ fontSize: 16, color: 'var(--lp-muted)', letterSpacing: '0.08em' }}>ОЧКОВ</p>
+        </div>
+
+        <p style={{ fontSize: 14, color: 'var(--lp-text)', lineHeight: 1.65, marginBottom: 28 }}>
+          Делай ставки на матчи, набирай очки и попади в топ рейтинга для получения призов!
+        </p>
+
+        <span className="lp-label">ВВЕДИТЕ ФИО</span>
         <input
-          className="tg-input"
+          className="lp-inp"
           placeholder="Иванов Иван Иванович"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && isValid && handleSubmit()}
+          style={{ marginBottom: 8 }}
         />
-        {error && <p className="text-tg-destructive text-sm">{error}</p>}
-        <p className="text-tg-hint text-xs">Укажите полное имя — оно будет видно в рейтинге</p>
-      </div>
+        <p style={{ fontSize: 11, color: 'var(--lp-muted)', marginBottom: 22 }}>
+          Укажите полное имя — оно будет видно в рейтинге
+        </p>
 
-      <button
-        className="tg-btn mt-auto"
-        onClick={handleSubmit}
-        disabled={!isValid || loading}
-      >
-        {loading ? 'Регистрация...' : 'Зарегистрироваться'}
-      </button>
+        {error && (
+          <p style={{ fontSize: 13, color: 'var(--lp-primary)', marginBottom: 12 }}>{error}</p>
+        )}
+
+        <button
+          className="lp-btn"
+          onClick={handleSubmit}
+          disabled={!isValid || loading}
+        >
+          {loading ? 'РЕГИСТРАЦИЯ...' : 'ЗАРЕГИСТРИРОВАТЬСЯ'}
+        </button>
+      </div>
     </div>
   )
 }

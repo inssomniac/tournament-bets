@@ -37,16 +37,15 @@ function formatDeadline(iso: string): string {
   return d.toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
 }
 
-function MatchCardSkeleton() {
+function SkeletonCard() {
   return (
-    <div className="tg-card">
-      <div className="flex justify-between items-center mb-3">
-        <div className="sk rounded-full h-5 w-24" />
-        <div className="sk rounded-md h-4 w-16" />
+    <div className="lp-mc">
+      <div className="lp-mc-head lp-mc-head--red" style={{ opacity: 0.4 }}>
+        <div className="lp-sk" style={{ width: 72, height: 20, borderRadius: 3 }} />
       </div>
-      <div className="flex gap-2">
-        <div className="sk rounded-xl flex-1 h-16" />
-        <div className="sk rounded-xl flex-1 h-16" />
+      <div className="lp-mc-body" style={{ display: 'flex', gap: 8 }}>
+        <div className="lp-sk" style={{ flex: 1, height: 72, borderRadius: 4 }} />
+        <div className="lp-sk" style={{ flex: 1, height: 72, borderRadius: 4 }} />
       </div>
     </div>
   )
@@ -59,81 +58,84 @@ export default function Matches() {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const fetchMatches = () => {
-    api.get('/api/matches/').then(({ data }) => setMatches(data)).finally(() => setLoading(false))
+    api.get('/api/matches/').then(({ data }) => {
+      setMatches(data)
+      setLoading(false)
+    }).catch(() => setLoading(false))
   }
 
   useEffect(() => {
     fetchMatches()
   }, [])
 
-  // Poll every 3s only while there are active matches
   useEffect(() => {
     const hasActive = matches.some((m) => m.status === 'active')
-    if (hasActive) {
+    if (hasActive && !intervalRef.current) {
       intervalRef.current = setInterval(fetchMatches, 3000)
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
-      }
+    } else if (!hasActive && intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
     }
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
+      if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null }
     }
   }, [matches])
 
-  const open = matches.filter((m) => m.status === 'active')
-  const live = matches.filter((m) => m.status === 'live')
-  const closed = matches.filter((m) => m.is_deadline_passed && m.status !== 'live' && m.status !== 'active')
+  const active   = matches.filter((m) => m.status === 'active')
+  const live     = matches.filter((m) => m.status === 'live')
+  const finished = matches.filter((m) => m.status === 'finished')
+  const totalActive = active.length + live.length
 
   return (
-    <div className="flex flex-col min-h-screen pb-tabbar pt-tg-header bg-tg-bg">
-      <div className="p-4">
-        <h1 className="text-xl font-bold text-tg-text mb-4">🏆 Матчи</h1>
+    <div className="lp-page">
+      {/* Diagonal red header — small */}
+      <div className="lp-hdr lp-hdr--red lp-hdr--sm">
+        <div className="lp-hdr-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <p className="russo" style={{ fontSize: 32, color: 'white', lineHeight: 1 }}>МАТЧИ</p>
+          {!loading && (
+            <p className="oswald" style={{ fontSize: 11, color: 'rgba(242,230,216,0.55)', letterSpacing: '0.07em' }}>
+              {totalActive > 0 ? `${totalActive} активных` : 'нет активных'}
+            </p>
+          )}
+        </div>
+      </div>
 
-        {loading && (
-          <div className="flex flex-col gap-3">
-            <MatchCardSkeleton />
-            <MatchCardSkeleton />
-            <MatchCardSkeleton />
+      <div className="lp-scroll" style={{ marginTop: -22, padding: '12px 16px 24px' }}>
+        {loading ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <SkeletonCard /><SkeletonCard /><SkeletonCard />
           </div>
-        )}
-
-        {!loading && matches.length === 0 && (
-          <p className="text-tg-hint text-center mt-16">Активных матчей нет</p>
-        )}
-
-        {!loading && (
+        ) : matches.length === 0 ? (
+          <p style={{ textAlign: 'center', color: 'var(--lp-muted)', marginTop: 40 }}>Матчей нет</p>
+        ) : (
           <>
             {live.length > 0 && (
               <>
-                <p className="text-red-500 text-xs uppercase tracking-wide font-bold mb-2">🔴 Сейчас идут</p>
-                <div className="flex flex-col gap-3 mb-4">
-                  {live.map((match) => (
-                    <MatchCard key={match.id} match={match} navigate={navigate} />
-                  ))}
+                <span className="lp-label" style={{ marginBottom: 10 }}>ИДЁТ МАТЧ</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
+                  {live.map((m) => <MatchCard key={m.id} match={m} navigate={navigate} />)}
                 </div>
               </>
             )}
-
-            {open.length > 0 && (
+            {active.length > 0 && (
               <>
-                {live.length > 0 && <p className="text-tg-hint text-xs uppercase tracking-wide mb-2 mt-2">Принимаем ставки</p>}
-                <div className="flex flex-col gap-3 mb-4">
-                  {open.map((match) => (
-                    <MatchCard key={match.id} match={match} navigate={navigate} />
-                  ))}
+                <span className="lp-label" style={{ marginBottom: 10 }}>ПРИНИМАЕМ СТАВКИ</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
+                  {active.map((m) => <MatchCard key={m.id} match={m} navigate={navigate} />)}
                 </div>
               </>
             )}
-
-            {closed.length > 0 && (
+            {finished.length > 0 && (
               <>
-                <p className="text-tg-hint text-xs uppercase tracking-wide mb-2 mt-2">Завершённые</p>
-                <div className="flex flex-col gap-3">
-                  {closed.map((match) => (
-                    <MatchCard key={match.id} match={match} navigate={navigate} />
-                  ))}
+                <div className="lp-marquee" style={{ margin: '0 -16px 12px' }}>
+                  <div className="lp-marquee-inner">
+                    <span className="lp-marquee-text">
+                      ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp;
+                    </span>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                  {finished.map((m) => <MatchCard key={m.id} match={m} navigate={navigate} />)}
                 </div>
               </>
             )}
@@ -145,96 +147,99 @@ export default function Matches() {
   )
 }
 
-function MatchCard({ match, navigate }: { match: Match; navigate: (path: string, opts?: any) => void }) {
-  const isLive = match.status === 'live'
+function MatchCard({ match, navigate }: { match: Match; navigate: (p: string, o?: any) => void }) {
+  const isLive     = match.status === 'live'
   const isFinished = match.status === 'finished'
-  const isClosed = isLive || isFinished
-  const userBet = match.user_bet
+  const isClosed   = isLive || isFinished
+  const userBet    = match.user_bet
+
+  const headCls = isFinished ? 'lp-mc-head--muted' : isLive ? 'lp-mc-head--red' : 'lp-mc-head--blue'
 
   return (
-    <div className="tg-card">
-      {/* Status + deadline */}
-      <div className="flex justify-between items-center mb-3">
-        <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-          isFinished ? 'bg-tg-bg text-tg-hint'
-          : isLive    ? 'bg-red-100 text-red-600'
-          :             'bg-green-100 text-green-700'
-        }`}>
-          {isFinished ? '✅ Завершён' : isLive ? '🔴 Идёт матч' : '🟢 Открыто'}
+    <div className="lp-mc">
+      {/* Card header */}
+      <div className={`lp-mc-head ${headCls}`}>
+        <span className={`lp-pill ${isFinished ? 'lp-pill--done' : isLive ? 'lp-pill--live-hd' : 'lp-pill--open-hd'}`}>
+          {isFinished ? '✓ ЗАВЕРШЁН' : isLive ? '🔴 LIVE' : '🟢 OPEN'}
         </span>
-        {!isFinished && !isLive && match.bet_deadline && (
-          <span className="text-xs text-tg-hint">
-            ⏰ {formatDeadline(match.bet_deadline)}
-          </span>
-        )}
-        {isLive && (
-          <span className="text-xs text-tg-hint">Ставки закрыты</span>
-        )}
+        <span style={{ fontSize: 10, color: 'rgba(242,230,216,0.55)' }}>
+          {isFinished ? '' : isLive ? 'Ставки закрыты' : match.bet_deadline ? formatDeadline(match.bet_deadline) : ''}
+        </span>
       </div>
 
-      {/* Team buttons (active match) */}
-      {!isClosed && (
-        <div className="flex gap-2">
-          {([1, 2] as const).map((choice) => {
-            const name = choice === 1 ? match.team1_name : match.team2_name
-            const odds = choice === 1 ? match.odds_team1 : match.odds_team2
-            const isMyTeam = userBet?.team_choice === choice
-            const isOtherTeam = userBet != null && !isMyTeam
-
-            return (
-              <button
-                key={choice}
-                onClick={() => {
-                  if (isOtherTeam) return
-                  navigate(`/matches/${match.id}`, {
-                    state: { match, teamChoice: choice, isTopUp: isMyTeam },
-                  })
-                }}
-                disabled={isOtherTeam}
-                className={`flex-1 rounded-xl py-4 text-center transition-all ${
-                  isOtherTeam
-                    ? 'opacity-30 cursor-not-allowed'
-                    : 'active:scale-95'
-                } ${isMyTeam ? 'ring-2 ring-tg-link' : ''}`}
-                style={{ background: 'var(--tg-theme-bg-color)' }}
-              >
-                <p className="font-semibold text-tg-text text-sm leading-tight">{name}</p>
-                <p className="text-tg-link font-bold mt-1">× {odds}</p>
-                {isMyTeam && (
-                  <p className="text-xs text-tg-hint mt-0.5">+ додеп</p>
-                )}
-              </button>
-            )
-          })}
+      <div className="lp-mc-body">
+        {/* Teams row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: isClosed ? 0 : 12 }}>
+          <div style={{ flex: 1 }}>
+            <p className="russo" style={{ fontSize: 14, color: isFinished && userBet?.team_choice === 1 ? 'var(--lp-secondary)' : 'var(--lp-text)' }}>
+              {match.team1_name}
+            </p>
+            <p className="russo" style={{ fontSize: 22, lineHeight: 1, color: 'var(--lp-primary)' }}>
+              ×{isClosed ? (isLive ? match.odds_team1 : match.initial_odds_team1) : match.odds_team1}
+            </p>
+          </div>
+          <span className="oswald" style={{ fontSize: 11, color: 'var(--lp-muted)', letterSpacing: '0.1em', flexShrink: 0 }}>VS</span>
+          <div style={{ flex: 1, textAlign: 'right' }}>
+            <p className="russo" style={{ fontSize: 14, color: isFinished && userBet?.team_choice === 2 ? 'var(--lp-secondary)' : 'var(--lp-text)', textAlign: 'right' }}>
+              {match.team2_name}
+            </p>
+            <p className="russo" style={{ fontSize: 22, lineHeight: 1, color: 'var(--lp-secondary)', textAlign: 'right' }}>
+              ×{isClosed ? (isLive ? match.odds_team2 : match.initial_odds_team2) : match.odds_team2}
+            </p>
+          </div>
         </div>
-      )}
 
-      {/* Teams display (live/finished, no buttons) */}
-      {isClosed && (
-        <div className="flex justify-between items-center">
-          <span className="font-semibold text-tg-text text-sm">
-            {match.team1_name} <span className="text-tg-hint font-normal">vs</span> {match.team2_name}
-          </span>
-          <span className="text-xs text-tg-hint shrink-0 ml-2">
-            × {match.odds_team1} / × {match.odds_team2}
-          </span>
-        </div>
-      )}
+        {/* Buttons (active only) */}
+        {!isClosed && (
+          <div style={{ display: 'flex', gap: 8 }}>
+            {([1, 2] as const).map((choice) => {
+              const name      = choice === 1 ? match.team1_name : match.team2_name
+              const isMyTeam  = userBet?.team_choice === choice
+              const isOther   = userBet != null && !isMyTeam
+              return (
+                <div key={choice} style={{ flex: 1, position: 'relative' }}>
+                  <button
+                    onClick={() => { if (isOther) return; navigate(`/matches/${match.id}`, { state: { match, teamChoice: choice, isTopUp: isMyTeam } }) }}
+                    disabled={isOther}
+                    className={isMyTeam ? 'lp-btn-outline lp-btn-outline--red' : 'lp-btn-outline'}
+                    style={{
+                      width: '100%', padding: '9px 6px', fontSize: 12,
+                      opacity: isOther ? 0.3 : 1,
+                      cursor: isOther ? 'not-allowed' : 'pointer',
+                      background: isMyTeam ? 'rgba(217,13,50,0.05)' : 'transparent',
+                    }}
+                  >
+                    {name}
+                  </button>
+                  {isMyTeam && (
+                    <span className="oswald" style={{
+                      position: 'absolute', top: -7, right: -3,
+                      background: 'var(--lp-primary)', color: 'white',
+                      fontSize: 9, padding: '1px 6px', borderRadius: 2, letterSpacing: '0.05em',
+                    }}>+ ДОДЕП</span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        )}
 
-      {/* Existing bet summary */}
-      {userBet && (
-        <div className="mt-3 rounded-xl p-3 bg-green-50">
-          <p className="text-green-700 font-medium text-sm">
-            ✅ {userBet.team_choice === 1 ? match.team1_name : match.team2_name}
-            {userBet.bets_count > 1 && (
-              <span className="text-green-600 font-normal"> ({userBet.bets_count} ставки)</span>
-            )}
-          </p>
-          <p className="text-green-600 text-xs mt-0.5">
-            {userBet.amount} → {userBet.potential_win} очков потенциально
-          </p>
-        </div>
-      )}
+        {/* Existing bet summary */}
+        {userBet && !isFinished && (
+          <div style={{
+            marginTop: 10, borderRadius: 4, padding: '8px 12px',
+            background: 'rgba(27,101,166,0.08)', borderLeft: '3px solid var(--lp-secondary)',
+          }}>
+            <p className="oswald" style={{ fontSize: 12, color: 'var(--lp-secondary)', letterSpacing: '0.05em' }}>
+              ✓ {userBet.team_choice === 1 ? match.team1_name : match.team2_name}
+              {userBet.bets_count > 1 && ` (${userBet.bets_count} ставки)`}
+            </p>
+            <p style={{ fontSize: 11, color: 'var(--lp-muted)', marginTop: 2 }}>
+              {userBet.amount} → {userBet.potential_win} очков
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

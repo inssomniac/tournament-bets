@@ -28,21 +28,20 @@ export default function BetFlow() {
   const odds = teamChoice === 1 ? match.odds_team1 : match.odds_team2
   const maxAllowed = user?.balance ?? 0
   const potentialWin = Math.floor(amount * odds)
-  const isValid = amount >= MIN && amount <= maxAllowed
 
-  const existingBet = match.user_bet
-
-  const adjust = (delta: number) => {
-    setAmount((prev) => Math.max(MIN, Math.min(maxAllowed, prev + delta)))
+  const setAmountSafe = (v: number) => {
+    const clamped = Math.max(MIN, Math.min(maxAllowed, Math.round(v / STEP) * STEP))
+    setAmount(clamped)
   }
 
-  const handleConfirm = async () => {
+  const handleBet = async () => {
     setLoading(true)
     setError('')
     try {
-      await api.post('/api/bets/', { match_id: match.id, team_choice: teamChoice, amount })
-      updateBalance((user?.balance ?? 0) - amount)
+      const { data } = await api.post('/api/bets/', { match_id: match.id, team_choice: teamChoice, amount })
+      updateBalance(data.new_balance)
       setSuccess(true)
+      setTimeout(() => navigate('/matches'), 1500)
     } catch (e: any) {
       setError(e.message)
     } finally {
@@ -52,132 +51,121 @@ export default function BetFlow() {
 
   if (success) {
     return (
-      <div className="flex flex-col min-h-screen p-5 gap-5 bg-tg-bg items-center justify-center text-center pt-tg-header">
-        <div className="text-6xl">✅</div>
-        <div>
-          <h2 className="text-xl font-bold text-tg-text">
-            {isTopUp ? 'Додеп принят!' : 'Ставка принята!'}
-          </h2>
-          <p className="text-tg-hint mt-1 text-sm">
-            {amount} очков на{' '}
-            <span className="font-semibold text-tg-text">{teamName}</span>
-          </p>
-        </div>
-        <div className="tg-card w-full text-center">
-          <p className="text-tg-hint text-sm">Потенциальный выигрыш (эта ставка)</p>
-          <p className="text-3xl font-bold text-tg-link">{potentialWin} 🪙</p>
-        </div>
-        <button onClick={() => navigate('/matches', { replace: true })} className="tg-btn w-full">
-          К матчам
-        </button>
+      <div className="lp-page" style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <p className="russo" style={{ fontSize: 48, textAlign: 'center' }}>✅</p>
+        <p className="russo" style={{ fontSize: 28, color: 'var(--lp-secondary)', textAlign: 'center' }}>
+          СТАВКА ПРИНЯТА
+        </p>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col min-h-screen p-5 gap-5 bg-tg-bg pt-tg-header">
-      <button onClick={() => navigate(-1)} className="text-tg-link text-sm self-start">
-        ← Назад
-      </button>
-
-      <div>
-        <p className="text-tg-hint text-xs">{match.team1_name} vs {match.team2_name}</p>
-        <h1 className="text-xl font-bold text-tg-text mt-0.5">
-          {isTopUp ? 'Додеп: ' : 'За '}
-          <span className="text-tg-link">{teamName}</span>
-        </h1>
-        <p className="text-tg-hint text-sm">Коэффициент × {odds}</p>
-        <p className="text-xs mt-1" style={{ color: 'var(--tg-theme-accent-text-color, #f59e0b)' }}>
-          ⚡ Коэф динамический — фиксируется в момент подтверждения
-        </p>
-      </div>
-
-      {/* Current bet summary (top-up mode) */}
-      {isTopUp && existingBet && (
-        <div className="tg-card flex flex-col gap-1" style={{ background: 'var(--tg-theme-secondary-bg-color)' }}>
-          <p className="text-tg-hint text-xs uppercase tracking-wide">Уже поставлено</p>
-          <p className="font-semibold text-tg-text text-sm">
-            {existingBet.amount} очков
-            {existingBet.bets_count > 1 && (
-              <span className="text-tg-hint font-normal"> ({existingBet.bets_count} ставки)</span>
-            )}
+    <div className="lp-page">
+      {/* Flat diagonal header with back button */}
+      <div className="lp-hdr-flat lp-hdr-flat--red">
+        <div className="lp-hdr-inner" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            onClick={() => navigate(-1)}
+            style={{ background: 'none', border: 'none', color: 'white', fontSize: 22, cursor: 'pointer', padding: '0 4px' }}
+          >←</button>
+          <p className="oswald" style={{ fontSize: 20, color: 'white', letterSpacing: '0.07em' }}>
+            {isTopUp ? 'ДОДЕП' : 'СТАВКА НА МАТЧ'}
           </p>
-          <p className="text-tg-hint text-xs">потенциал: {existingBet.potential_win} очков</p>
         </div>
-      )}
-
-      <div className="tg-card flex justify-between items-center">
-        <span className="text-tg-hint text-sm">Ваш баланс</span>
-        <span className="font-bold text-tg-text">{user?.balance ?? '…'} очков</span>
       </div>
 
-      <div className="tg-card flex flex-col items-center gap-4 py-6">
-        <p className="text-tg-hint text-xs uppercase tracking-wide">
-          {isTopUp ? 'Сумма додепа' : 'Сумма ставки'}
+      <div className="lp-scroll" style={{ marginTop: -16, padding: '14px 16px 32px' }}>
+        <span className="lp-label">МАТЧ</span>
+        <p className="russo" style={{ fontSize: 20, color: 'var(--lp-text)', marginBottom: 16 }}>
+          {match.team1_name} vs {match.team2_name}
         </p>
-        <div className="flex items-center gap-6">
-          <button
-            onClick={() => adjust(-STEP)}
-            disabled={amount <= MIN}
-            className="w-12 h-12 rounded-full text-2xl font-bold disabled:opacity-30 active:scale-90 transition-transform"
-            style={{ background: 'var(--tg-theme-bg-color)', color: 'var(--tg-theme-text-color)' }}
-          >
-            −
-          </button>
-          <span className="text-5xl font-bold text-tg-text w-32 text-center tabular-nums">
-            {amount}
+
+        {/* Selected team card */}
+        <div style={{
+          background: 'var(--lp-secondary)', borderRadius: 6,
+          padding: '14px 16px', marginBottom: 16, position: 'relative', overflow: 'hidden',
+        }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'rgba(255,255,255,0.25)' }} />
+          <span className="lp-label lp-label--dk">
+            {isTopUp ? 'ДОДЕП НА' : 'СТАВКА НА'}
           </span>
-          <button
-            onClick={() => adjust(+STEP)}
-            disabled={amount >= maxAllowed}
-            className="w-12 h-12 rounded-full text-2xl font-bold disabled:opacity-30 active:scale-90 transition-transform"
-            style={{ background: 'var(--tg-theme-bg-color)', color: 'var(--tg-theme-text-color)' }}
-          >
-            +
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <p className="russo" style={{ fontSize: 24, color: 'white' }}>{teamName}</p>
+            <p className="russo" style={{ fontSize: 30, color: 'white' }}>×{odds}</p>
+          </div>
         </div>
 
-        <div className="flex gap-2 w-full">
-          {PRESETS.filter((v) => v <= maxAllowed).map((v) => (
+        {/* Existing bet info (dodep) */}
+        {isTopUp && match.user_bet && (
+          <div style={{
+            background: 'rgba(27,101,166,0.08)', border: '1px solid rgba(27,101,166,0.2)',
+            borderRadius: 4, padding: '10px 12px', marginBottom: 16,
+          }}>
+            <p className="oswald" style={{ fontSize: 11, color: 'var(--lp-secondary)', letterSpacing: '0.07em', marginBottom: 3 }}>
+              ТЕКУЩАЯ СТАВКА
+            </p>
+            <p style={{ fontSize: 13, color: 'var(--lp-text)' }}>
+              {match.user_bet.amount} оч → {match.user_bet.potential_win} потенциально
+              {match.user_bet.bets_count > 1 && ` (${match.user_bet.bets_count} ставки)`}
+            </p>
+          </div>
+        )}
+
+        <span className="lp-label">СУММА СТАВКИ</span>
+        <input
+          className="lp-inp"
+          type="number"
+          value={amount}
+          min={MIN}
+          max={maxAllowed}
+          step={STEP}
+          onChange={(e) => setAmountSafe(Number(e.target.value))}
+          style={{ fontFamily: "'Russo One', sans-serif", fontSize: 32, textAlign: 'center', marginBottom: 10 }}
+        />
+
+        {/* Quick presets */}
+        <div style={{ display: 'flex', gap: 6, marginBottom: 20 }}>
+          {PRESETS.map((p) => (
             <button
-              key={v}
-              onClick={() => setAmount(v)}
-              className={`flex-1 py-2 rounded-xl text-sm font-medium transition-all active:scale-95 ${
-                amount === v ? 'bg-tg-btn text-tg-btn-text' : 'bg-tg-bg text-tg-hint'
-              }`}
-            >
-              {v}
-            </button>
+              key={p}
+              onClick={() => setAmountSafe(p)}
+              className={amount === p ? 'lp-btn-outline lp-btn-outline--red' : 'lp-btn-outline'}
+              style={{ flex: 1, padding: '8px 4px', fontSize: 12,
+                background: amount === p ? 'rgba(217,13,50,0.06)' : 'transparent' }}
+            >{p}</button>
           ))}
           <button
-            onClick={() => setAmount(maxAllowed)}
-            className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all active:scale-95 ${
-              amount === maxAllowed ? 'bg-tg-btn text-tg-btn-text' : 'bg-tg-bg text-tg-link'
-            }`}
-          >
-            All-in
-          </button>
+            onClick={() => setAmountSafe(maxAllowed)}
+            className="lp-btn-outline"
+            style={{ flex: 1, padding: '8px 4px', fontSize: 12 }}
+          >MAX</button>
         </div>
+
+        {/* Potential win block */}
+        <div className="lp-win" style={{ marginBottom: 20 }}>
+          <span className="lp-label lp-label--dk">ПОТЕНЦИАЛЬНЫЙ ВЫИГРЫШ</span>
+          <p className="russo" style={{ fontSize: 52, color: 'white', lineHeight: 1 }}>{potentialWin}</p>
+          <p className="oswald" style={{ fontSize: 13, color: 'rgba(242,230,216,0.55)', letterSpacing: '0.07em' }}>ОЧКОВ</p>
+          <div style={{ marginTop: 10, padding: '6px 12px', background: 'rgba(255,255,255,0.08)', borderRadius: 4, display: 'inline-block' }}>
+            <p style={{ fontSize: 11, color: 'rgba(242,230,216,0.6)' }}>
+              ⚡ Коэф динамический — фиксируется при подтверждении
+            </p>
+          </div>
+        </div>
+
+        {error && (
+          <p style={{ fontSize: 13, color: 'var(--lp-primary)', marginBottom: 12 }}>{error}</p>
+        )}
+
+        <button
+          className="lp-btn"
+          onClick={handleBet}
+          disabled={loading || amount < MIN || amount > maxAllowed}
+        >
+          {loading ? 'ОБРАБОТКА...' : `${isTopUp ? 'ДОДЕПНУТЬ' : 'ПОСТАВИТЬ'} ${amount} ОЧКОВ`}
+        </button>
       </div>
-
-      <div className="tg-card flex justify-between items-center">
-        <span className="text-tg-hint text-sm">Потенциальный выигрыш</span>
-        <span className="text-xl font-bold text-tg-link">{potentialWin} 🪙</span>
-      </div>
-
-      {error && <p className="text-tg-destructive text-sm text-center">{error}</p>}
-
-      <button
-        onClick={handleConfirm}
-        disabled={!isValid || loading}
-        className="tg-btn mt-auto"
-      >
-        {loading
-          ? 'Отправка...'
-          : isTopUp
-            ? `Додепнуть ${amount} очков`
-            : `Поставить ${amount} очков`}
-      </button>
     </div>
   )
 }

@@ -1,37 +1,29 @@
-import { NavLink } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
-const tabs = [
-  { path: '/home',        icon: '🏠', label: 'Главная' },
-  { path: '/matches',     icon: '🏆', label: 'Матчи' },
-  { path: '/balance',     icon: '💰', label: 'Баланс' },
-  { path: '/bonuses',     icon: '🎁', label: 'Бонусы' },
-  { path: '/leaderboard', icon: '📊', label: 'Рейтинг' },
+const TABS = [
+  { path: '/home',        icon: '🏠', label: 'ДОМ' },
+  { path: '/matches',     icon: '🏆', label: 'МАТЧИ' },
+  { path: '/balance',     icon: '💰', label: 'БАЛАНС' },
+  { path: '/bonuses',     icon: '🎁', label: 'БОНУСЫ' },
+  { path: '/leaderboard', icon: '📊', label: 'РЕЙТИНГ' },
 ]
 
 export default function TabBar() {
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 flex z-10"
-      style={{
-        background: 'var(--tg-theme-secondary-bg-color)',
-        borderTop: '1px solid var(--tg-separator)',
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-      }}
-    >
-      {tabs.map((tab) => (
-        <NavLink
+    <div className="lp-tabbar">
+      {TABS.map((tab) => (
+        <div
           key={tab.path}
-          to={tab.path}
-          className={({ isActive }) =>
-            `flex-1 flex flex-col items-center py-2 text-xs gap-1 transition-colors ${
-              isActive ? 'text-tg-link' : 'text-tg-hint'
-            }`
-          }
+          className={`lp-tab ${pathname === tab.path ? 'lp-tab--active' : ''}`}
+          onClick={() => navigate(tab.path)}
         >
-          <span className="text-xl">{tab.icon}</span>
-          <span>{tab.label}</span>
-        </NavLink>
+          <span className="lp-tab-icon">{tab.icon}</span>
+          <span className="lp-tab-label">{tab.label}</span>
+        </div>
       ))}
-    </nav>
+    </div>
   )
 }

@@ -16,21 +16,21 @@ function formatTime(d: Date): string {
   return d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
 }
 
-function MatchCardSkeleton() {
+function MatchSkeleton() {
   return (
-    <div style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 20, padding: '24px 32px' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-        <div className="sk" style={{ width: 80, height: 28, borderRadius: 20 }} />
+    <div style={{ background: 'white', border: '1.5px solid var(--lp-cream-dark)', borderRadius: 6, overflow: 'hidden', marginBottom: 14 }}>
+      <div style={{ background: 'var(--lp-primary)', padding: '8px 14px', opacity: 0.3 }}>
+        <div className="lp-sk" style={{ width: 72, height: 20, borderRadius: 3 }} />
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
-          <div className="sk" style={{ width: 120, height: 22, borderRadius: 6 }} />
-          <div className="sk" style={{ width: 60, height: 32, borderRadius: 6 }} />
+      <div style={{ padding: 16, display: 'flex', gap: 12 }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+          <div className="lp-sk" style={{ width: 100, height: 16, borderRadius: 4 }} />
+          <div className="lp-sk" style={{ width: 60, height: 36, borderRadius: 4 }} />
         </div>
-        <div className="sk" style={{ width: 40, height: 22, borderRadius: 6, flexShrink: 0 }} />
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8 }}>
-          <div className="sk" style={{ width: 120, height: 22, borderRadius: 6 }} />
-          <div className="sk" style={{ width: 60, height: 32, borderRadius: 6 }} />
+        <div className="lp-sk" style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0 }} />
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="lp-sk" style={{ width: 100, height: 16, borderRadius: 4 }} />
+          <div className="lp-sk" style={{ width: 60, height: 36, borderRadius: 4 }} />
         </div>
       </div>
     </div>
@@ -40,183 +40,144 @@ function MatchCardSkeleton() {
 export default function PublicOddsPage() {
   const [matches, setMatches] = useState<PublicMatch[]>([])
   const [loading, setLoading] = useState(true)
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
-  const [networkError, setNetworkError] = useState(false)
+  const [updatedAt, setUpdatedAt] = useState(new Date())
 
-  const fetchData = () => {
-    api.get('/public/odds')
-      .then(({ data }) => {
-        setMatches(data)
-        setLastUpdated(new Date())
-        setNetworkError(false)
-      })
-      .catch(() => setNetworkError(true))
-      .finally(() => setLoading(false))
+  const fetchMatches = () => {
+    api.get('/public/odds').then(({ data }) => {
+      setMatches(data)
+      setUpdatedAt(new Date())
+    }).finally(() => setLoading(false))
   }
 
   useEffect(() => {
-    fetchData()
-    const interval = setInterval(fetchData, 5000)
-    return () => clearInterval(interval)
+    fetchMatches()
+    const id = setInterval(fetchMatches, 5000)
+    return () => clearInterval(id)
   }, [])
 
+  const live = matches.filter((m) => m.status === 'live')
+  const open = matches.filter((m) => m.status === 'active')
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#0d0d0d',
-      color: '#f0f0f0',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
-      {/* Header */}
-      <div style={{ textAlign: 'center', padding: '36px 24px 24px' }}>
-        <h1 style={{
-          fontSize: 'clamp(1.2rem, 4vw, 2rem)',
-          fontWeight: 800,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: '#fff',
-          margin: 0,
+    <div style={{ minHeight: '100dvh', background: 'var(--lp-bg)', display: 'flex', flexDirection: 'column' }}>
+      {/* Red diagonal header */}
+      <div style={{
+        background: 'var(--lp-primary)',
+        clipPath: 'polygon(0 0, 100% 0, 100% 82%, 0 100%)',
+        padding: '28px 20px 52px',
+        textAlign: 'center',
+        position: 'relative',
+        flexShrink: 0,
+      }}>
+        {/* Badge */}
+        <div style={{
+          position: 'absolute', top: 18, left: 18,
+          width: 56, height: 56, borderRadius: '50%',
+          background: 'rgba(30,29,63,0.6)', border: '2px solid rgba(242,230,216,0.5)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         }}>
-          🏏 Летний Кубок по лапте 2026
-        </h1>
-        <p style={{ color: '#444', fontSize: 13, marginTop: 10 }}>
-          {networkError ? '⚠️ ' : ''}
-          {lastUpdated ? `Обновлено: ${formatTime(lastUpdated)}` : 'Загрузка...'}
+          <span style={{ fontSize: 20 }}>🏏</span>
+          <small style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 700, fontSize: 7, color: 'var(--lp-bg)', letterSpacing: '0.1em', marginTop: 1 }}>LAPTA</small>
+        </div>
+        <p style={{ fontFamily: "'Russo One',sans-serif", fontSize: 22, color: 'white', lineHeight: 1.2, marginBottom: 8 }}>
+          ЛЕТНИЙ КУБОК<br />ПО ЛАПТЕ 2026
+        </p>
+        <p style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 700, fontSize: 11, color: 'rgba(255,255,255,0.5)', letterSpacing: '0.08em' }}>
+          Обновлено: {formatTime(updatedAt)}
         </p>
       </div>
 
-      {/* Matches */}
-      <div style={{ flex: 1, padding: '0 24px 40px', maxWidth: 860, margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-        {loading && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <MatchCardSkeleton />
-            <MatchCardSkeleton />
-            <MatchCardSkeleton />
-          </div>
-        )}
-
-        {!loading && matches.length === 0 && (
-          <div style={{ textAlign: 'center', marginTop: 80 }}>
-            <p style={{ fontSize: 48, margin: 0 }}>🏏</p>
-            <p style={{ color: '#555', fontSize: 18, marginTop: 16 }}>Матчей нет</p>
-          </div>
-        )}
-
-        {!loading && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {matches.map((match) => {
-              const isLive = match.status === 'live'
-              return (
-                <div
-                  key={match.id}
-                  style={{
-                    background: '#1a1a1a',
-                    border: `1px solid ${isLive ? '#ef4444' : '#2a2a2a'}`,
-                    borderRadius: 20,
-                    padding: '24px 32px',
-                  }}
-                >
-                  {/* Status badge — centered top */}
-                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
-                    <span style={{
-                      fontSize: 13,
-                      fontWeight: 700,
-                      letterSpacing: '0.06em',
-                      textTransform: 'uppercase',
-                      padding: '5px 18px',
-                      borderRadius: 20,
-                      background: isLive ? '#ef4444' : '#16a34a',
-                      color: '#fff',
-                    }}>
-                      {isLive ? '🔴 Live' : '🟢 Open'}
-                    </span>
-                  </div>
-
-                  {/* Teams row: Team1 | VS | Team2 */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    {/* Team 1 — right-aligned */}
-                    <div style={{ flex: 1, textAlign: 'right' }}>
-                      <p style={{
-                        fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)',
-                        fontWeight: 600,
-                        color: '#f0f0f0',
-                        margin: '0 0 6px',
-                        lineHeight: 1.3,
-                      }}>
-                        {match.team1_name}
-                      </p>
-                      <p style={{
-                        fontSize: 'clamp(1.4rem, 4vw, 2rem)',
-                        fontWeight: 800,
-                        color: isLive ? '#666' : '#22c55e',
-                        margin: 0,
-                        fontVariantNumeric: 'tabular-nums',
-                      }}>
-                        ×{match.odds_team1}
-                      </p>
-                    </div>
-
-                    {/* VS */}
-                    <div style={{
-                      flexShrink: 0,
-                      width: 48,
-                      textAlign: 'center',
-                      fontSize: 'clamp(0.9rem, 2vw, 1.1rem)',
-                      fontWeight: 700,
-                      color: '#444',
-                      letterSpacing: '0.04em',
-                    }}>
-                      VS
-                    </div>
-
-                    {/* Team 2 — left-aligned */}
-                    <div style={{ flex: 1, textAlign: 'left' }}>
-                      <p style={{
-                        fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)',
-                        fontWeight: 600,
-                        color: '#f0f0f0',
-                        margin: '0 0 6px',
-                        lineHeight: 1.3,
-                      }}>
-                        {match.team2_name}
-                      </p>
-                      <p style={{
-                        fontSize: 'clamp(1.4rem, 4vw, 2rem)',
-                        fontWeight: 800,
-                        color: isLive ? '#666' : '#22c55e',
-                        margin: 0,
-                        fontVariantNumeric: 'tabular-nums',
-                      }}>
-                        ×{match.odds_team2}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Pool info */}
-                  {match.bets_count > 0 && (
-                    <p style={{
-                      textAlign: 'center',
-                      color: '#444',
-                      fontSize: 12,
-                      marginTop: 16,
-                      marginBottom: 0,
-                    }}>
-                      {match.bets_count} ставок · {match.total_bets} очков в пуле
-                    </p>
-                  )}
-                </div>
-              )
-            })}
-          </div>
+      {/* Content */}
+      <div style={{ flex: 1, padding: '4px 16px 24px', marginTop: -24 }}>
+        {loading ? (
+          <><MatchSkeleton /><MatchSkeleton /></>
+        ) : matches.length === 0 ? (
+          <p style={{ textAlign: 'center', color: 'var(--lp-muted)', marginTop: 40, fontFamily: "'Oswald',sans-serif", fontWeight: 700, fontSize: 14 }}>
+            НЕТ АКТИВНЫХ МАТЧЕЙ
+          </p>
+        ) : (
+          <>
+            {live.length > 0 && (
+              <>
+                <span style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', color: 'var(--lp-muted)', display: 'block', marginBottom: 10 }}>
+                  ИДУТ МАТЧИ
+                </span>
+                {live.map((m) => <PublicMatchCard key={m.id} match={m} />)}
+              </>
+            )}
+            {open.length > 0 && (
+              <>
+                {live.length > 0 && (
+                  <div style={{ height: 1, background: 'var(--lp-cream-dark)', margin: '4px 0 14px' }} />
+                )}
+                <span style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', color: 'var(--lp-muted)', display: 'block', marginBottom: 10 }}>
+                  ПРИНИМАЕМ СТАВКИ
+                </span>
+                {open.map((m) => <PublicMatchCard key={m.id} match={m} />)}
+              </>
+            )}
+          </>
         )}
       </div>
 
-      {/* Footer */}
-      <div style={{ textAlign: 'center', color: '#2a2a2a', fontSize: 12, padding: '0 0 20px' }}>
-        авто-обновление каждые 5 секунд
+      {/* Bottom marquee */}
+      <div style={{ background: 'var(--lp-contrast)', overflow: 'hidden', padding: '8px 0', whiteSpace: 'nowrap', marginTop: 'auto' }}>
+        <div style={{ display: 'inline-block', animation: 'lp-mq 16s linear infinite' }}>
+          <span style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', color: 'var(--lp-on-dark)' }}>
+            ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; DVFU &nbsp;·&nbsp; ДЕЛАЙ СТАВКИ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp;
+            ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; DVFU &nbsp;·&nbsp; ДЕЛАЙ СТАВКИ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp;
+          </span>
+        </div>
       </div>
     </div>
   )
+}
+
+function PublicMatchCard({ match }: { match: PublicMatch }) {
+  const isLive = match.status === 'live'
+  const headColor = isLive ? 'var(--lp-primary)' : 'var(--lp-secondary)'
+
+  return (
+    <div style={{ background: 'white', border: '1.5px solid var(--lp-cream-dark)', borderRadius: 6, overflow: 'hidden', marginBottom: 14, position: 'relative' }}>
+      {/* Top accent */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: headColor }} />
+      {/* Status */}
+      <div style={{ padding: '10px 14px 4px', textAlign: 'center' }}>
+        <span style={{
+          fontFamily: "'Oswald',sans-serif", fontWeight: 700, fontSize: 11,
+          background: headColor, color: 'white',
+          padding: '3px 10px', borderRadius: 3, letterSpacing: '0.07em',
+        }}>
+          {isLive ? '🔴 LIVE' : '🟢 OPEN'}
+        </span>
+      </div>
+      {/* Teams + odds */}
+      <div style={{ padding: '10px 16px 14px', display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ flex: 1, textAlign: 'right' }}>
+          <p style={{ fontFamily: "'Russo One',sans-serif", fontSize: 14, color: 'var(--lp-text)' }}>{match.team1_name}</p>
+          <p style={{ fontFamily: "'Russo One',sans-serif", fontSize: 36, lineHeight: 1, color: 'var(--lp-primary)' }}>×{match.odds_team1}</p>
+        </div>
+        <div style={{
+          width: 36, height: 36, borderRadius: '50%',
+          background: 'var(--lp-bg)', border: '2px solid var(--lp-cream-dark)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        }}>
+          <span style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 700, fontSize: 10, color: 'var(--lp-muted)', letterSpacing: '0.05em' }}>VS</span>
+        </div>
+        <div style={{ flex: 1 }}>
+          <p style={{ fontFamily: "'Russo One',sans-serif", fontSize: 14, color: 'var(--lp-text)' }}>{match.team2_name}</p>
+          <p style={{ fontFamily: "'Russo One',sans-serif", fontSize: 36, lineHeight: 1, color: 'var(--lp-secondary)' }}>×{match.odds_team2}</p>
+        </div>
+      </div>
+      {/* Pool info */}
+      {match.bets_count > 0 && (
+        <div style={{ background: 'var(--lp-bg)', borderTop: '1px solid var(--lp-cream-dark)', padding: '6px 16px', display: 'flex', justifyContent: 'center', gap: 16 }}>
+          <p style={{ fontFamily: "'Oswald',sans-serif", fontSize: 11, color: 'var(--lp-muted)', fontWeight: 700, letterSpacing: '0.05em' }}>{match.bets_count} ставок</p>
+          <p style={{ fontFamily: "'Oswald',sans-serif", fontSize: 11, color: 'var(--lp-muted)', fontWeight: 700 }}>·</p>
+          <p style={{ fontFamily: "'Oswald',sans-serif", fontSize: 11, color: 'var(--lp-muted)', fontWeight: 700, letterSpacing: '0.05em' }}>{match.total_bets} очков в пуле</p>
+        </div>
+      )}
+    </div>
+  )
+}
 }

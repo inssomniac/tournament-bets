@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './styles/lapta.css';
+
 /* Fallback values for browser preview — Telegram overrides these at runtime */
 :root {
   --tg-theme-bg-color: #ffffff;

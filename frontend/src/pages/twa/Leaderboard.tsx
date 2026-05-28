@@ -15,27 +15,6 @@ interface LeaderboardData {
   total_players: number
 }
 
-const rankMedal = (rank: number) => {
-  if (rank === 1) return '🥇'
-  if (rank === 2) return '🥈'
-  if (rank === 3) return '🥉'
-  return `#${rank}`
-}
-
-function LeaderboardSkeleton() {
-  return (
-    <div className="flex flex-col gap-2">
-      {[0, 1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-tg-sbg">
-          <div className="sk rounded-md w-8 h-5 shrink-0" />
-          <div className="sk rounded-md flex-1 h-4" />
-          <div className="sk rounded-md w-16 h-4 shrink-0" />
-        </div>
-      ))}
-    </div>
-  )
-}
-
 export default function Leaderboard() {
   const [data, setData] = useState<LeaderboardData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -59,73 +38,109 @@ export default function Leaderboard() {
     }
   }, [data])
 
+  const top3    = data?.leaderboard.slice(0, 3) ?? []
+  const rest    = data?.leaderboard.slice(3) ?? []
   const myEntry = data?.leaderboard.find((e) => e.is_current_user)
-  const myInTop = myEntry !== undefined
+  const myInTop = !!myEntry
+
+  const podiumOrder = top3.length >= 3
+    ? [top3[1], top3[0], top3[2]]   // silver, gold, bronze
+    : top3
+
+  const podiumHeights = [64, 90, 44]
+  const podiumColors  = ['var(--lp-secondary)', 'var(--lp-primary)', 'var(--lp-muted)']
+  const podiumMedals  = ['🥈', '🥇', '🥉']
 
   return (
-    <div className="flex flex-col min-h-screen pb-tabbar pt-tg-header bg-tg-bg">
-      <div className="p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xl font-bold text-tg-text">📊 Рейтинг</h1>
-          {/* Placeholder фиксированной ширины чтобы заголовок не прыгал */}
-          {loading
-            ? <div className="sk rounded-md h-4 w-24" />
-            : data
-              ? <span className="text-sm text-tg-hint">{data.total_players} участников</span>
-              : null
-          }
+    <div className="lp-page">
+      {/* Diagonal blue header */}
+      <div className="lp-hdr lp-hdr--blue lp-hdr--lg">
+        <div className="lp-hdr-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <p className="russo" style={{ fontSize: 40, color: 'white', lineHeight: 1 }}>РЕЙТИНГ</p>
+            {!loading && data && (
+              <p className="oswald" style={{ fontSize: 11, color: 'rgba(242,230,216,0.5)', letterSpacing: '0.07em', marginTop: 4 }}>
+                {data.total_players} УЧАСТНИКОВ
+              </p>
+            )}
+          </div>
+          <div className="lp-badge-circle" style={{ position: 'relative', top: 'auto', right: 'auto', width: 58, height: 58 }}>
+            <span style={{ fontSize: 22 }}>🏆</span>
+            <small className="oswald" style={{ fontSize: 7, color: 'var(--lp-bg)', letterSpacing: '0.1em', marginTop: 2 }}>TOP</small>
+          </div>
         </div>
+      </div>
 
+      <div className="lp-scroll" style={{ marginTop: -26, padding: '8px 16px 24px' }}>
         {loading ? (
-          <LeaderboardSkeleton />
-        ) : (
-          <div className="flex flex-col gap-2">
-            {data?.leaderboard.map((entry) => (
-              <div
-                key={entry.rank}
-                ref={entry.is_current_user ? myRowRef : undefined}
-                className={`flex items-center gap-3 p-3 rounded-xl ${
-                  entry.is_current_user
-                    ? 'ring-2 ring-tg-link bg-tg-sbg'
-                    : 'bg-tg-sbg'
-                }`}
-              >
-                <span className="text-base font-bold w-8 text-center shrink-0 text-tg-text">
-                  {rankMedal(entry.rank)}
-                </span>
-                <span className={`flex-1 text-sm font-medium truncate ${
-                  entry.is_current_user ? 'text-tg-link' : 'text-tg-text'
-                }`}>
-                  {entry.full_name}
-                  {entry.is_current_user && ' 👈'}
-                </span>
-                <span className={`text-sm font-bold shrink-0 ${
-                  entry.is_current_user ? 'text-tg-link' : 'text-tg-hint'
-                }`}>
-                  {entry.balance} 🪙
-                </span>
-              </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {[0,1,2,3,4,5].map(i => (
+              <div key={i} className="lp-sk" style={{ height: 40, borderRadius: 5 }} />
             ))}
           </div>
+        ) : (
+          <>
+            {/* Podium top-3 */}
+            {top3.length >= 3 && (
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 5, marginBottom: 18 }}>
+                {podiumOrder.map((entry, i) => (
+                  <div key={entry.rank} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+                    <p style={{ fontSize: 10, color: 'var(--lp-muted)', textAlign: 'center', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%', padding: '0 2px' }}>
+                      {entry.full_name.split(' ').slice(0,2).join(' ')}
+                    </p>
+                    <p className="russo" style={{ fontSize: 10, color: podiumColors[i], textAlign: 'center', marginBottom: 3 }}>
+                      {entry.balance} 🪙
+                    </p>
+                    <div style={{
+                      width: '100%', background: podiumColors[i], height: podiumHeights[i],
+                      borderRadius: '4px 4px 0 0',
+                      display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: 5,
+                      fontSize: 20,
+                    }}>{podiumMedals[i]}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Rows from 4th */}
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {rest.map((entry) => (
+                <div
+                  key={entry.rank}
+                  ref={entry.is_current_user ? myRowRef : undefined}
+                  className={`lp-lb-row ${entry.is_current_user ? 'lp-lb-row--me' : ''}`}
+                >
+                  <span className="russo" style={{ fontSize: 16, color: entry.is_current_user ? 'var(--lp-primary)' : 'var(--lp-muted)', width: 28, textAlign: 'center', flexShrink: 0 }}>
+                    #{entry.rank}
+                  </span>
+                  <span style={{ flex: 1, fontSize: 13, color: entry.is_current_user ? 'var(--lp-primary)' : 'var(--lp-text)', fontWeight: entry.is_current_user ? 600 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {entry.full_name}{entry.is_current_user && ' 👈'}
+                  </span>
+                  <span className={entry.is_current_user ? 'russo' : ''} style={{ fontSize: entry.is_current_user ? 14 : 13, fontWeight: 700, color: entry.is_current_user ? 'var(--lp-primary)' : 'var(--lp-muted)', flexShrink: 0 }}>
+                    {entry.balance} 🪙
+                  </span>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
+      {/* Floating bar when user not in visible list */}
       {!loading && data && !myInTop && data.current_user_rank && (
-        <div
-          className="fixed left-0 right-0 px-4 py-2"
-          style={{
-            bottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))',
-            background: 'var(--tg-theme-secondary-bg-color)',
-            borderTop: '1px solid var(--tg-separator)',
-          }}
-        >
-          <div className="flex items-center gap-3 p-2 rounded-xl ring-2 ring-tg-link bg-tg-bg">
-            <span className="text-base font-bold w-8 text-center shrink-0 text-tg-text">
+        <div style={{
+          position: 'fixed', left: 0, right: 0,
+          bottom: 'calc(60px + env(safe-area-inset-bottom, 0px))',
+          padding: '8px 16px',
+          background: 'rgba(242,230,216,0.95)',
+          borderTop: '1px solid var(--lp-cream-dark)',
+          backdropFilter: 'blur(8px)',
+        }}>
+          <div className="lp-lb-row lp-lb-row--me" style={{ background: 'white' }}>
+            <span className="russo" style={{ fontSize: 16, color: 'var(--lp-primary)', width: 28, textAlign: 'center' }}>
               #{data.current_user_rank}
             </span>
-            <span className="flex-1 text-sm font-medium text-tg-link truncate">
-              Вы 👈
-            </span>
+            <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: 'var(--lp-primary)' }}>Вы 👈</span>
           </div>
         </div>
       )}

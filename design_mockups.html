@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Lapta Game — Design Mockups v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --lp-primary:#D90D32;
+  --lp-secondary:#1B65A6;
+  --lp-bg:#F2E6D8;
+  --lp-contrast:#1E1D3F;
+  --lp-cream-dark:#D9C9B5;
+  --lp-text:#2a1f18;
+  --lp-muted:#8a7c6e;
+  --lp-on-dark:#F2E6D8;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0f1117;display:flex;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:200px;background:#080b10;display:flex;flex-direction:column;gap:2px;padding:18px 10px;position:fixed;top:0;left:0;bottom:0;overflow-y:auto;}
+.sidebar-logo{color:var(--lp-bg);font-family:"Russo One",sans-serif;font-size:16px;letter-spacing:0.06em;margin-bottom:4px;padding-bottom:10px;border-bottom:3px solid var(--lp-primary);}
+.sidebar-sub{color:rgba(242,230,216,0.35);font-size:10px;margin-bottom:12px;}
+.nav-s{color:rgba(242,230,216,0.25);font-size:9px;letter-spacing:0.15em;font-family:"Oswald",sans-serif;padding:8px 4px 3px;}
+.nav-btn{background:transparent;border:1px solid rgba(242,230,216,0.08);border-radius:4px;color:rgba(242,230,216,0.5);cursor:pointer;font-family:"Oswald",sans-serif;font-size:12px;letter-spacing:0.07em;padding:8px 10px;text-align:left;transition:all .15s;width:100%;margin-bottom:2px;}
+.nav-btn:hover{background:rgba(217,13,50,0.1);border-color:var(--lp-primary);color:var(--lp-bg);}
+.nav-btn.on{background:var(--lp-primary);border-color:var(--lp-primary);color:white;}
+.sidebar-note{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05);color:rgba(242,230,216,0.28);font-size:10px;line-height:1.7;}
+.v2-badge{background:rgba(27,101,166,0.2);border:1px solid rgba(27,101,166,0.4);border-radius:3px;padding:6px 8px;margin-top:10px;color:rgba(27,101,166,0.9);font-size:10px;line-height:1.6;}
+
+/* ── VIEWER ── */
+.viewer{margin-left:200px;flex:1;display:flex;flex-direction:column;align-items:center;padding:28px 20px 60px;gap:12px;}
+.pg-label{color:rgba(242,230,216,0.4);font-family:"Oswald",sans-serif;font-size:12px;letter-spacing:0.12em;}
+.device{width:390px;height:844px;background:var(--lp-bg);border-radius:42px;overflow:hidden;box-shadow:0 0 0 10px #1a1f2e,0 0 0 12px #252d3d,0 40px 100px rgba(0,0,0,.7);position:relative;display:flex;flex-direction:column;}
+/* grain */
+.device::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:9999;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.032;mix-blend-mode:multiply;}
+
+/* ── PAGES ── */
+.page{display:none;flex-direction:column;height:100%;overflow:hidden;}
+.page.on{display:flex;}
+.scroll{flex:1;overflow-y:auto;}
+.scroll::-webkit-scrollbar{display:none;}
+.px{padding:0 16px;}
+.gap8{margin-bottom:8px;}
+.gap12{margin-bottom:12px;}
+.gap16{margin-bottom:16px;}
+.gap20{margin-bottom:20px;}
+
+/* ── FONTS ── */
+.russo{font-family:"Russo One",sans-serif;}
+.oswald{font-family:"Oswald",sans-serif;font-weight:700;}
+
+/* ── HEADERS ── */
+.hdr{flex-shrink:0;padding:44px 20px 52px;clip-path:polygon(0 0,100% 0,100% 85%,0 100%);position:relative;}
+.hdr-red{background:var(--lp-primary);}
+.hdr-blue{background:var(--lp-secondary);}
+.hdr-flat{flex-shrink:0;padding:44px 16px 14px;}
+.hdr-flat-red{background:var(--lp-primary);}
+.hdr-flat-blue{background:var(--lp-secondary);}
+
+/* Badge */
+.badge-circle{width:66px;height:66px;border-radius:50%;background:rgba(30,29,63,.7);border:2px solid rgba(242,230,216,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;position:absolute;top:34px;right:18px;}
+.badge-circle span{font-size:22px;}
+.badge-circle small{font-family:"Oswald",sans-serif;font-size:7px;color:var(--lp-bg);letter-spacing:.08em;margin-top:1px;}
+
+/* ── CARDS ── */
+.card{background:white;border:1.5px solid var(--lp-cream-dark);border-radius:6px;padding:14px 16px;position:relative;overflow:hidden;}
+.card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--lp-primary);}
+.card-blue::before{background:var(--lp-secondary);}
+
+/* ── BUTTONS ── */
+.btn{background:var(--lp-primary);color:white;font-family:"Oswald",sans-serif;font-weight:700;font-size:15px;letter-spacing:.06em;border-radius:4px;padding:13px 20px;border:none;width:100%;cursor:pointer;display:block;text-align:center;}
+.btn-blue{background:var(--lp-secondary);}
+.btn-outline{background:transparent;color:var(--lp-text);border:2px solid var(--lp-text);font-family:"Oswald",sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;border-radius:4px;padding:10px 14px;cursor:pointer;text-align:center;width:100%;}
+.btn-outline-red{border-color:var(--lp-primary);color:var(--lp-primary);}
+
+/* ── INPUT ── */
+.inp{background:white;border:1.5px solid var(--lp-cream-dark);border-radius:4px;padding:12px 14px;font-size:15px;color:var(--lp-text);width:100%;}
+
+/* ── PILLS ── */
+.pill{font-family:"Oswald",sans-serif;font-weight:700;font-size:11px;letter-spacing:.07em;padding:3px 9px;border-radius:3px;display:inline-block;}
+.pill-live{background:var(--lp-primary);color:white;}
+.pill-open{background:var(--lp-secondary);color:white;}
+.pill-won{background:var(--lp-secondary);color:white;}
+.pill-lost{background:rgba(217,13,50,.08);color:var(--lp-primary);border:1px solid var(--lp-primary);}
+.pill-pend{background:var(--lp-cream-dark);color:var(--lp-muted);}
+.pill-done{background:var(--lp-muted);color:white;}
+
+/* ── MARQUEE ── */
+.marquee{background:var(--lp-contrast);overflow:hidden;padding:8px 0;white-space:nowrap;}
+.marquee-in{display:inline-block;animation:mq 14s linear infinite;}
+.mq-txt{font-family:"Oswald",sans-serif;font-size:11px;letter-spacing:.1em;color:var(--lp-bg);font-weight:700;}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── TABBAR ── */
+.tabbar{background:var(--lp-contrast);border-top:3px solid var(--lp-primary);display:flex;padding:8px 0 22px;flex-shrink:0;}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.tab-ic{font-size:18px;}
+.tab-lb{font-family:"Oswald",sans-serif;font-size:9px;letter-spacing:.07em;color:rgba(242,230,216,.35);font-weight:700;}
+.tab.on .tab-lb{color:var(--lp-primary);}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.stat{background:white;border:1.5px solid var(--lp-cream-dark);border-radius:6px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;}
+.stat::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;}
+.stat.s-won::before{background:var(--lp-secondary);}
+.stat.s-pend::before{background:var(--lp-muted);}
+.stat.s-lost::before{background:var(--lp-primary);}
+
+/* ── MATCH CARD ── */
+.mc{background:white;border:1.5px solid var(--lp-cream-dark);border-radius:6px;overflow:hidden;}
+.mc-head{padding:7px 14px;display:flex;align-items:center;justify-content:space-between;}
+.mc-head-red{background:var(--lp-primary);}
+.mc-head-blue{background:var(--lp-secondary);}
+.mc-head-muted{background:var(--lp-muted);}
+.mc-body{padding:13px 14px;}
+.team-row{display:flex;align-items:center;gap:6px;margin-bottom:12px;}
+.tname{font-family:"Russo One",sans-serif;font-size:14px;color:var(--lp-text);}
+.odd{font-family:"Russo One",sans-serif;font-size:24px;line-height:1;}
+.odd-r{color:var(--lp-primary);}
+.odd-b{color:var(--lp-secondary);}
+.vs{color:var(--lp-muted);font-size:11px;font-weight:700;letter-spacing:.1em;flex-shrink:0;}
+
+/* ── BET HISTORY ── */
+.bh{background:white;border:1.5px solid var(--lp-cream-dark);border-radius:6px;padding:14px;display:flex;gap:12px;align-items:stretch;}
+.bstripe{width:4px;border-radius:2px;flex-shrink:0;}
+.bs-won{background:var(--lp-secondary);}
+.bs-lost{background:var(--lp-primary);}
+.bs-pend{background:var(--lp-cream-dark);}
+
+/* ── LEADERBOARD ── */
+.lb-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:5px;}
+.lb-row:nth-child(odd){background:white;}
+.lb-row:nth-child(even){background:rgba(255,255,255,.45);}
+.lb-row.me{box-shadow:0 0 0 2px var(--lp-primary);background:white;}
+.podium{display:flex;align-items:flex-end;gap:4px;}
+.pod{display:flex;flex-direction:column;align-items:center;flex:1;}
+.pod-blk{width:100%;border-radius:4px 4px 0 0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font-size:20px;}
+
+/* ── SECTION LABEL ── */
+.slabel{font-family:"Oswald",sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;color:var(--lp-muted);display:block;margin-bottom:8px;}
+
+/* ── WIN BLOCK ── */
+.win-blk{background:var(--lp-secondary);border-radius:6px;padding:16px;text-align:center;}
+
+/* ── MATCHES PAGE flat-cream header ── */
+.matches-hdr{flex-shrink:0;padding:44px 16px 12px;background:var(--lp-bg);border-bottom:3px solid var(--lp-primary);}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">🏏 LAPTA GAME</div>
+  <div class="sidebar-sub">Mockups v2 — Russo One + Oswald</div>
+  <div class="nav-s">TWA</div>
+  <button class="nav-btn on" onclick="show('registration',this)">📋 Registration</button>
+  <button class="nav-btn" onclick="show('home',this)">🏠 Home</button>
+  <button class="nav-btn" onclick="show('matches',this)">🏆 Matches</button>
+  <button class="nav-btn" onclick="show('betflow',this)">💸 BetFlow</button>
+  <button class="nav-btn" onclick="show('balance',this)">💰 Balance</button>
+  <button class="nav-btn" onclick="show('bonuses',this)">🎁 Bonuses</button>
+  <button class="nav-btn" onclick="show('leaderboard',this)">📊 Leaderboard</button>
+  <div class="nav-s">ВНЕШНИЕ</div>
+  <button class="nav-btn" onclick="show('public',this)">📡 Public Odds</button>
+  <div class="sidebar-note">
+    Шрифт: Russo One (заголовки) + Oswald (лейблы)<br>— оба поддерживают кириллицу
+    <div class="v2-badge">
+      v2 fixes:<br>
+      ✓ Кириллица работает<br>
+      ✓ Меньше contrast-цвета<br>
+      ✓ Public Odds в бренде
+    </div>
+  </div>
+</div>
+
+<!-- VIEWER -->
+<div class="viewer">
+<div class="pg-label" id="pg-lbl">📋 REGISTRATION</div>
+<div class="device">
+
+<!-- REGISTRATION -->
+<div class="page on" id="pg-registration">
+  <div class="hdr hdr-red" style="padding-bottom:60px;">
+    <div>
+      <p style="color:rgba(242,230,216,.6);font-size:12px;letter-spacing:.08em;margin-bottom:3px;">ЛЕТНИЙ КУБОК</p>
+      <p class="russo" style="font-size:40px;line-height:1;color:white;">ПО ЛАПТЕ</p>
+      <p class="russo" style="font-size:40px;line-height:1;color:rgba(255,255,255,.6);">2026</p>
+    </div>
+    <div class="badge-circle">
+      <span>🏏</span><small>LAPTA</small>
+    </div>
+  </div>
+  <div class="scroll" style="background:var(--lp-bg);">
+    <div class="px" style="padding-top:10px;padding-bottom:28px;">
+      <div class="gap20">
+        <p style="color:var(--lp-muted);font-size:13px;margin-bottom:5px;">Твой стартовый банк</p>
+        <p class="russo" style="font-size:58px;color:var(--lp-primary);line-height:1;">1 100</p>
+        <p class="oswald" style="font-size:16px;color:var(--lp-muted);letter-spacing:.08em;">ОЧКОВ</p>
+      </div>
+      <p style="font-size:14px;color:var(--lp-text);line-height:1.65;margin-bottom:28px;">Делай ставки на матчи, набирай очки и попади в топ рейтинга для получения призов!</p>
+      <span class="slabel">ВВЕДИТЕ ФИО</span>
+      <input class="inp gap8" type="text" placeholder="Иванов Иван Иванович" style="margin-bottom:8px;" />
+      <p style="font-size:11px;color:var(--lp-muted);margin-bottom:22px;">Укажите полное имя — оно будет видно в рейтинге</p>
+      <button class="btn">ЗАРЕГИСТРИРОВАТЬСЯ</button>
+    </div>
+  </div>
+</div>
+
+<!-- HOME -->
+<div class="page" id="pg-home">
+  <div class="hdr hdr-red" style="padding-bottom:56px;">
+    <p style="color:rgba(242,230,216,.55);font-size:13px;margin-bottom:2px;">Привет, Иван! 👋</p>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:3px;">
+      <p class="russo" style="font-size:54px;color:white;line-height:1;">1 250</p>
+      <p style="color:rgba(242,230,216,.5);font-size:14px;">очков</p>
+    </div>
+    <p style="color:rgba(242,230,216,.75);font-size:13px;font-weight:500;">#4 из 87 в рейтинге</p>
+  </div>
+  <div class="scroll" style="background:var(--lp-bg);">
+    <div class="px" style="padding-top:8px;padding-bottom:24px;">
+      <div class="stats gap16" style="margin-bottom:16px;">
+        <div class="stat s-won">
+          <p class="russo" style="font-size:36px;color:var(--lp-secondary);line-height:1;">12</p>
+          <p style="font-size:10px;color:var(--lp-muted);margin-top:2px;">Выиграно</p>
+        </div>
+        <div class="stat s-pend">
+          <p class="russo" style="font-size:36px;color:var(--lp-text);line-height:1;">3</p>
+          <p style="font-size:10px;color:var(--lp-muted);margin-top:2px;">В игре</p>
+        </div>
+        <div class="stat s-lost">
+          <p class="russo" style="font-size:36px;color:var(--lp-primary);line-height:1;">5</p>
+          <p style="font-size:10px;color:var(--lp-muted);margin-top:2px;">Проиграно</p>
+        </div>
+      </div>
+      <button class="btn" style="margin-bottom:16px;">🏆 СДЕЛАТЬ СТАВКУ</button>
+      <div class="marquee" style="margin:0 -16px 16px;"><div class="marquee-in"><span class="mq-txt">СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp;</span></div></div>
+      <div style="background:var(--lp-primary);border-radius:6px;padding:16px;text-align:center;">
+        <p class="russo" style="font-size:18px;color:white;line-height:1.25;">🏏 ЛЕТНИЙ КУБОК<br>ПО ЛАПТЕ 2026</p>
+        <p class="oswald" style="font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.07em;margin-top:6px;">DVFU · ИЮНЬ 2026</p>
+      </div>
+    </div>
+  </div>
+  <div class="tabbar">
+    <div class="tab on"><div class="tab-ic">🏠</div><div class="tab-lb">ДОМ</div></div>
+    <div class="tab"><div class="tab-ic">🏆</div><div class="tab-lb">МАТЧИ</div></div>
+    <div class="tab"><div class="tab-ic">💰</div><div class="tab-lb">БАЛАНС</div></div>
+    <div class="tab"><div class="tab-ic">🎁</div><div class="tab-lb">БОНУСЫ</div></div>
+    <div class="tab"><div class="tab-ic">📊</div><div class="tab-lb">РЕЙТИНГ</div></div>
+  </div>
+</div>
+
+<!-- MATCHES -->
+<div class="page" id="pg-matches">
+  <div class="matches-hdr">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <p class="russo" style="font-size:30px;color:var(--lp-primary);">МАТЧИ</p>
+      <p style="font-size:11px;color:var(--lp-muted);">3 активных</p>
+    </div>
+  </div>
+  <div class="scroll" style="background:var(--lp-bg);padding:12px 16px;">
+    <!-- live match, user bet on team1 -->
+    <div class="mc gap12" style="margin-bottom:12px;">
+      <div class="mc-head mc-head-red">
+        <span class="pill pill-live" style="background:rgba(255,255,255,.2);color:white;border:1px solid rgba(255,255,255,.35);">🔴 LIVE</span>
+        <span style="font-size:10px;color:rgba(255,255,255,.5);">обн. 3с</span>
+      </div>
+      <div class="mc-body">
+        <div class="team-row">
+          <div style="flex:1;"><p class="tname">БУРЕВЕСТНИК</p><p class="odd odd-r">×1.85</p></div>
+          <span class="vs">VS</span>
+          <div style="flex:1;text-align:right;"><p class="tname" style="text-align:right;">СОКОЛ</p><p class="odd odd-b" style="text-align:right;">×2.10</p></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <div style="flex:1;position:relative;">
+            <button class="btn-outline btn-outline-red" style="width:100%;padding:9px;font-size:12px;background:rgba(217,13,50,.06);">БУРЕВЕСТНИК ✓</button>
+            <span style="position:absolute;top:-7px;right:-3px;background:var(--lp-primary);color:white;font-family:Oswald,sans-serif;font-weight:700;font-size:9px;padding:1px 6px;border-radius:2px;letter-spacing:.05em;">+ ДОДЕП</span>
+          </div>
+          <button style="flex:1;border:2px solid var(--lp-cream-dark);border-radius:4px;background:transparent;font-family:Oswald,sans-serif;font-weight:700;font-size:12px;padding:9px;opacity:.3;cursor:not-allowed;color:var(--lp-text);">СОКОЛ</button>
+        </div>
+      </div>
+    </div>
+    <!-- open match -->
+    <div class="mc" style="margin-bottom:12px;">
+      <div class="mc-head mc-head-blue">
+        <span class="pill" style="background:rgba(255,255,255,.2);color:white;border:1px solid rgba(255,255,255,.35);font-family:Oswald,sans-serif;font-weight:700;font-size:11px;letter-spacing:.07em;padding:3px 9px;border-radius:3px;">🟢 OPEN</span>
+      </div>
+      <div class="mc-body">
+        <div class="team-row">
+          <div style="flex:1;"><p class="tname">БЕРКУТ</p><p class="odd odd-r">×2.40</p></div>
+          <span class="vs">VS</span>
+          <div style="flex:1;text-align:right;"><p class="tname" style="text-align:right;">ОРЁЛ</p><p class="odd odd-b" style="text-align:right;">×1.65</p></div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-outline" style="flex:1;padding:9px;font-size:12px;">БЕРКУТ</button>
+          <button class="btn-outline" style="flex:1;padding:9px;font-size:12px;">ОРЁЛ</button>
+        </div>
+      </div>
+    </div>
+    <div class="marquee" style="margin:0 -16px 12px;"><div class="marquee-in"><span class="mq-txt">ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp;</span></div></div>
+    <!-- finished match -->
+    <div class="mc" style="opacity:.6;">
+      <div class="mc-head mc-head-muted">
+        <span class="pill pill-done" style="font-family:Oswald,sans-serif;font-weight:700;font-size:11px;padding:3px 9px;letter-spacing:.07em;border-radius:3px;">✓ ЗАВЕРШЁН</span>
+        <span style="font-size:10px;color:rgba(242,230,216,.6);">Буревестник 🏆</span>
+      </div>
+      <div class="mc-body" style="padding-bottom:14px;">
+        <div class="team-row" style="margin-bottom:0;">
+          <div style="flex:1;"><p class="tname" style="color:var(--lp-secondary);">БУРЕВЕСТНИК</p><p style="font-family:Russo One,sans-serif;font-size:16px;color:var(--lp-muted);">×1.72 финал</p></div>
+          <span class="vs">VS</span>
+          <div style="flex:1;text-align:right;"><p class="tname" style="color:var(--lp-muted);text-align:right;">СОКОЛ</p><p style="font-family:Russo One,sans-serif;font-size:16px;color:var(--lp-muted);text-align:right;">×2.20</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tabbar">
+    <div class="tab"><div class="tab-ic">🏠</div><div class="tab-lb">ДОМ</div></div>
+    <div class="tab on"><div class="tab-ic">🏆</div><div class="tab-lb">МАТЧИ</div></div>
+    <div class="tab"><div class="tab-ic">💰</div><div class="tab-lb">БАЛАНС</div></div>
+    <div class="tab"><div class="tab-ic">🎁</div><div class="tab-lb">БОНУСЫ</div></div>
+    <div class="tab"><div class="tab-ic">📊</div><div class="tab-lb">РЕЙТИНГ</div></div>
+  </div>
+</div>
+
+<!-- BETFLOW -->
+<div class="page" id="pg-betflow">
+  <div class="hdr-flat hdr-flat-red" style="display:flex;align-items:center;gap:10px;padding-bottom:12px;">
+    <span style="color:white;font-size:22px;cursor:pointer;">←</span>
+    <p class="oswald" style="font-size:20px;color:white;letter-spacing:.07em;">СТАВКА НА МАТЧ</p>
+  </div>
+  <div class="scroll" style="background:var(--lp-bg);padding:16px;">
+    <span class="slabel">МАТЧ</span>
+    <p class="russo" style="font-size:20px;color:var(--lp-text);margin-bottom:16px;">БУРЕВЕСТНИК vs СОКОЛ</p>
+    <!-- selected team -->
+    <div style="background:var(--lp-secondary);border-radius:6px;padding:14px 16px;margin-bottom:16px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:rgba(255,255,255,.25);"></div>
+      <span class="slabel" style="color:rgba(242,230,216,.6);">СТАВКА НА</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <p class="russo" style="font-size:24px;color:white;">БУРЕВЕСТНИК</p>
+        <p class="russo" style="font-size:30px;color:white;">×1.85</p>
+      </div>
+    </div>
+    <span class="slabel">СУММА СТАВКИ</span>
+    <input class="inp" type="text" value="500" style="font-family:'Russo One',sans-serif;font-size:34px;text-align:center;margin-bottom:10px;" />
+    <div style="display:flex;gap:6px;margin-bottom:20px;">
+      <button class="btn-outline" style="flex:1;padding:8px 4px;font-size:12px;">100</button>
+      <button class="btn-outline" style="flex:1;padding:8px 4px;font-size:12px;">200</button>
+      <button class="btn-outline btn-outline-red" style="flex:1;padding:8px 4px;font-size:12px;background:rgba(217,13,50,.06);">500</button>
+      <button class="btn-outline" style="flex:1;padding:8px 4px;font-size:12px;">MAX</button>
+    </div>
+    <div class="win-blk" style="margin-bottom:20px;">
+      <span class="slabel" style="color:rgba(242,230,216,.45);">ПОТЕНЦИАЛЬНЫЙ ВЫИГРЫШ</span>
+      <p class="russo" style="font-size:52px;color:white;line-height:1;">925</p>
+      <p class="oswald" style="font-size:13px;color:rgba(242,230,216,.55);letter-spacing:.07em;">ОЧКОВ</p>
+      <div style="margin-top:10px;padding:6px 12px;background:rgba(255,255,255,.08);border-radius:4px;display:inline-block;">
+        <p style="font-size:11px;color:rgba(242,230,216,.6);">⚡ Коэф динамический — фиксируется при подтверждении</p>
+      </div>
+    </div>
+    <button class="btn">ПОСТАВИТЬ 500 ОЧКОВ</button>
+  </div>
+</div>
+
+<!-- BALANCE -->
+<div class="page" id="pg-balance">
+  <div class="hdr hdr-blue" style="padding-bottom:56px;">
+    <span class="slabel" style="color:rgba(242,230,216,.45);margin-bottom:4px;">БАЛАНС</span>
+    <div style="display:flex;align-items:baseline;gap:8px;">
+      <p class="russo" style="font-size:54px;color:white;line-height:1;">1 250</p>
+      <p style="color:rgba(242,230,216,.5);font-size:14px;">очков</p>
+    </div>
+  </div>
+  <div class="scroll" style="background:var(--lp-bg);">
+    <div class="px" style="margin-top:-26px;padding-bottom:24px;">
+      <span class="slabel">ИСТОРИЯ СТАВОК</span>
+      <!-- WON -->
+      <div class="bh gap12" style="margin-bottom:10px;">
+        <div class="bstripe bs-won"></div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:3px;">
+            <p style="font-size:13px;font-weight:600;color:var(--lp-text);">Буревестник vs Сокол</p>
+            <span class="pill pill-won" style="font-size:10px;padding:2px 7px;flex-shrink:0;margin-left:8px;">ВЫИГРАЛ</span>
+          </div>
+          <p style="font-size:12px;color:var(--lp-muted);margin-bottom:6px;">Ставка на: Буревестник</p>
+          <p class="russo" style="font-size:20px;color:var(--lp-secondary);">+1 350 очков</p>
+        </div>
+      </div>
+      <!-- PENDING -->
+      <div class="bh gap12" style="margin-bottom:10px;">
+        <div class="bstripe bs-pend"></div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:3px;">
+            <p style="font-size:13px;font-weight:600;color:var(--lp-text);">Беркут vs Орёл</p>
+            <span class="pill pill-pend" style="font-size:10px;padding:2px 7px;flex-shrink:0;margin-left:8px;">В ИГРЕ</span>
+          </div>
+          <p style="font-size:12px;color:var(--lp-muted);margin-bottom:6px;">Ставка на: Беркут</p>
+          <p style="font-size:13px;color:var(--lp-muted);">300 оч → 720 потенциально</p>
+        </div>
+      </div>
+      <!-- DODEP -->
+      <div class="bh gap12" style="margin-bottom:10px;">
+        <div class="bstripe bs-pend"></div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:3px;">
+            <p style="font-size:13px;font-weight:600;color:var(--lp-text);">Беркут vs Орёл</p>
+            <span class="pill pill-pend" style="font-size:10px;padding:2px 7px;flex-shrink:0;margin-left:8px;">В ИГРЕ</span>
+          </div>
+          <p style="font-size:12px;color:var(--lp-muted);margin-bottom:6px;">↪ Додеп: Беркут</p>
+          <p style="font-size:13px;color:var(--lp-muted);">200 оч → 470 потенциально</p>
+        </div>
+      </div>
+      <!-- LOST -->
+      <div class="bh">
+        <div class="bstripe bs-lost"></div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:3px;">
+            <p style="font-size:13px;font-weight:600;color:var(--lp-text);">Сокол vs Беркут</p>
+            <span class="pill pill-lost" style="font-size:10px;padding:2px 7px;flex-shrink:0;margin-left:8px;">ПРОИГРАЛ</span>
+          </div>
+          <p style="font-size:12px;color:var(--lp-muted);margin-bottom:6px;">Ставка на: Сокол</p>
+          <p class="russo" style="font-size:20px;color:var(--lp-primary);">−200 очков</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="tabbar">
+    <div class="tab"><div class="tab-ic">🏠</div><div class="tab-lb">ДОМ</div></div>
+    <div class="tab"><div class="tab-ic">🏆</div><div class="tab-lb">МАТЧИ</div></div>
+    <div class="tab on"><div class="tab-ic">💰</div><div class="tab-lb">БАЛАНС</div></div>
+    <div class="tab"><div class="tab-ic">🎁</div><div class="tab-lb">БОНУСЫ</div></div>
+    <div class="tab"><div class="tab-ic">📊</div><div class="tab-lb">РЕЙТИНГ</div></div>
+  </div>
+</div>
+
+<!-- BONUSES -->
+<div class="page" id="pg-bonuses">
+  <div class="matches-hdr">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <p class="russo" style="font-size:30px;color:var(--lp-secondary);">БОНУСЫ</p>
+      <p style="font-size:11px;color:var(--lp-muted);">Промокоды и подписки</p>
+    </div>
+  </div>
+  <div class="scroll" style="background:var(--lp-bg);padding:14px 16px;">
+    <div class="card card-blue gap16" style="margin-bottom:16px;">
+      <p class="russo" style="font-size:16px;color:var(--lp-text);margin-bottom:12px;">🎟 АКТИВИРОВАТЬ ПРОМОКОД</p>
+      <div style="display:flex;gap:8px;">
+        <input class="inp" type="text" placeholder="AB1C2" style="flex:1;font-family:monospace;font-size:22px;text-align:center;letter-spacing:.2em;font-weight:700;" />
+        <button class="btn" style="width:auto;padding:0 14px;font-size:13px;">ВВЕСТИ</button>
+      </div>
+    </div>
+    <div class="marquee" style="margin:0 -16px 16px;"><div class="marquee-in"><span class="mq-txt">ПОДПИШИСЬ &nbsp;·&nbsp; ПОЛУЧИ ОЧКИ &nbsp;·&nbsp; ПОДПИШИСЬ &nbsp;·&nbsp; ПОЛУЧИ ОЧКИ &nbsp;·&nbsp; ПОДПИШИСЬ &nbsp;·&nbsp; ПОЛУЧИ ОЧКИ &nbsp;·&nbsp;</span></div></div>
+    <div class="card gap12" style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
+        <div>
+          <p style="font-size:15px;font-weight:600;color:var(--lp-text);margin-bottom:2px;">📣 ДВФУ Спорт</p>
+          <p class="russo" style="font-size:26px;color:var(--lp-secondary);">+300 ОЧКОВ</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <a class="btn-outline" style="flex:1;display:block;text-align:center;text-decoration:none;padding:10px;font-size:12px;">ПОДПИСАТЬСЯ</a>
+        <button class="btn" style="flex:1;padding:10px;font-size:12px;">ПОЛУЧИТЬ</button>
+      </div>
+    </div>
+    <div class="card" style="opacity:.55;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <p style="font-size:15px;font-weight:600;color:var(--lp-text);margin-bottom:2px;">🏅 Лапта 2026</p>
+          <p class="russo" style="font-size:26px;color:var(--lp-secondary);">+200 ОЧКОВ</p>
+        </div>
+        <span class="pill pill-won">✓ ПОЛУЧЕНО</span>
+      </div>
+    </div>
+  </div>
+  <div class="tabbar">
+    <div class="tab"><div class="tab-ic">🏠</div><div class="tab-lb">ДОМ</div></div>
+    <div class="tab"><div class="tab-ic">🏆</div><div class="tab-lb">МАТЧИ</div></div>
+    <div class="tab"><div class="tab-ic">💰</div><div class="tab-lb">БАЛАНС</div></div>
+    <div class="tab on"><div class="tab-ic">🎁</div><div class="tab-lb">БОНУСЫ</div></div>
+    <div class="tab"><div class="tab-ic">📊</div><div class="tab-lb">РЕЙТИНГ</div></div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="page" id="pg-leaderboard">
+  <div class="hdr hdr-blue" style="padding-bottom:52px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <p class="russo" style="font-size:42px;color:white;line-height:1;">РЕЙТИНГ</p>
+        <p style="font-size:12px;color:rgba(242,230,216,.45);margin-top:4px;">87 участников</p>
+      </div>
+      <div class="badge-circle" style="position:relative;top:auto;right:auto;width:58px;height:58px;">
+        <span>🏆</span><small>TOP</small>
+      </div>
+    </div>
+  </div>
+  <div class="scroll" style="background:var(--lp-bg);">
+    <div class="px" style="margin-top:-26px;padding-bottom:24px;">
+      <div class="podium" style="margin-bottom:18px;align-items:flex-end;">
+        <div class="pod">
+          <p style="font-size:10px;color:var(--lp-muted);text-align:center;margin-bottom:2px;">Сидоров А.</p>
+          <p style="font-size:10px;font-weight:700;color:var(--lp-secondary);text-align:center;">1 200 🪙</p>
+          <div class="pod-blk" style="background:var(--lp-secondary);height:56px;">🥈</div>
+        </div>
+        <div class="pod">
+          <p style="font-size:11px;font-weight:700;color:var(--lp-text);text-align:center;margin-bottom:2px;">Иванов А.</p>
+          <p class="russo" style="font-size:13px;color:var(--lp-primary);text-align:center;">1 850 🪙</p>
+          <div class="pod-blk" style="background:var(--lp-primary);height:82px;">🥇</div>
+        </div>
+        <div class="pod">
+          <p style="font-size:10px;color:var(--lp-muted);text-align:center;margin-bottom:2px;">Петров И.</p>
+          <p style="font-size:10px;font-weight:700;color:var(--lp-muted);text-align:center;">1 100 🪙</p>
+          <div class="pod-blk" style="background:var(--lp-muted);height:42px;">🥉</div>
+        </div>
+      </div>
+      <div class="lb-row"><span class="russo" style="font-size:16px;color:var(--lp-muted);width:28px;text-align:center;">#4</span><span style="flex:1;font-size:13px;color:var(--lp-text);">Козлова Мария</span><span style="font-size:13px;font-weight:700;color:var(--lp-muted);">980 🪙</span></div>
+      <div class="lb-row me"><span class="russo" style="font-size:16px;color:var(--lp-primary);width:28px;text-align:center;">#5</span><span style="flex:1;font-size:13px;font-weight:600;color:var(--lp-primary);">Вы 👈</span><span class="russo" style="font-size:14px;color:var(--lp-primary);">920 🪙</span></div>
+      <div class="lb-row"><span class="russo" style="font-size:16px;color:var(--lp-muted);width:28px;text-align:center;">#6</span><span style="flex:1;font-size:13px;color:var(--lp-text);">Новиков Д.</span><span style="font-size:13px;font-weight:700;color:var(--lp-muted);">880 🪙</span></div>
+      <div class="lb-row"><span class="russo" style="font-size:16px;color:var(--lp-muted);width:28px;text-align:center;">#7</span><span style="flex:1;font-size:13px;color:var(--lp-text);">Фёдорова А.</span><span style="font-size:13px;font-weight:700;color:var(--lp-muted);">820 🪙</span></div>
+      <div class="lb-row"><span class="russo" style="font-size:16px;color:var(--lp-muted);width:28px;text-align:center;">#8</span><span style="flex:1;font-size:13px;color:var(--lp-text);">Громов С.</span><span style="font-size:13px;font-weight:700;color:var(--lp-muted);">790 🪙</span></div>
+    </div>
+  </div>
+  <div class="tabbar">
+    <div class="tab"><div class="tab-ic">🏠</div><div class="tab-lb">ДОМ</div></div>
+    <div class="tab"><div class="tab-ic">🏆</div><div class="tab-lb">МАТЧИ</div></div>
+    <div class="tab"><div class="tab-ic">💰</div><div class="tab-lb">БАЛАНС</div></div>
+    <div class="tab"><div class="tab-ic">🎁</div><div class="tab-lb">БОНУСЫ</div></div>
+    <div class="tab on"><div class="tab-ic">📊</div><div class="tab-lb">РЕЙТИНГ</div></div>
+  </div>
+</div>
+
+<!-- PUBLIC ODDS — full brand treatment -->
+<div class="page" id="pg-public" style="background:var(--lp-bg);">
+  <!-- Red diagonal header -->
+  <div class="hdr hdr-red" style="padding-bottom:52px;text-align:center;">
+    <div class="badge-circle" style="position:absolute;top:30px;left:18px;right:auto;">
+      <span>🏏</span><small>LAPTA</small>
+    </div>
+    <div style="text-align:center;">
+      <p class="russo" style="font-size:22px;color:white;line-height:1.15;">ЛЕТНИЙ КУБОК<br>ПО ЛАПТЕ 2026</p>
+      <p style="font-size:11px;color:rgba(255,255,255,.5);margin-top:6px;letter-spacing:.05em;">Обновлено: 14:22:35 &nbsp;·&nbsp; обн. каждые 5с</p>
+    </div>
+  </div>
+
+  <div class="scroll" style="background:var(--lp-bg);">
+    <div class="px" style="margin-top:-26px;padding-bottom:24px;">
+
+      <!-- LIVE match card -->
+      <div style="background:white;border:1.5px solid var(--lp-cream-dark);border-radius:6px;overflow:hidden;margin-bottom:14px;position:relative;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--lp-primary);"></div>
+        <div style="padding:12px 14px 4px;text-align:center;">
+          <span style="background:var(--lp-primary);color:white;font-family:Oswald,sans-serif;font-weight:700;font-size:11px;padding:3px 10px;border-radius:3px;letter-spacing:.07em;">🔴 LIVE</span>
+        </div>
+        <div style="padding:10px 16px 14px;display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;text-align:right;">
+            <p class="russo" style="font-size:15px;color:var(--lp-text);">БУРЕВЕСТНИК</p>
+            <p class="russo" style="font-size:36px;color:var(--lp-primary);line-height:1;">×1.85</p>
+          </div>
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--lp-bg);border:2px solid var(--lp-cream-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:Oswald,sans-serif;font-weight:700;font-size:10px;color:var(--lp-muted);letter-spacing:.05em;">VS</span>
+          </div>
+          <div style="flex:1;">
+            <p class="russo" style="font-size:15px;color:var(--lp-text);">СОКОЛ</p>
+            <p class="russo" style="font-size:36px;color:var(--lp-secondary);line-height:1;">×2.10</p>
+          </div>
+        </div>
+        <div style="background:var(--lp-bg);border-top:1px solid var(--lp-cream-dark);padding:6px 16px;display:flex;justify-content:center;gap:16px;">
+          <p style="font-size:11px;color:var(--lp-muted);">47 ставок</p>
+          <p style="font-size:11px;color:var(--lp-muted);">·</p>
+          <p style="font-size:11px;color:var(--lp-muted);">12 400 очков в пуле</p>
+        </div>
+      </div>
+
+      <!-- OPEN match card -->
+      <div style="background:white;border:1.5px solid var(--lp-cream-dark);border-radius:6px;overflow:hidden;margin-bottom:14px;position:relative;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--lp-secondary);"></div>
+        <div style="padding:12px 14px 4px;text-align:center;">
+          <span style="background:var(--lp-secondary);color:white;font-family:Oswald,sans-serif;font-weight:700;font-size:11px;padding:3px 10px;border-radius:3px;letter-spacing:.07em;">🟢 OPEN</span>
+        </div>
+        <div style="padding:10px 16px 14px;display:flex;align-items:center;gap:8px;">
+          <div style="flex:1;text-align:right;">
+            <p class="russo" style="font-size:15px;color:var(--lp-text);">БЕРКУТ</p>
+            <p class="russo" style="font-size:36px;color:var(--lp-primary);line-height:1;">×2.40</p>
+          </div>
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--lp-bg);border:2px solid var(--lp-cream-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <span style="font-family:Oswald,sans-serif;font-weight:700;font-size:10px;color:var(--lp-muted);letter-spacing:.05em;">VS</span>
+          </div>
+          <div style="flex:1;">
+            <p class="russo" style="font-size:15px;color:var(--lp-text);">ОРЁЛ</p>
+            <p class="russo" style="font-size:36px;color:var(--lp-secondary);line-height:1;">×1.65</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom marquee strip -->
+    <div class="marquee" style="margin-top:auto;"><div class="marquee-in"><span class="mq-txt">ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; DVFU &nbsp;·&nbsp; ДЕЛАЙ СТАВКИ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; DVFU &nbsp;·&nbsp; ДЕЛАЙ СТАВКИ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp;</span></div></div>
+  </div>
+</div>
+
+</div><!-- /device -->
+</div><!-- /viewer -->
+
+<script>
+const lbls={registration:"📋 REGISTRATION",home:"🏠 HOME",matches:"🏆 MATCHES",betflow:"💸 BETFLOW",balance:"💰 BALANCE",bonuses:"🎁 BONUSES",leaderboard:"📊 LEADERBOARD",public:"📡 PUBLIC ODDS"};
+function show(n,btn){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("on"));
+  document.getElementById("pg-"+n).classList.add("on");
+  btn.classList.add("on");
+  document.getElementById("pg-lbl").textContent=lbls[n];
+}
+</script>
+</body>
+</html>

@@ -12,19 +12,6 @@ interface MyStats {
   total_players: number
 }
 
-function StatsGridSkeleton() {
-  return (
-    <div className="grid grid-cols-3 gap-2">
-      {[0, 1, 2].map((i) => (
-        <div key={i} className="tg-card text-center py-3 flex flex-col items-center gap-2">
-          <div className="sk rounded-lg h-7 w-8" />
-          <div className="sk rounded-md h-3 w-10" />
-        </div>
-      ))}
-    </div>
-  )
-}
-
 export default function Home() {
   const { user, setUser, isAdmin } = useAppStore()
   const navigate = useNavigate()
@@ -37,8 +24,8 @@ export default function Home() {
       const total = data.total_players ?? 0
       api.get('/api/bets/my').then(({ data: bets }) => {
         setStats({
-          bets_won: bets.filter((b: any) => b.status === 'won').length,
-          bets_lost: bets.filter((b: any) => b.status === 'lost').length,
+          bets_won:     bets.filter((b: any) => b.status === 'won').length,
+          bets_lost:    bets.filter((b: any) => b.status === 'lost').length,
           bets_pending: bets.filter((b: any) => b.status === 'pending').length,
           rank,
           total_players: total,
@@ -52,82 +39,98 @@ export default function Home() {
   const firstName = user?.full_name.split(' ')[1] || user?.full_name.split(' ')[0] || ''
 
   return (
-    <div className="flex flex-col min-h-screen pb-tabbar pt-tg-header bg-tg-bg">
-      <div className="p-5 flex flex-col gap-4">
-
-        {/* Greeting + balance */}
-        <div className="mt-3">
-          <p className="text-tg-hint text-sm">
+    <div className="lp-page">
+      {/* Diagonal red header */}
+      <div className="lp-hdr lp-hdr--red lp-hdr--lg">
+        <div className="lp-hdr-inner">
+          <p style={{ color: 'rgba(242,230,216,0.6)', fontSize: 13, marginBottom: 2 }}>
             {firstName ? `Привет, ${firstName}! 👋` : '👋 Добро пожаловать!'}
           </p>
-          <div className="flex items-end gap-2 mt-1">
-            <span className="text-4xl font-bold text-tg-text">
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 3 }}>
+            <p className="russo" style={{ fontSize: 54, color: 'white', lineHeight: 1 }}>
               {user?.balance ?? '…'}
-            </span>
-            <span className="text-tg-hint mb-1">очков</span>
+            </p>
+            <p style={{ color: 'rgba(242,230,216,0.5)', fontSize: 14 }}>очков</p>
           </div>
+          {stats?.rank ? (
+            <p style={{ color: 'rgba(242,230,216,0.8)', fontSize: 13 }}>
+              #{stats.rank} из {stats.total_players} в рейтинге
+            </p>
+          ) : (
+            <div className="lp-sk" style={{ height: 16, width: 140, borderRadius: 4 }} />
+          )}
+        </div>
+      </div>
 
-          {/* Фиксированная высота — skeleton пока данные грузятся, реальный текст после */}
-          <div className="mt-1" style={{ minHeight: '1.25rem' }}>
-            {stats === null && <div className="sk rounded-md h-4 w-36" />}
-            {stats !== null && stats.rank && (
-              <p className="text-tg-link text-sm">
-                #{stats.rank} из {stats.total_players} в рейтинге
-              </p>
-            )}
+      {/* Content */}
+      <div className="lp-scroll" style={{ marginTop: -26, padding: '8px 16px 24px' }}>
+        {/* Stats grid */}
+        {stats ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>
+            {[
+              { value: stats.bets_won,     label: 'Выиграно',  color: 'var(--lp-secondary)', top: 'var(--lp-secondary)' },
+              { value: stats.bets_pending, label: 'В игре',    color: 'var(--lp-text)',      top: 'var(--lp-muted)' },
+              { value: stats.bets_lost,    label: 'Проиграно', color: 'var(--lp-primary)',   top: 'var(--lp-primary)' },
+            ].map(({ value, label, color, top }) => (
+              <div key={label} className="lp-card" style={{ padding: '14px 6px', textAlign: 'center' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: top }} />
+                <p className="russo" style={{ fontSize: 36, color, lineHeight: 1 }}>{value}</p>
+                <p style={{ fontSize: 10, color: 'var(--lp-muted)', marginTop: 2 }}>{label}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>
+            {[0,1,2].map(i => (
+              <div key={i} className="lp-sk" style={{ height: 72, borderRadius: 6 }} />
+            ))}
+          </div>
+        )}
+
+        <button className="lp-btn" onClick={() => navigate('/matches')} style={{ marginBottom: 16 }}>
+          🏆 СДЕЛАТЬ СТАВКУ
+        </button>
+
+        {/* Marquee */}
+        <div className="lp-marquee" style={{ margin: '0 -16px 16px' }}>
+          <div className="lp-marquee-inner">
+            <span className="lp-marquee-text">
+              СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp;
+              СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp;
+              СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp;
+            </span>
           </div>
         </div>
 
-        {/* Bet stats or skeleton */}
-        {stats ? (
-          <div className="grid grid-cols-3 gap-2">
-            <div className="tg-card text-center py-3">
-              <p className="text-xl font-bold text-green-600">{stats.bets_won}</p>
-              <p className="text-xs text-tg-hint">Выиграно</p>
-            </div>
-            <div className="tg-card text-center py-3">
-              <p className="text-xl font-bold text-tg-hint">{stats.bets_pending}</p>
-              <p className="text-xs text-tg-hint">В игре</p>
-            </div>
-            <div className="tg-card text-center py-3">
-              <p className="text-xl font-bold text-red-500">{stats.bets_lost}</p>
-              <p className="text-xs text-tg-hint">Проиграно</p>
-            </div>
-          </div>
-        ) : (
-          <StatsGridSkeleton />
-        )}
-
-        {/* CTA */}
-        <button
-          onClick={() => navigate('/matches')}
-          className="tg-btn mt-1"
-        >
-          🏆 Сделать ставку
-        </button>
-
-        {/* Admin */}
+        {/* Admin shortcut */}
         {isAdmin && (
           <button
+            className="lp-card"
             onClick={() => navigate('/admin')}
-            className="tg-card flex items-center gap-3 active:scale-95 transition-transform"
+            style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+              cursor: 'pointer', border: 'none', textAlign: 'left', marginBottom: 12 }}
           >
-            <span className="text-2xl">⚙️</span>
-            <div className="text-left">
-              <p className="font-semibold text-tg-text text-sm">Панель администратора</p>
-              <p className="text-tg-hint text-xs">Управление матчами и участниками</p>
+            <span style={{ fontSize: 24 }}>⚙️</span>
+            <div>
+              <p className="oswald" style={{ fontSize: 14, color: 'var(--lp-text)', letterSpacing: '0.04em' }}>
+                ПАНЕЛЬ АДМИНИСТРАТОРА
+              </p>
+              <p style={{ fontSize: 11, color: 'var(--lp-muted)', marginTop: 2 }}>Управление матчами и участниками</p>
             </div>
           </button>
         )}
 
-        {/* Tournament info */}
-        <div className="tg-card text-center py-4">
-          <p className="text-2xl mb-1">🏏</p>
-          <p className="font-semibold text-tg-text text-sm">Летний Кубок по лапте 2026</p>
-          <p className="text-tg-hint text-xs mt-1">Университетский турнир</p>
+        {/* Tournament card */}
+        <div style={{ background: 'var(--lp-primary)', borderRadius: 6, padding: 16, textAlign: 'center' }}>
+          <p className="russo" style={{ fontSize: 18, color: 'white', lineHeight: 1.25 }}>
+            🏏 ЛЕТНИЙ КУБОК<br />ПО ЛАПТЕ 2026
+          </p>
+          <p className="oswald" style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.07em', marginTop: 6 }}>
+            DVFU · ИЮНЬ 2026
+          </p>
         </div>
-
       </div>
+
       <TabBar />
     </div>
   )

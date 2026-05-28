@@ -15,23 +15,21 @@ interface BetItem {
   created_at: string
 }
 
-const statusConfig: Record<string, { icon: string; label: string; cls: string }> = {
-  won:     { icon: '✅', label: 'Выиграл',  cls: 'bg-green-100 text-green-700' },
-  lost:    { icon: '❌', label: 'Проиграл', cls: 'bg-red-100 text-red-700' },
-  pending: { icon: '⏳', label: 'Ожидание', cls: 'bg-yellow-100 text-yellow-700' },
+const STATUS: Record<string, { label: string; stripe: string; textColor: string }> = {
+  won:     { label: 'ВЫИГРАЛ',  stripe: 'lp-bstripe--won',     textColor: 'var(--lp-secondary)' },
+  lost:    { label: 'ПРОИГРАЛ', stripe: 'lp-bstripe--lost',    textColor: 'var(--lp-primary)' },
+  pending: { label: 'В ИГРЕ',   stripe: 'lp-bstripe--pending', textColor: 'var(--lp-muted)' },
 }
 
 function BetCardSkeleton() {
   return (
-    <div className="tg-card flex flex-col gap-3">
-      <div className="flex justify-between items-start">
-        <div className="flex-1 pr-2 flex flex-col gap-2">
-          <div className="sk rounded-md h-4 w-3/4" />
-          <div className="sk rounded-md h-3 w-1/2" />
-        </div>
-        <div className="sk rounded-full h-6 w-20 shrink-0" />
+    <div style={{ display: 'flex', gap: 12, background: 'white', border: '1.5px solid var(--lp-cream-dark)', borderRadius: 6, padding: 14 }}>
+      <div className="lp-sk" style={{ width: 4, height: 64, borderRadius: 2 }} />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div className="lp-sk" style={{ height: 14, width: '70%', borderRadius: 4 }} />
+        <div className="lp-sk" style={{ height: 12, width: '45%', borderRadius: 4 }} />
+        <div className="lp-sk" style={{ height: 20, width: '30%', borderRadius: 4 }} />
       </div>
-      <div className="sk rounded-md h-4 w-1/3" />
     </div>
   )
 }
@@ -49,69 +47,65 @@ export default function Balance() {
   }, [])
 
   return (
-    <div className="flex flex-col min-h-screen pb-tabbar pt-tg-header bg-tg-bg">
-      <div className="p-5">
-        <h1 className="text-xl font-bold text-tg-text mb-4">💰 Баланс</h1>
-
-        <div className="tg-card flex items-center gap-4 mb-6">
-          <span className="text-4xl">💰</span>
-          <div>
-            <p className="text-sm text-tg-hint">Текущий баланс</p>
-            <p className="text-2xl font-bold text-tg-link">
-              {user?.balance ?? '…'}{' '}
-              <span className="text-base font-normal text-tg-hint">очков</span>
+    <div className="lp-page">
+      {/* Diagonal blue header */}
+      <div className="lp-hdr lp-hdr--blue lp-hdr--lg">
+        <div className="lp-hdr-inner">
+          <span className="lp-label lp-label--dk" style={{ marginBottom: 4 }}>БАЛАНС</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+            <p className="russo" style={{ fontSize: 54, color: 'white', lineHeight: 1 }}>
+              {user?.balance ?? '…'}
             </p>
+            <p style={{ color: 'rgba(242,230,216,0.5)', fontSize: 14 }}>очков</p>
           </div>
         </div>
+      </div>
 
-        <h2 className="font-semibold text-tg-hint text-sm mb-3 uppercase tracking-wide">
-          История ставок
-        </h2>
+      <div className="lp-scroll" style={{ marginTop: -26, padding: '8px 16px 24px' }}>
+        <span className="lp-label">ИСТОРИЯ СТАВОК</span>
 
-        {loading && (
-          <div className="flex flex-col gap-3">
-            <BetCardSkeleton />
-            <BetCardSkeleton />
-            <BetCardSkeleton />
+        {loading ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <BetCardSkeleton /><BetCardSkeleton /><BetCardSkeleton />
           </div>
-        )}
-
-        {!loading && bets.length === 0 && (
-          <p className="text-tg-hint text-center mt-6">Ставок ещё нет</p>
-        )}
-
-        {!loading && (
-          <div className="flex flex-col gap-3">
+        ) : bets.length === 0 ? (
+          <p style={{ textAlign: 'center', color: 'var(--lp-muted)', marginTop: 40 }}>Ставок ещё нет</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {bets.map((bet, idx) => {
-              const teamName = bet.team_choice === 1 ? bet.team1_name : bet.team2_name
-              const cfg = statusConfig[bet.status] ?? statusConfig.pending
-              const isTopUp = idx > 0 && bets[idx - 1].match_id === bet.match_id
+              const cfg       = STATUS[bet.status] ?? STATUS.pending
+              const isTopUp   = idx > 0 && bets[idx - 1].match_id === bet.match_id
+              const teamName  = bet.team_choice === 1 ? bet.team1_name : bet.team2_name
+              const pillCls   = bet.status === 'won' ? 'lp-pill--won' : bet.status === 'lost' ? 'lp-pill--lost' : 'lp-pill--pending'
               return (
-                <div key={bet.id} className="tg-card">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1 pr-2">
-                      <p className="font-medium text-tg-text text-sm">
+                <div key={bet.id} style={{
+                  display: 'flex', gap: 12, background: 'white',
+                  border: '1.5px solid var(--lp-cream-dark)', borderRadius: 6, padding: 14,
+                  alignItems: 'stretch',
+                }}>
+                  <div className={`lp-bstripe ${cfg.stripe}`} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 3 }}>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--lp-text)' }}>
                         {bet.team1_name} vs {bet.team2_name}
                       </p>
-                      <p className="text-tg-hint text-sm">
-                      {isTopUp ? '+ Додеп: ' : 'Ставка на: '}{teamName}
-                    </p>
+                      <span className={`lp-pill ${pillCls}`} style={{ fontSize: 10, padding: '2px 7px', flexShrink: 0, marginLeft: 8 }}>
+                        {cfg.label}
+                      </span>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full shrink-0 ${cfg.cls}`}>
-                      {cfg.icon} {cfg.label}
-                    </span>
-                  </div>
-                  <div className="mt-2 text-sm">
+                    <p style={{ fontSize: 12, color: 'var(--lp-muted)', marginBottom: 6 }}>
+                      {isTopUp ? '↪ Додеп: ' : 'Ставка на: '}{teamName}
+                    </p>
                     {bet.status === 'won' && (
-                      <span className="text-green-600 font-medium">+{bet.potential_win} очков</span>
+                      <p className="russo" style={{ fontSize: 20, color: cfg.textColor }}>+{bet.potential_win} очков</p>
                     )}
                     {bet.status === 'lost' && (
-                      <span className="text-red-500 font-medium">-{bet.amount} очков</span>
+                      <p className="russo" style={{ fontSize: 20, color: cfg.textColor }}>−{bet.amount} очков</p>
                     )}
                     {bet.status === 'pending' && (
-                      <span className="text-tg-hint">
-                        {bet.amount} очков → {bet.potential_win} потенциально
-                      </span>
+                      <p style={{ fontSize: 13, color: cfg.textColor }}>
+                        {bet.amount} оч → {bet.potential_win} потенциально
+                      </p>
                     )}
                   </div>
                 </div>

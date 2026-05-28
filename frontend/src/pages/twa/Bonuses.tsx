@@ -11,25 +11,6 @@ interface Channel {
   is_claimed: boolean
 }
 
-function ChannelCardSkeleton() {
-  return (
-    <div className="tg-card flex flex-col gap-3">
-      <div className="flex justify-between items-center">
-        <div className="flex flex-col gap-2">
-          <div className="sk rounded-md h-5 w-36" />
-          <div className="sk rounded-md h-4 w-20" />
-        </div>
-      </div>
-      <div className="flex gap-2">
-        <div className="sk rounded-xl flex-1 h-10" />
-        <div className="sk rounded-xl flex-1 h-10" />
-      </div>
-    </div>
-  )
-}
-
-// ── Промокод ──────────────────────────────────────────────────────────────────
-
 type RedeemState = 'idle' | 'loading' | 'success' | 'error'
 
 function PromoSection() {
@@ -61,36 +42,36 @@ function PromoSection() {
   }
 
   return (
-    <div className="tg-card mb-5">
-      <p className="font-semibold text-tg-text text-sm mb-3">🎟 Промокод</p>
-      <div className="flex gap-2">
+    <div className="lp-card lp-card--blue" style={{ marginBottom: 16 }}>
+      <p className="russo" style={{ fontSize: 16, color: 'var(--lp-text)', marginBottom: 12 }}>🎟 АКТИВИРОВАТЬ ПРОМОКОД</p>
+      <div style={{ display: 'flex', gap: 8 }}>
         <input
           ref={inputRef}
-          className="tg-input flex-1 font-mono tracking-widest text-center text-lg uppercase"
+          className="lp-inp"
           placeholder="AB1C2"
           value={code}
           maxLength={5}
           onChange={(e) => handleChange(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && code.length === 5 && handleRedeem()}
+          style={{ flex: 1, fontFamily: 'monospace', fontSize: 22, textAlign: 'center', letterSpacing: '0.2em', fontWeight: 700, textTransform: 'uppercase' }}
         />
         <button
+          className="lp-btn"
           onClick={handleRedeem}
           disabled={code.length !== 5 || state === 'loading'}
-          className="tg-btn w-auto px-4 py-3 text-sm rounded-xl disabled:opacity-40"
+          style={{ width: 'auto', padding: '0 14px', fontSize: 13 }}
         >
-          {state === 'loading' ? '...' : 'Активировать'}
+          {state === 'loading' ? '...' : 'ВВЕСТИ'}
         </button>
       </div>
       {message && (
-        <p className={`text-sm mt-2 ${state === 'success' ? 'text-green-600 font-medium' : 'text-tg-destructive'}`}>
+        <p style={{ fontSize: 13, marginTop: 8, color: state === 'success' ? 'var(--lp-secondary)' : 'var(--lp-primary)', fontWeight: 600 }}>
           {message}
         </p>
       )}
     </div>
   )
 }
-
-// ── Главная страница ───────────────────────────────────────────────────────────
 
 export default function Bonuses() {
   const [channels, setChannels] = useState<Channel[]>([])
@@ -111,9 +92,7 @@ export default function Bonuses() {
     try {
       const { data } = await api.post(`/api/bonuses/claim/${channel.id}`)
       updateBalance(data.new_balance)
-      setChannels((prev) =>
-        prev.map((ch) => ch.id === channel.id ? { ...ch, is_claimed: true } : ch)
-      )
+      setChannels((prev) => prev.map((ch) => ch.id === channel.id ? { ...ch, is_claimed: true } : ch))
       setMessages((m) => ({ ...m, [channel.id]: `+${data.bonus_points} очков получено!` }))
     } catch (e: any) {
       setMessages((m) => ({ ...m, [channel.id]: e.message }))
@@ -123,66 +102,73 @@ export default function Bonuses() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen pb-tabbar pt-tg-header bg-tg-bg">
-      <div className="p-5">
-        <h1 className="text-xl font-bold text-tg-text mb-1">🎁 Бонусы</h1>
-        <p className="text-sm text-tg-hint mb-5">
-          Подпишитесь на каналы или введите промокод
-        </p>
+    <div className="lp-page">
+      {/* Diagonal blue header */}
+      <div className="lp-hdr lp-hdr--blue lp-hdr--sm">
+        <div className="lp-hdr-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <p className="russo" style={{ fontSize: 32, color: 'white', lineHeight: 1 }}>БОНУСЫ</p>
+          <p className="oswald" style={{ fontSize: 11, color: 'rgba(242,230,216,0.55)', letterSpacing: '0.07em' }}>
+            Промокоды и подписки
+          </p>
+        </div>
+      </div>
 
-        {/* Промокод — всегда сверху */}
+      <div className="lp-scroll" style={{ marginTop: -22, padding: '12px 16px 24px' }}>
         <PromoSection />
 
-        {/* Каналы */}
+        <div className="lp-marquee" style={{ margin: '0 -16px 16px' }}>
+          <div className="lp-marquee-inner">
+            <span className="lp-marquee-text">
+              ПОДПИШИСЬ &nbsp;·&nbsp; ПОЛУЧИ ОЧКИ &nbsp;·&nbsp; ПОДПИШИСЬ &nbsp;·&nbsp; ПОЛУЧИ ОЧКИ &nbsp;·&nbsp;
+              ПОДПИШИСЬ &nbsp;·&nbsp; ПОЛУЧИ ОЧКИ &nbsp;·&nbsp; ПОДПИШИСЬ &nbsp;·&nbsp; ПОЛУЧИ ОЧКИ &nbsp;·&nbsp;
+            </span>
+          </div>
+        </div>
+
         {loading && (
-          <div className="flex flex-col gap-4">
-            <ChannelCardSkeleton />
-            <ChannelCardSkeleton />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {[0,1].map(i => <div key={i} className="lp-sk" style={{ height: 100, borderRadius: 6 }} />)}
           </div>
         )}
 
         {!loading && channels.length === 0 && (
-          <p className="text-tg-hint text-center mt-6">Бонусных каналов нет</p>
+          <p style={{ textAlign: 'center', color: 'var(--lp-muted)', marginTop: 20 }}>Бонусных каналов нет</p>
         )}
 
         {!loading && (
-          <div className="flex flex-col gap-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {channels.map((ch) => (
-              <div key={ch.id} className="tg-card">
-                <div className="flex justify-between items-center mb-3">
+              <div key={ch.id} className="lp-card" style={{ opacity: ch.is_claimed ? 0.55 : 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: ch.is_claimed ? 0 : 12 }}>
                   <div>
-                    <p className="font-semibold text-tg-text">{ch.channel_name}</p>
-                    <p className="text-tg-link font-bold text-sm">+{ch.bonus_points} 🪙</p>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--lp-text)', marginBottom: 2 }}>{ch.channel_name}</p>
+                    <p className="russo" style={{ fontSize: 26, color: 'var(--lp-secondary)', lineHeight: 1 }}>+{ch.bonus_points} ОЧКОВ</p>
                   </div>
                   {ch.is_claimed && (
-                    <span className="text-green-600 text-sm font-medium">✅ Получено</span>
+                    <span className="lp-pill lp-pill--won">✓ ПОЛУЧЕНО</span>
                   )}
                 </div>
-
                 {!ch.is_claimed && (
-                  <div className="flex gap-2">
+                  <div style={{ display: 'flex', gap: 8 }}>
                     <a
                       href={ch.channel_url}
                       target="_blank"
                       rel="noreferrer"
-                      className="flex-1 text-center tg-btn-outline py-2"
-                    >
-                      Подписаться
-                    </a>
+                      className="lp-btn-outline"
+                      style={{ flex: 1, display: 'block', textDecoration: 'none', padding: '10px 8px', fontSize: 12 }}
+                    >ПОДПИСАТЬСЯ</a>
                     <button
+                      className="lp-btn"
                       onClick={() => handleClaim(ch)}
                       disabled={claiming === ch.id}
-                      className="flex-1 tg-btn py-2 text-sm rounded-xl disabled:opacity-50"
+                      style={{ flex: 1, padding: '10px 8px', fontSize: 12 }}
                     >
-                      {claiming === ch.id ? '...' : 'Получить'}
+                      {claiming === ch.id ? '...' : 'ПОЛУЧИТЬ'}
                     </button>
                   </div>
                 )}
-
                 {messages[ch.id] && (
-                  <p className={`text-sm mt-2 ${
-                    messages[ch.id].startsWith('+') ? 'text-green-600' : 'text-tg-destructive'
-                  }`}>
+                  <p style={{ fontSize: 12, marginTop: 8, color: messages[ch.id].startsWith('+') ? 'var(--lp-secondary)' : 'var(--lp-primary)' }}>
                     {messages[ch.id]}
                   </p>
                 )}
