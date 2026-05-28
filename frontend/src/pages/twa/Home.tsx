@@ -91,8 +91,8 @@ export default function Home() {
         {/* Marquee */}
         <div className="lp-marquee" style={{ margin: '0 -16px 16px' }}>
           <div className="lp-marquee-track">
-            <span className="lp-marquee-text">СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; </span>
-            <span className="lp-marquee-text">СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; </span>
+            <span className="lp-marquee-text">СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; </span>
+            <span className="lp-marquee-text">СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; </span>
           </div>
         </div>
 

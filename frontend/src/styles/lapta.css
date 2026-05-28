@@ -151,6 +151,7 @@ body { background: var(--lp-bg); }
   display: flex;
   width: max-content;
   animation: lp-mq 20s linear infinite;
+  will-change: transform;
 }
 .lp-marquee-text {
   font-family: 'Oswald', sans-serif; font-weight: 700;

@@ -129,8 +129,8 @@ export default function Matches() {
               <>
                 <div className="lp-marquee" style={{ margin: '0 -16px 12px' }}>
                   <div className="lp-marquee-track">
-                    <span className="lp-marquee-text">ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; </span>
-                    <span className="lp-marquee-text">ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; </span>
+                    <span className="lp-marquee-text">ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; </span>
+                    <span className="lp-marquee-text">ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; </span>
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
