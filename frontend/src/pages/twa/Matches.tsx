@@ -91,7 +91,7 @@ export default function Matches() {
       {/* Diagonal red header — small */}
       <div className="lp-hdr lp-hdr--red lp-hdr--sm">
         <div className="lp-hdr-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <p className="russo" style={{ fontSize: 32, color: 'white', lineHeight: 1 }}>МАТЧИ</p>
+          <p className="russo" style={{ fontSize: 36, color: 'white', lineHeight: 1 }}>МАТЧИ</p>
           {!loading && (
             <p className="oswald" style={{ fontSize: 11, color: 'rgba(242,230,216,0.55)', letterSpacing: '0.07em' }}>
               {totalActive > 0 ? `${totalActive} активных` : 'нет активных'}

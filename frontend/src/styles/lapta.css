@@ -28,11 +28,11 @@ body { background: var(--lp-bg); }
 .lp-hdr--red  { background: var(--lp-primary); }
 .lp-hdr--blue { background: var(--lp-secondary); }
 
-/* Large: Home, Balance, Leaderboard, Registration */
-.lp-hdr--lg { padding: 0 20px 56px; }
+/* Единый размер для всех страниц TWA */
+.lp-hdr--lg { padding: 0 20px 52px; }
 
-/* Small: Matches, Bonuses — compact diagonal */
-.lp-hdr--sm { padding: 0 20px 38px; }
+/* Алиас для обратной совместимости */
+.lp-hdr--sm { padding: 0 20px 52px; }
 
 /* Flat (nav bar with diagonal feel): BetFlow back-nav */
 .lp-hdr-flat {

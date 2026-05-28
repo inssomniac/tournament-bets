@@ -37,7 +37,7 @@ export default function Bonuses() {
     <div className="lp-page">
       <div className="lp-hdr lp-hdr--blue lp-hdr--sm">
         <div className="lp-hdr-inner">
-          <p className="russo" style={{ fontSize: 32, color: 'white', lineHeight: 1 }}>БОНУСЫ</p>
+          <p className="russo" style={{ fontSize: 36, color: 'white', lineHeight: 1 }}>БОНУСЫ</p>
           <p className="oswald" style={{ fontSize: 11, color: 'rgba(242,230,216,0.55)', letterSpacing: '0.07em', marginTop: 4 }}>
             Введи промокод — получи очки
           </p>

@@ -56,7 +56,7 @@ export default function Leaderboard() {
       {/* Diagonal blue header */}
       <div className="lp-hdr lp-hdr--blue lp-hdr--lg">
         <div className="lp-hdr-inner">
-          <p className="russo" style={{ fontSize: 40, color: 'white', lineHeight: 1 }}>РЕЙТИНГ</p>
+          <p className="russo" style={{ fontSize: 36, color: 'white', lineHeight: 1 }}>РЕЙТИНГ</p>
           {!loading && data && (
             <p className="oswald" style={{ fontSize: 11, color: 'rgba(242,230,216,0.5)', letterSpacing: '0.07em', marginTop: 4 }}>
               {data.total_players} УЧАСТНИКОВ
