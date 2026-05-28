@@ -63,7 +63,7 @@ export default function Home() {
       </div>
 
       {/* Content */}
-      <div className="lp-scroll" style={{ marginTop: -26, padding: '8px 16px 24px' }}>
+      <div className="lp-scroll" style={{ marginTop: -10, padding: '16px 16px 24px' }}>
         {/* Stats grid */}
         {stats ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>

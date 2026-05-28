@@ -61,7 +61,7 @@ export default function Balance() {
         </div>
       </div>
 
-      <div className="lp-scroll" style={{ marginTop: -26, padding: '8px 16px 24px' }}>
+      <div className="lp-scroll" style={{ marginTop: -10, padding: '20px 16px 24px' }}>
         <span className="lp-label">ИСТОРИЯ СТАВОК</span>
 
         {loading ? (
