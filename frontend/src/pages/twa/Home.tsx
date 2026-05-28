@@ -43,9 +43,6 @@ export default function Home() {
       {/* Diagonal red header */}
       <div className="lp-hdr lp-hdr--red lp-hdr--lg">
         <div className="lp-hdr-inner">
-          <p style={{ color: 'rgba(242,230,216,0.6)', fontSize: 13, marginBottom: 2 }}>
-            {firstName ? `Привет, ${firstName}! 👋` : '👋 Добро пожаловать!'}
-          </p>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 3 }}>
             <p className="russo" style={{ fontSize: 54, color: 'white', lineHeight: 1 }}>
               {user?.balance ?? '…'}
@@ -63,7 +60,7 @@ export default function Home() {
       </div>
 
       {/* Content */}
-      <div className="lp-scroll" style={{ marginTop: -10, padding: '16px 16px 24px' }}>
+      <div className="lp-scroll" style={{ marginTop: -10, padding: '20px 16px 24px' }}>
         {/* Stats grid */}
         {stats ? (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8, marginBottom: 16 }}>
@@ -88,17 +85,14 @@ export default function Home() {
         )}
 
         <button className="lp-btn" onClick={() => navigate('/matches')} style={{ marginBottom: 16 }}>
-          🏆 СДЕЛАТЬ СТАВКУ
+          СДЕЛАТЬ СТАВКУ
         </button>
 
         {/* Marquee */}
         <div className="lp-marquee" style={{ margin: '0 -16px 16px' }}>
-          <div className="lp-marquee-inner">
-            <span className="lp-marquee-text">
-              СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp;
-              СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp;
-              СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp;
-            </span>
+          <div className="lp-marquee-track">
+            <span className="lp-marquee-text">СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; </span>
+            <span className="lp-marquee-text">СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; МАТЧИ &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; ЛАПТА &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; </span>
           </div>
         </div>
 
@@ -123,10 +117,10 @@ export default function Home() {
         {/* Tournament card */}
         <div style={{ background: 'var(--lp-primary)', borderRadius: 6, padding: 16, textAlign: 'center' }}>
           <p className="russo" style={{ fontSize: 18, color: 'white', lineHeight: 1.25 }}>
-            🏏 ЛЕТНИЙ КУБОК<br />ПО ЛАПТЕ 2026
+            ЛЕТНИЙ КУБОК<br />ПО ЛАПТЕ 2026
           </p>
           <p className="oswald" style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.07em', marginTop: 6 }}>
-            DVFU · ИЮНЬ 2026
+            ДВФУ · ИЮНЬ 2026
           </p>
         </div>
       </div>

@@ -55,23 +55,17 @@ export default function Leaderboard() {
     <div className="lp-page">
       {/* Diagonal blue header */}
       <div className="lp-hdr lp-hdr--blue lp-hdr--lg">
-        <div className="lp-hdr-inner" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div>
-            <p className="russo" style={{ fontSize: 40, color: 'white', lineHeight: 1 }}>РЕЙТИНГ</p>
-            {!loading && data && (
-              <p className="oswald" style={{ fontSize: 11, color: 'rgba(242,230,216,0.5)', letterSpacing: '0.07em', marginTop: 4 }}>
-                {data.total_players} УЧАСТНИКОВ
-              </p>
-            )}
-          </div>
-          <div className="lp-badge-circle" style={{ position: 'relative', top: 'auto', right: 'auto', width: 58, height: 58 }}>
-            <span style={{ fontSize: 22 }}>🏆</span>
-            <small className="oswald" style={{ fontSize: 7, color: 'var(--lp-bg)', letterSpacing: '0.1em', marginTop: 2 }}>TOP</small>
-          </div>
+        <div className="lp-hdr-inner">
+          <p className="russo" style={{ fontSize: 40, color: 'white', lineHeight: 1 }}>РЕЙТИНГ</p>
+          {!loading && data && (
+            <p className="oswald" style={{ fontSize: 11, color: 'rgba(242,230,216,0.5)', letterSpacing: '0.07em', marginTop: 4 }}>
+              {data.total_players} УЧАСТНИКОВ
+            </p>
+          )}
         </div>
       </div>
 
-      <div className="lp-scroll" style={{ marginTop: -26, padding: '8px 16px 24px' }}>
+      <div className="lp-scroll" style={{ marginTop: -8, padding: '24px 16px 24px' }}>
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {[0,1,2,3,4,5].map(i => (
@@ -85,7 +79,7 @@ export default function Leaderboard() {
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: 5, marginBottom: 18 }}>
                 {podiumOrder.map((entry, i) => (
                   <div key={entry.rank} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
-                    <p style={{ fontSize: 10, color: 'var(--lp-muted)', textAlign: 'center', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', width: '100%', padding: '0 2px' }}>
+                    <p className="oswald" style={{ fontSize: 10, color: 'var(--lp-text)', textAlign: 'center', marginBottom: 2, whiteSpace: 'normal', lineHeight: 1.2, wordBreak: 'break-word', width: '100%', padding: '0 2px' }}>
                       {entry.full_name.split(' ').slice(0,2).join(' ')}
                     </p>
                     <p className="russo" style={{ fontSize: 10, color: podiumColors[i], textAlign: 'center', marginBottom: 3 }}>
@@ -113,7 +107,7 @@ export default function Leaderboard() {
                   <span className="russo" style={{ fontSize: 16, color: entry.is_current_user ? 'var(--lp-primary)' : 'var(--lp-muted)', width: 28, textAlign: 'center', flexShrink: 0 }}>
                     #{entry.rank}
                   </span>
-                  <span style={{ flex: 1, fontSize: 13, color: entry.is_current_user ? 'var(--lp-primary)' : 'var(--lp-text)', fontWeight: entry.is_current_user ? 600 : 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span className="oswald" style={{ flex: 1, fontSize: 13, color: entry.is_current_user ? 'var(--lp-primary)' : 'var(--lp-text)', letterSpacing: '0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {entry.full_name}{entry.is_current_user && ' 👈'}
                   </span>
                   <span className={entry.is_current_user ? 'russo' : ''} style={{ fontSize: entry.is_current_user ? 14 : 13, fontWeight: 700, color: entry.is_current_user ? 'var(--lp-primary)' : 'var(--lp-muted)', flexShrink: 0 }}>

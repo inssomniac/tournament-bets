@@ -100,7 +100,7 @@ export default function Matches() {
         </div>
       </div>
 
-      <div className="lp-scroll" style={{ marginTop: -22, padding: '12px 16px 24px' }}>
+      <div className="lp-scroll" style={{ marginTop: -8, padding: '20px 16px 24px' }}>
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             <SkeletonCard /><SkeletonCard /><SkeletonCard />
@@ -128,10 +128,9 @@ export default function Matches() {
             {finished.length > 0 && (
               <>
                 <div className="lp-marquee" style={{ margin: '0 -16px 12px' }}>
-                  <div className="lp-marquee-inner">
-                    <span className="lp-marquee-text">
-                      ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp;
-                    </span>
+                  <div className="lp-marquee-track">
+                    <span className="lp-marquee-text">ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; </span>
+                    <span className="lp-marquee-text">ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; ЗАВЕРШЁННЫЕ МАТЧИ &nbsp;·&nbsp; РЕЗУЛЬТАТЫ &nbsp;·&nbsp; ФИНАЛ &nbsp;·&nbsp; </span>
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

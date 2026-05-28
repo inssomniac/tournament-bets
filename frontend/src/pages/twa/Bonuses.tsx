@@ -94,11 +94,9 @@ export default function Bonuses() {
         </div>
 
         <div className="lp-marquee" style={{ margin: '0 -16px 24px' }}>
-          <div className="lp-marquee-inner">
-            <span className="lp-marquee-text">
-              ПРОМОКОД · ОЧКИ · СТАВКИ · ПОБЕДА ·
-              ПРОМОКОД · ОЧКИ · СТАВКИ · ПОБЕДА ·
-            </span>
+          <div className="lp-marquee-track">
+            <span className="lp-marquee-text">ПРОМОКОД &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; ПРОМОКОД &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; </span>
+            <span className="lp-marquee-text">ПРОМОКОД &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; ПРОМОКОД &nbsp;·&nbsp; ОЧКИ &nbsp;·&nbsp; СТАВКИ &nbsp;·&nbsp; ПОБЕДА &nbsp;·&nbsp; </span>
           </div>
         </div>
 

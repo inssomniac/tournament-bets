@@ -144,13 +144,20 @@ body { background: var(--lp-bg); }
 .lp-pill--open-hd { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.35); }
 
 /* ── MARQUEE ─────────────────────────────────────────────────────── */
-.lp-marquee { background: var(--lp-contrast); overflow: hidden; padding: 8px 0; white-space: nowrap; }
-.lp-marquee-inner { display: inline-block; animation: lp-mq 14s linear infinite; }
-.lp-marquee-text  {
+/* Правило: track содержит ровно 2 одинаковых span.lp-marquee-text.
+   Анимация translateX(-50%) = ширина одного span → идеальный бесшовный loop. */
+.lp-marquee { background: var(--lp-contrast); overflow: hidden; padding: 8px 0; }
+.lp-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: lp-mq 20s linear infinite;
+}
+.lp-marquee-text {
   font-family: 'Oswald', sans-serif; font-weight: 700;
   font-size: 11px; letter-spacing: 0.1em; color: var(--lp-on-dark);
+  white-space: nowrap;
 }
-@keyframes lp-mq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes lp-mq { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
 /* ── TABBAR ──────────────────────────────────────────────────────── */
 .lp-tabbar {

@@ -69,16 +69,6 @@ export default function PublicOddsPage() {
         position: 'relative',
         flexShrink: 0,
       }}>
-        {/* Badge */}
-        <div style={{
-          position: 'absolute', top: 18, left: 18,
-          width: 56, height: 56, borderRadius: '50%',
-          background: 'rgba(30,29,63,0.6)', border: '2px solid rgba(242,230,216,0.5)',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <span style={{ fontSize: 20 }}>🏏</span>
-          <small style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 700, fontSize: 7, color: 'var(--lp-bg)', letterSpacing: '0.1em', marginTop: 1 }}>LAPTA</small>
-        </div>
         <p style={{ fontFamily: "'Russo One',sans-serif", fontSize: 22, color: 'white', lineHeight: 1.2, marginBottom: 8 }}>
           ЛЕТНИЙ КУБОК<br />ПО ЛАПТЕ 2026
         </p>
@@ -121,12 +111,10 @@ export default function PublicOddsPage() {
       </div>
 
       {/* Bottom marquee */}
-      <div style={{ background: 'var(--lp-contrast)', overflow: 'hidden', padding: '8px 0', whiteSpace: 'nowrap', marginTop: 'auto' }}>
-        <div style={{ display: 'inline-block', animation: 'lp-mq 16s linear infinite' }}>
-          <span style={{ fontFamily: "'Oswald',sans-serif", fontWeight: 700, fontSize: 11, letterSpacing: '0.1em', color: 'var(--lp-on-dark)' }}>
-            ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; DVFU &nbsp;·&nbsp; ДЕЛАЙ СТАВКИ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp;
-            ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; DVFU &nbsp;·&nbsp; ДЕЛАЙ СТАВКИ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp;
-          </span>
+      <div className="lp-marquee" style={{ marginTop: 'auto' }}>
+        <div className="lp-marquee-track">
+          <span className="lp-marquee-text">ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; DVFU &nbsp;·&nbsp; ДЕЛАЙ СТАВКИ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; DVFU &nbsp;·&nbsp; ДЕЛАЙ СТАВКИ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; </span>
+          <span className="lp-marquee-text">ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; DVFU &nbsp;·&nbsp; ДЕЛАЙ СТАВКИ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; DVFU &nbsp;·&nbsp; ДЕЛАЙ СТАВКИ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; </span>
         </div>
       </div>
     </div>
