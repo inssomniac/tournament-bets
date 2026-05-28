@@ -180,4 +180,3 @@ function PublicMatchCard({ match }: { match: PublicMatch }) {
     </div>
   )
 }
-}
