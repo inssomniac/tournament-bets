@@ -56,7 +56,7 @@ export default function Balance() {
             <p className="russo" style={{ fontSize: 54, color: 'white', lineHeight: 1 }}>
               {user?.balance ?? '…'}
             </p>
-            <p style={{ color: 'rgba(242,230,216,0.5)', fontSize: 14 }}>очков</p>
+            <p className="oswald" style={{ color: 'rgba(242,230,216,0.5)', fontSize: 14, letterSpacing: '0.06em' }}>ОЧКОВ</p>
           </div>
         </div>
       </div>
@@ -69,7 +69,7 @@ export default function Balance() {
             <BetCardSkeleton /><BetCardSkeleton /><BetCardSkeleton />
           </div>
         ) : bets.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--lp-muted)', marginTop: 40 }}>Ставок ещё нет</p>
+          <p className="oswald" style={{ textAlign: 'center', color: 'var(--lp-muted)', marginTop: 40, fontSize: 14, letterSpacing: '0.06em' }}>СТАВОК ЕЩЁ НЕТ</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {bets.map((bet, idx) => {
@@ -86,15 +86,15 @@ export default function Balance() {
                   <div className={`lp-bstripe ${cfg.stripe}`} />
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 3 }}>
-                      <p style={{ fontSize: 13, fontWeight: 600, color: 'var(--lp-text)' }}>
+                      <p className="oswald" style={{ fontSize: 13, color: 'var(--lp-text)', letterSpacing: '0.03em' }}>
                         {bet.team1_name} vs {bet.team2_name}
                       </p>
                       <span className={`lp-pill ${pillCls}`} style={{ fontSize: 10, padding: '2px 7px', flexShrink: 0, marginLeft: 8 }}>
                         {cfg.label}
                       </span>
                     </div>
-                    <p style={{ fontSize: 12, color: 'var(--lp-muted)', marginBottom: 6 }}>
-                      {isTopUp ? '↪ Додеп: ' : 'Ставка на: '}{teamName}
+                    <p className="oswald" style={{ fontSize: 11, color: 'var(--lp-muted)', marginBottom: 6, letterSpacing: '0.04em' }}>
+                      {isTopUp ? '↪ ДОДЕП: ' : 'СТАВКА НА: '}{teamName}
                     </p>
                     {bet.status === 'won' && (
                       <p className="russo" style={{ fontSize: 20, color: cfg.textColor }}>+{bet.potential_win} очков</p>
@@ -103,8 +103,8 @@ export default function Balance() {
                       <p className="russo" style={{ fontSize: 20, color: cfg.textColor }}>−{bet.amount} очков</p>
                     )}
                     {bet.status === 'pending' && (
-                      <p style={{ fontSize: 13, color: cfg.textColor }}>
-                        {bet.amount} оч → {bet.potential_win} потенциально
+                      <p className="oswald" style={{ fontSize: 12, color: cfg.textColor, letterSpacing: '0.04em' }}>
+                        {bet.amount} → {bet.potential_win} ОЧ
                       </p>
                     )}
                   </div>

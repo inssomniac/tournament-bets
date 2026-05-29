@@ -134,7 +134,7 @@ export default function Leaderboard() {
             <span className="russo" style={{ fontSize: 16, color: 'var(--lp-primary)', width: 28, textAlign: 'center' }}>
               #{data.current_user_rank}
             </span>
-            <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: 'var(--lp-primary)' }}>Вы 👈</span>
+            <span className="oswald" style={{ flex: 1, fontSize: 13, color: 'var(--lp-primary)', letterSpacing: '0.04em' }}>ВЫ 👈</span>
           </div>
         </div>
       )}

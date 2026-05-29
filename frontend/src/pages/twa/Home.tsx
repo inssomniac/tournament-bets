@@ -47,7 +47,7 @@ export default function Home() {
             <p className="russo" style={{ fontSize: 54, color: 'white', lineHeight: 1 }}>
               {user?.balance ?? '…'}
             </p>
-            <p style={{ color: 'rgba(242,230,216,0.5)', fontSize: 14 }}>очков</p>
+            <p className="oswald" style={{ color: 'rgba(242,230,216,0.5)', fontSize: 14, letterSpacing: '0.06em' }}>ОЧКОВ</p>
           </div>
           {stats?.rank ? (
             <p style={{ color: 'rgba(242,230,216,0.8)', fontSize: 13 }}>
@@ -72,7 +72,7 @@ export default function Home() {
               <div key={label} className="lp-card" style={{ padding: '14px 6px', textAlign: 'center' }}>
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: top }} />
                 <p className="russo" style={{ fontSize: 36, color, lineHeight: 1 }}>{value}</p>
-                <p style={{ fontSize: 10, color: 'var(--lp-muted)', marginTop: 2 }}>{label}</p>
+                <p className="oswald" style={{ fontSize: 10, color: 'var(--lp-muted)', marginTop: 2, letterSpacing: '0.05em' }}>{label}</p>
               </div>
             ))}
           </div>

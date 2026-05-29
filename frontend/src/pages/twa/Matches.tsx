@@ -106,7 +106,7 @@ export default function Matches() {
             <SkeletonCard /><SkeletonCard /><SkeletonCard />
           </div>
         ) : matches.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--lp-muted)', marginTop: 40 }}>Матчей нет</p>
+          <p className="oswald" style={{ textAlign: 'center', color: 'var(--lp-muted)', marginTop: 40, fontSize: 14, letterSpacing: '0.06em' }}>МАТЧЕЙ НЕТ</p>
         ) : (
           <>
             {live.length > 0 && (
@@ -233,8 +233,8 @@ function MatchCard({ match, navigate }: { match: Match; navigate: (p: string, o?
               ✓ {userBet.team_choice === 1 ? match.team1_name : match.team2_name}
               {userBet.bets_count > 1 && ` (${userBet.bets_count} ставки)`}
             </p>
-            <p style={{ fontSize: 11, color: 'var(--lp-muted)', marginTop: 2 }}>
-              {userBet.amount} → {userBet.potential_win} очков
+            <p className="oswald" style={{ fontSize: 11, color: 'var(--lp-muted)', marginTop: 2, letterSpacing: '0.04em' }}>
+              {userBet.amount} → {userBet.potential_win} ОЧ
             </p>
           </div>
         )}

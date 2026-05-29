@@ -49,9 +49,9 @@ export default function Registration() {
       </div>
 
       {/* Content */}
-      <div className="lp-scroll" style={{ marginTop: -26, padding: '0 16px 32px' }}>
-        <div style={{ marginBottom: 22, paddingTop: 10 }}>
-          <p style={{ color: 'var(--lp-muted)', fontSize: 13, marginBottom: 5 }}>Твой стартовый банк</p>
+      <div className="lp-scroll" style={{ marginTop: -10, padding: '20px 16px 32px' }}>
+        <div style={{ marginBottom: 22 }}>
+          <p className="oswald" style={{ color: 'var(--lp-muted)', fontSize: 12, letterSpacing: '0.07em', marginBottom: 5 }}>СТАРТОВЫЙ БАНК</p>
           <p className="russo" style={{ fontSize: 58, color: 'var(--lp-primary)', lineHeight: 1 }}>1 100</p>
           <p className="oswald" style={{ fontSize: 16, color: 'var(--lp-muted)', letterSpacing: '0.08em' }}>ОЧКОВ</p>
         </div>

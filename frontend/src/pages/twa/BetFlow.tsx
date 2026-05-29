@@ -105,8 +105,8 @@ export default function BetFlow() {
             <p className="oswald" style={{ fontSize: 11, color: 'var(--lp-secondary)', letterSpacing: '0.07em', marginBottom: 3 }}>
               ТЕКУЩАЯ СТАВКА
             </p>
-            <p style={{ fontSize: 13, color: 'var(--lp-text)' }}>
-              {match.user_bet.amount} оч → {match.user_bet.potential_win} потенциально
+            <p className="oswald" style={{ fontSize: 12, color: 'var(--lp-text)', letterSpacing: '0.04em' }}>
+              {match.user_bet.amount} → {match.user_bet.potential_win} ОЧ
               {match.user_bet.bets_count > 1 && ` (${match.user_bet.bets_count} ставки)`}
             </p>
           </div>
@@ -148,8 +148,8 @@ export default function BetFlow() {
           <p className="russo" style={{ fontSize: 52, color: 'white', lineHeight: 1 }}>{potentialWin}</p>
           <p className="oswald" style={{ fontSize: 13, color: 'rgba(242,230,216,0.55)', letterSpacing: '0.07em' }}>ОЧКОВ</p>
           <div style={{ marginTop: 10, padding: '6px 12px', background: 'rgba(255,255,255,0.08)', borderRadius: 4, display: 'inline-block' }}>
-            <p style={{ fontSize: 11, color: 'rgba(242,230,216,0.6)' }}>
-              ⚡ Коэф динамический — фиксируется при подтверждении
+            <p className="oswald" style={{ fontSize: 10, color: 'rgba(242,230,216,0.6)', letterSpacing: '0.04em' }}>
+              ⚡ КОЭФ ДИНАМИЧЕСКИЙ — ФИКСИРУЕТСЯ ПРИ ПОДТВЕРЖДЕНИИ
             </p>
           </div>
         </div>
