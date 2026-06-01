@@ -119,10 +119,18 @@ export default function AuthGate() {
         }
         setStatus('ready')
       } catch (e: any) {
-        // 403 — не подписан на канал
-        if (e.status === 403) {
-          const detail = e.detail || {}
-          setChannelUrl(detail.channel_url || 'https://t.me/')
+        // Парсим detail из JSON-строки (интерцептор axios stringify-ит объект)
+        let parsedDetail: Record<string, string> = {}
+        try { parsedDetail = JSON.parse(e.message) } catch { /* не JSON */ }
+
+        const notSubscribed =
+          e.status === 403 ||
+          (e as any).response?.status === 403 ||
+          parsedDetail?.code === 'not_subscribed'
+
+        if (notSubscribed) {
+          const url = (e.detail as any)?.channel_url || parsedDetail?.channel_url || 'https://t.me/'
+          setChannelUrl(url)
           setStatus('not_subscribed')
           return
         }
