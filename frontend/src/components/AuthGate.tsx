@@ -120,8 +120,8 @@ export default function AuthGate() {
         setStatus('ready')
       } catch (e: any) {
         // 403 — не подписан на канал
-        if (e.status === 403 || e.response?.status === 403) {
-          const detail = e.response?.data?.detail || e.detail || {}
+        if (e.status === 403) {
+          const detail = e.detail || {}
           setChannelUrl(detail.channel_url || 'https://t.me/')
           setStatus('not_subscribed')
           return

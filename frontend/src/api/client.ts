@@ -9,6 +9,7 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     const detail = err.response?.data?.detail
+    const status = err.response?.status ?? 0
     let message = 'Ошибка сети'
     if (detail) {
       if (typeof detail === 'string') {
@@ -20,7 +21,10 @@ api.interceptors.response.use(
         message = JSON.stringify(detail)
       }
     }
-    return Promise.reject(new Error(message))
+    const error = new Error(message) as Error & { status: number; detail: unknown }
+    error.status = status
+    error.detail = detail
+    return Promise.reject(error)
   }
 )
 
