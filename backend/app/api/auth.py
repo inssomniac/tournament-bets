@@ -45,15 +45,26 @@ def _is_channel_member(telegram_id: int) -> bool:
         with httpx.Client(proxies=proxies, timeout=5.0) as client:
             resp = client.get(url)
         data = resp.json()
-    except Exception:
+    except Exception as e:
         # Telegram API недоступен — пропускаем (fail-open)
+        print(f"[channel_check] network error: {e}")
         return True
 
+    print(f"[channel_check] user={telegram_id} response={data}")
+
     if not data.get("ok"):
-        # Пользователь не найден в канале (private channel + не в канале)
+        error_desc = data.get("description", "")
+        # Бот не является администратором канала — не можем проверить,
+        # пропускаем пользователя (fail-open), чтобы не блокировать всех
+        if any(kw in error_desc for kw in ("ADMIN_REQUIRED", "not enough rights", "bot is not a member")):
+            print(f"[channel_check] bot lacks rights, fail-open")
+            return True
+        # Пользователь явно не в канале
+        print(f"[channel_check] user not in channel: {error_desc}")
         return False
 
     status = data.get("result", {}).get("status", "left")
+    print(f"[channel_check] user={telegram_id} status={status}")
     return status in ("creator", "administrator", "member", "restricted")
 
 
