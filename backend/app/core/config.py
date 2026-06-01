@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     BOT_TOKEN: str
     LAPTU_CHANNEL_ID: int
+    CHANNEL_INVITE_URL: str = ""   # https://t.me/+XXXX или https://t.me/username
     SECRET_KEY: str
     ADMIN_IDS: str  # "123,456" — парсим в список
     ENVIRONMENT: str = "development"
