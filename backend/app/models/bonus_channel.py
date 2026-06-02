@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, BigInteger, String, DateTime, ForeignKey, func
+from sqlalchemy import Integer, String, Boolean, DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
@@ -8,10 +8,11 @@ class BonusChannel(Base):
     __tablename__ = "bonus_channels"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    channel_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
+    channel_id: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)  # @username или -100xxx
     channel_name: Mapped[str] = mapped_column(String(100), nullable=False)
     channel_url: Mapped[str] = mapped_column(String(255), nullable=False)
-    bonus_points: Mapped[int] = mapped_column(Integer, nullable=False, default=50)
+    bonus_points: Mapped[int] = mapped_column(Integer, nullable=False, default=100)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
 
 class UserChannelBonus(Base):
