@@ -149,7 +149,7 @@ export default function MatchList() {
               {confirmDelete === m.id && (
                 <div className="rounded-xl p-3 mb-2" style={{ background: 'var(--tg-theme-bg-color)' }}>
                   <p className="text-sm text-tg-text mb-1">
-                    Удалить матч{m.bets_count > 0 ? ` и ${m.bets_count} ставок` : ''}?
+                    Удалить матч{m.bets_count > 0 ? ` и ${m.bets_count} предсказаний` : ''}?
                   </p>
                   {errors[m.id] && (
                     <p className="text-xs text-tg-destructive mb-2">{errors[m.id]}</p>

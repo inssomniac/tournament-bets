@@ -57,7 +57,7 @@ export default function Registration() {
         </div>
 
         <p style={{ fontSize: 14, color: 'var(--lp-text)', lineHeight: 1.65, marginBottom: 28 }}>
-          Делай ставки на матчи, набирай очки и попади в топ рейтинга для получения призов!
+          Делай предсказания на матчи, набирай очки и попади в топ рейтинга для получения призов!
         </p>
 
         <span className="lp-label">ВВЕДИТЕ ФИО</span>

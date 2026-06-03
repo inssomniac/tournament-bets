@@ -119,7 +119,7 @@ export default function Matches() {
             )}
             {active.length > 0 && (
               <>
-                <span className="lp-label" style={{ marginBottom: 10 }}>ПРИНИМАЕМ СТАВКИ</span>
+                <span className="lp-label" style={{ marginBottom: 10 }}>ПРИНИМАЕМ ПРЕДСКАЗАНИЯ</span>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 16 }}>
                   {active.map((m) => <MatchCard key={m.id} match={m} navigate={navigate} />)}
                 </div>
@@ -215,7 +215,7 @@ function MatchCard({ match, navigate }: { match: Match; navigate: (p: string, o?
                       position: 'absolute', top: -7, right: -3,
                       background: 'var(--lp-primary)', color: 'white',
                       fontSize: 9, padding: '1px 6px', borderRadius: 2, letterSpacing: '0.05em',
-                    }}>+ ДОДЕП</span>
+                    }}>+ ЕЩЁ</span>
                   )}
                 </div>
               )
@@ -231,7 +231,7 @@ function MatchCard({ match, navigate }: { match: Match; navigate: (p: string, o?
           }}>
             <p className="oswald" style={{ fontSize: 12, color: 'var(--lp-secondary)', letterSpacing: '0.05em' }}>
               ✓ {userBet.team_choice === 1 ? match.team1_name : match.team2_name}
-              {userBet.bets_count > 1 && ` (${userBet.bets_count} ставки)`}
+              {userBet.bets_count > 1 && ` (${userBet.bets_count} предсказания)`}
             </p>
             <p className="oswald" style={{ fontSize: 11, color: 'var(--lp-muted)', marginTop: 2, letterSpacing: '0.04em' }}>
               {userBet.amount} → {userBet.potential_win} ОЧ

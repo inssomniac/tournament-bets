@@ -14,7 +14,7 @@ export default function BetFlow() {
 
   const { match, teamChoice, isTopUp } = location.state || {}
 
-  const [amount, setAmount] = useState(100)
+  const [amount, setAmount] = useState(MIN)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
@@ -24,13 +24,13 @@ export default function BetFlow() {
     return null
   }
 
+  const maxAllowed = user?.balance ?? 0
   const teamName = teamChoice === 1 ? match.team1_name : match.team2_name
   const odds = teamChoice === 1 ? match.odds_team1 : match.odds_team2
-  const maxAllowed = user?.balance ?? 0
   const potentialWin = Math.floor(amount * odds)
 
   const setAmountSafe = (v: number) => {
-    const clamped = Math.max(MIN, Math.min(maxAllowed, Math.round(v / STEP) * STEP))
+    const clamped = Math.max(MIN, Math.min(maxAllowed, Math.round(v)))
     setAmount(clamped)
   }
 
@@ -54,7 +54,7 @@ export default function BetFlow() {
       <div className="lp-page" style={{ alignItems: 'center', justifyContent: 'center' }}>
         <p className="russo" style={{ fontSize: 48, textAlign: 'center' }}>✅</p>
         <p className="russo" style={{ fontSize: 28, color: 'var(--lp-secondary)', textAlign: 'center' }}>
-          СТАВКА ПРИНЯТА
+          ПРЕДСКАЗАНИЕ ПРИНЯТО
         </p>
       </div>
     )
@@ -70,7 +70,7 @@ export default function BetFlow() {
             style={{ background: 'none', border: 'none', color: 'white', fontSize: 22, cursor: 'pointer', padding: '0 4px' }}
           >←</button>
           <p className="oswald" style={{ fontSize: 20, color: 'white', letterSpacing: '0.07em' }}>
-            {isTopUp ? 'ДОДЕП' : 'СТАВКА НА МАТЧ'}
+            {isTopUp ? 'ДОБАВИТЬ' : 'ПРЕДСКАЗАНИЕ'}
           </p>
         </div>
       </div>
@@ -88,7 +88,7 @@ export default function BetFlow() {
         }}>
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'rgba(255,255,255,0.25)' }} />
           <span className="lp-label lp-label--dk">
-            {isTopUp ? 'ДОДЕП НА' : 'СТАВКА НА'}
+            {isTopUp ? 'ПРЕДСКАЗАНИЕ НА' : 'ПРЕДСКАЗАНИЕ НА'}
           </span>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <p className="russo" style={{ fontSize: 24, color: 'white' }}>{teamName}</p>
@@ -103,16 +103,16 @@ export default function BetFlow() {
             borderRadius: 4, padding: '10px 12px', marginBottom: 16,
           }}>
             <p className="oswald" style={{ fontSize: 11, color: 'var(--lp-secondary)', letterSpacing: '0.07em', marginBottom: 3 }}>
-              ТЕКУЩАЯ СТАВКА
+              ТЕКУЩЕЕ ПРЕДСКАЗАНИЕ
             </p>
             <p className="oswald" style={{ fontSize: 12, color: 'var(--lp-text)', letterSpacing: '0.04em' }}>
               {match.user_bet.amount} → {match.user_bet.potential_win} ОЧ
-              {match.user_bet.bets_count > 1 && ` (${match.user_bet.bets_count} ставки)`}
+              {match.user_bet.bets_count > 1 && ` (${match.user_bet.bets_count} предсказания)`}
             </p>
           </div>
         )}
 
-        <span className="lp-label">СУММА СТАВКИ</span>
+        <span className="lp-label">СУММА ПРЕДСКАЗАНИЯ</span>
         <input
           className="lp-inp"
           type="number"
@@ -136,7 +136,7 @@ export default function BetFlow() {
             >{p}</button>
           ))}
           <button
-            onClick={() => setAmountSafe(maxAllowed)}
+            onClick={() => setAmount(Math.max(MIN, useAppStore.getState().user?.balance ?? 0))}
             className="lp-btn-outline"
             style={{ flex: 1, padding: '8px 4px', fontSize: 12 }}
           >MAX</button>
@@ -144,7 +144,7 @@ export default function BetFlow() {
 
         {/* Potential win block */}
         <div className="lp-win" style={{ marginBottom: 20 }}>
-          <span className="lp-label lp-label--dk">ПОТЕНЦИАЛЬНЫЙ ВЫИГРЫШ</span>
+          <span className="lp-label lp-label--dk">ПОТЕНЦИАЛЬНЫЙ РЕЗУЛЬТАТ</span>
           <p className="russo" style={{ fontSize: 52, color: 'white', lineHeight: 1 }}>{potentialWin}</p>
           <p className="oswald" style={{ fontSize: 13, color: 'rgba(242,230,216,0.55)', letterSpacing: '0.07em' }}>ОЧКОВ</p>
           <div style={{ marginTop: 10, padding: '6px 12px', background: 'rgba(255,255,255,0.08)', borderRadius: 4, display: 'inline-block' }}>
@@ -163,7 +163,7 @@ export default function BetFlow() {
           onClick={handleBet}
           disabled={loading || amount < MIN || amount > maxAllowed}
         >
-          {loading ? 'ОБРАБОТКА...' : `${isTopUp ? 'ДОДЕПНУТЬ' : 'ПОСТАВИТЬ'} ${amount} ОЧКОВ`}
+          {loading ? 'ОБРАБОТКА...' : `${isTopUp ? 'ДОБАВИТЬ' : 'ПРЕДСКАЗАТЬ'} ${amount} ОЧКОВ`}
         </button>
       </div>
     </div>

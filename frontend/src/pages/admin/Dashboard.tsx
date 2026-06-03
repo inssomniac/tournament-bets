@@ -13,7 +13,7 @@ const CARD_DEFS = [
   { key: 'total_users',       label: 'Участников',         icon: '👥' },
   { key: 'active_matches',    label: 'Активных матчей',    icon: '🟢' },
   { key: 'finished_matches',  label: 'Завершённых матчей', icon: '✅' },
-  { key: 'total_bets',        label: 'Всего ставок',       icon: '🎯' },
+  { key: 'total_bets',        label: 'Всего предсказаний',       icon: '🎯' },
 ] as const
 
 function StatCardSkeleton() {

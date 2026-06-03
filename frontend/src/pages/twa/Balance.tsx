@@ -62,14 +62,14 @@ export default function Balance() {
       </div>
 
       <div className="lp-scroll" style={{ marginTop: -10, padding: '20px 16px 24px' }}>
-        <span className="lp-label">ИСТОРИЯ СТАВОК</span>
+        <span className="lp-label">ИСТОРИЯ ПРЕДСКАЗАНИЙ</span>
 
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <BetCardSkeleton /><BetCardSkeleton /><BetCardSkeleton />
           </div>
         ) : bets.length === 0 ? (
-          <p className="oswald" style={{ textAlign: 'center', color: 'var(--lp-muted)', marginTop: 40, fontSize: 14, letterSpacing: '0.06em' }}>СТАВОК ЕЩЁ НЕТ</p>
+          <p className="oswald" style={{ textAlign: 'center', color: 'var(--lp-muted)', marginTop: 40, fontSize: 14, letterSpacing: '0.06em' }}>ПРЕДСКАЗАНИЙ ЕЩЁ НЕТ</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {bets.map((bet, idx) => {
@@ -94,7 +94,7 @@ export default function Balance() {
                       </span>
                     </div>
                     <p className="oswald" style={{ fontSize: 11, color: 'var(--lp-muted)', marginBottom: 6, letterSpacing: '0.04em' }}>
-                      {isTopUp ? '↪ ДОДЕП: ' : 'СТАВКА НА: '}{teamName}
+                      {isTopUp ? '↪ ДОБАВИТЬ: ' : 'ПРЕДСКАЗАНИЕ НА: '}{teamName}
                     </p>
                     {bet.status === 'won' && (
                       <p className="russo" style={{ fontSize: 20, color: cfg.textColor }}>+{bet.potential_win} очков</p>

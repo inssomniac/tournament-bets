@@ -49,7 +49,7 @@ export default function MatchResult() {
         </div>
         <div className="tg-card flex flex-col gap-2 text-sm">
           <div className="flex justify-between">
-            <span className="text-tg-hint">Обработано ставок</span>
+            <span className="text-tg-hint">Обработано предсказаний</span>
             <span className="font-semibold text-tg-text">{result.bets_processed}</span>
           </div>
           <div className="flex justify-between">
