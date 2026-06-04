@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { api } from '../../api/client'
 import { useAppStore } from '../../store/useAppStore'
@@ -10,7 +10,7 @@ const STEP = 50
 export default function BetFlow() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { user, updateBalance } = useAppStore()
+  const { user, updateBalance, setUser } = useAppStore()
 
   const { match, teamChoice, isTopUp } = location.state || {}
 
@@ -18,6 +18,11 @@ export default function BetFlow() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+
+  // Рефетчим баланс при монтировании — гарантирует актуальный maxAllowed
+  useEffect(() => {
+    api.get('/api/users/me').then(({ data }) => setUser(data)).catch(() => {})
+  }, [])
 
   if (!match || !teamChoice) {
     navigate('/matches')
