@@ -51,19 +51,20 @@ export default function PublicOddsPage() {
       <div style={{
         background: 'var(--lp-primary)',
         clipPath: 'polygon(0 0, 100% 0, 100% 80%, 0 100%)',
-        padding: '32px 48px 64px',
+        padding: 'clamp(20px, 3vw, 32px) clamp(20px, 4vw, 48px) clamp(40px, 5vw, 64px)',
         flexShrink: 0,
         display: 'flex',
         alignItems: 'flex-start',
         justifyContent: 'space-between',
+        gap: 12,
       }}>
-        <div>
+        <div style={{ minWidth: 0 }}>
           <p style={{
             fontFamily: "'Russo One', sans-serif",
-            fontSize: 'clamp(28px, 4vw, 56px)',
+            fontSize: 'clamp(20px, 4vw, 56px)',
             color: 'white',
-            lineHeight: 1,
-            marginBottom: 8,
+            lineHeight: 1.1,
+            marginBottom: 6,
           }}>
             ЛЕТНИЙ КУБОК<br />ПО ЛАПТЕ 2026
           </p>
@@ -77,11 +78,11 @@ export default function PublicOddsPage() {
             ДВФУ · ИЮНЬ 2026
           </p>
         </div>
-        <div style={{ textAlign: 'right' }}>
+        <div style={{ textAlign: 'right', flexShrink: 0 }}>
           <p style={{
             fontFamily: "'Oswald', sans-serif",
             fontWeight: 700,
-            fontSize: 'clamp(10px, 1.1vw, 13px)',
+            fontSize: 'clamp(9px, 1.1vw, 13px)',
             color: 'rgba(255,255,255,0.4)',
             letterSpacing: '0.08em',
             marginBottom: 4,
@@ -105,36 +106,37 @@ export default function PublicOddsPage() {
         maxWidth: 1400,
         width: '100%',
         margin: '0 auto',
-        padding: 'clamp(16px, 3vw, 48px)',
-        marginTop: -28,
+        padding: 'clamp(12px, 3vw, 48px)',
+        paddingBottom: 'clamp(16px, 3vw, 48px)',
+        marginTop: -20,
       }}>
         {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
             {[0,1,2].map(i => (
-              <div key={i} className="lp-sk" style={{ height: 200, borderRadius: 8 }} />
+              <div key={i} className="lp-sk" style={{ height: 180, borderRadius: 8 }} />
             ))}
           </div>
         ) : all.length === 0 ? (
-          <div style={{ textAlign: 'center', paddingTop: 80 }}>
+          <div style={{ textAlign: 'center', paddingTop: 60 }}>
             <p style={{
               fontFamily: "'Russo One', sans-serif",
-              fontSize: 'clamp(18px, 2.5vw, 32px)',
+              fontSize: 'clamp(16px, 2.5vw, 32px)',
               color: 'var(--lp-muted)',
             }}>НЕТ АКТИВНЫХ МАТЧЕЙ</p>
           </div>
         ) : (
           <>
             {live.length > 0 && (
-              <div style={{ marginBottom: 32 }}>
+              <div style={{ marginBottom: 24 }}>
                 <p style={{
                   fontFamily: "'Oswald', sans-serif",
                   fontWeight: 700,
                   fontSize: 'clamp(11px, 1vw, 13px)',
                   letterSpacing: '0.12em',
                   color: 'var(--lp-primary)',
-                  marginBottom: 14,
+                  marginBottom: 12,
                 }}>🔴 ИДУТ МАТЧИ</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 20 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
                   {live.map((m) => <MatchCard key={m.id} match={m} />)}
                 </div>
               </div>
@@ -147,9 +149,9 @@ export default function PublicOddsPage() {
                   fontSize: 'clamp(11px, 1vw, 13px)',
                   letterSpacing: '0.12em',
                   color: 'var(--lp-secondary)',
-                  marginBottom: 14,
+                  marginBottom: 12,
                 }}>🟢 ПРИНИМАЕМ ПРЕДСКАЗАНИЯ</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 20 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
                   {open.map((m) => <MatchCard key={m.id} match={m} />)}
                 </div>
               </div>
@@ -159,10 +161,10 @@ export default function PublicOddsPage() {
       </div>
 
       {/* ── MARQUEE ──────────────────────────────────────────────────── */}
-      <div className="lp-marquee" style={{ marginTop: 'auto' }}>
+      <div className="lp-marquee">
         <div className="lp-marquee-track">
-          <span className="lp-marquee-text">ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; </span>
-          <span className="lp-marquee-text">ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; </span>
+          <span className="lp-marquee-text">ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; </span>
+          <span className="lp-marquee-text">ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; ЛЕТНИЙ КУБОК ПО ЛАПТЕ 2026 &nbsp;·&nbsp; ДВФУ &nbsp;·&nbsp; ДЕЛАЙ ПРЕДСКАЗАНИЯ &nbsp;·&nbsp; ВЫИГРЫВАЙ ОЧКИ &nbsp;·&nbsp; </span>
         </div>
       </div>
     </div>
@@ -170,7 +172,7 @@ export default function PublicOddsPage() {
 }
 
 function MatchCard({ match }: { match: PublicMatch }) {
-  const isLive     = match.status === 'live'
+  const isLive      = match.status === 'live'
   const accentColor = isLive ? 'var(--lp-primary)' : 'var(--lp-secondary)'
 
   return (
@@ -178,23 +180,22 @@ function MatchCard({ match }: { match: PublicMatch }) {
       background: 'white',
       borderRadius: 8,
       overflow: 'hidden',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+      boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
       border: '1.5px solid var(--lp-cream-dark)',
-      position: 'relative',
     }}>
       {/* Top accent stripe */}
       <div style={{ height: 4, background: accentColor }} />
 
       {/* Status pill */}
-      <div style={{ padding: '12px 16px 0', textAlign: 'center' }}>
+      <div style={{ padding: 'clamp(8px, 1.2vw, 16px) clamp(12px, 1.5vw, 20px) 0', textAlign: 'center' }}>
         <span style={{
           fontFamily: "'Oswald', sans-serif",
           fontWeight: 700,
-          fontSize: 'clamp(10px, 1vw, 13px)',
+          fontSize: 'clamp(10px, 1vw, 14px)',
           letterSpacing: '0.08em',
           background: accentColor,
           color: 'white',
-          padding: '4px 14px',
+          padding: '4px 16px',
           borderRadius: 3,
           display: 'inline-block',
         }}>
@@ -206,21 +207,22 @@ function MatchCard({ match }: { match: PublicMatch }) {
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        padding: 'clamp(12px, 2vw, 24px) clamp(12px, 2vw, 24px)',
-        gap: 12,
+        padding: 'clamp(10px, 1.5vw, 24px) clamp(12px, 2vw, 28px)',
+        gap: 'clamp(8px, 1vw, 16px)',
       }}>
         {/* Team 1 */}
-        <div style={{ flex: 1, textAlign: 'right' }}>
+        <div style={{ flex: 1, textAlign: 'right', minWidth: 0 }}>
           <p style={{
             fontFamily: "'Russo One', sans-serif",
-            fontSize: 'clamp(13px, 1.4vw, 18px)',
+            fontSize: 'clamp(12px, 1.4vw, 20px)',
             color: 'var(--lp-text)',
             marginBottom: 4,
             lineHeight: 1.2,
+            wordBreak: 'break-word',
           }}>{match.team1_name}</p>
           <p style={{
             fontFamily: "'Russo One', sans-serif",
-            fontSize: 'clamp(36px, 5vw, 72px)',
+            fontSize: 'clamp(32px, 5vw, 72px)',
             lineHeight: 1,
             color: 'var(--lp-primary)',
           }}>×{match.odds_team1}</p>
@@ -228,8 +230,8 @@ function MatchCard({ match }: { match: PublicMatch }) {
 
         {/* VS */}
         <div style={{
-          width: 'clamp(36px, 4vw, 56px)',
-          height: 'clamp(36px, 4vw, 56px)',
+          width: 'clamp(32px, 4vw, 56px)',
+          height: 'clamp(32px, 4vw, 56px)',
           borderRadius: '50%',
           background: 'var(--lp-bg)',
           border: '2px solid var(--lp-cream-dark)',
@@ -241,24 +243,25 @@ function MatchCard({ match }: { match: PublicMatch }) {
           <span style={{
             fontFamily: "'Oswald', sans-serif",
             fontWeight: 700,
-            fontSize: 'clamp(9px, 1vw, 13px)',
+            fontSize: 'clamp(8px, 1vw, 13px)',
             color: 'var(--lp-muted)',
             letterSpacing: '0.05em',
           }}>VS</span>
         </div>
 
         {/* Team 2 */}
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{
             fontFamily: "'Russo One', sans-serif",
-            fontSize: 'clamp(13px, 1.4vw, 18px)',
+            fontSize: 'clamp(12px, 1.4vw, 20px)',
             color: 'var(--lp-text)',
             marginBottom: 4,
             lineHeight: 1.2,
+            wordBreak: 'break-word',
           }}>{match.team2_name}</p>
           <p style={{
             fontFamily: "'Russo One', sans-serif",
-            fontSize: 'clamp(36px, 5vw, 72px)',
+            fontSize: 'clamp(32px, 5vw, 72px)',
             lineHeight: 1,
             color: 'var(--lp-secondary)',
           }}>×{match.odds_team2}</p>
@@ -270,16 +273,31 @@ function MatchCard({ match }: { match: PublicMatch }) {
         <div style={{
           background: 'var(--lp-bg)',
           borderTop: '1px solid var(--lp-cream-dark)',
-          padding: '8px 20px',
+          padding: 'clamp(6px, 0.8vw, 10px) clamp(12px, 1.5vw, 20px)',
           display: 'flex',
           justifyContent: 'center',
-          gap: 20,
+          gap: 16,
+          flexWrap: 'wrap',
         }}>
-          <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: 'clamp(10px, 1vw, 12px)', fontWeight: 700, color: 'var(--lp-muted)', letterSpacing: '0.05em' }}>
+          <span style={{
+            fontFamily: "'Oswald', sans-serif",
+            fontSize: 'clamp(10px, 1vw, 13px)',
+            fontWeight: 700,
+            color: 'var(--lp-muted)',
+            letterSpacing: '0.05em',
+            whiteSpace: 'nowrap',
+          }}>
             {match.bets_count} предсказаний
           </span>
           <span style={{ color: 'var(--lp-cream-dark)' }}>·</span>
-          <span style={{ fontFamily: "'Oswald', sans-serif", fontSize: 'clamp(10px, 1vw, 12px)', fontWeight: 700, color: 'var(--lp-muted)', letterSpacing: '0.05em' }}>
+          <span style={{
+            fontFamily: "'Oswald', sans-serif",
+            fontSize: 'clamp(10px, 1vw, 13px)',
+            fontWeight: 700,
+            color: 'var(--lp-muted)',
+            letterSpacing: '0.05em',
+            whiteSpace: 'nowrap',
+          }}>
             {match.total_bets} очков в пуле
           </span>
         </div>
