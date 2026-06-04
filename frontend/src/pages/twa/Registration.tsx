@@ -41,11 +41,6 @@ export default function Registration() {
             2026
           </p>
         </div>
-        {/* Badge */}
-        <div className="lp-badge-circle" style={{ top: 0 }}>
-          <span style={{ fontSize: 22 }}>🏏</span>
-          <small className="oswald" style={{ fontSize: 7, color: 'var(--lp-bg)', letterSpacing: '0.1em', marginTop: 2 }}>LAPTA</small>
-        </div>
       </div>
 
       {/* Content */}
@@ -56,7 +51,7 @@ export default function Registration() {
           <p className="oswald" style={{ fontSize: 16, color: 'var(--lp-muted)', letterSpacing: '0.08em' }}>ОЧКОВ</p>
         </div>
 
-        <p style={{ fontSize: 14, color: 'var(--lp-text)', lineHeight: 1.65, marginBottom: 28 }}>
+        <p className="oswald" style={{ fontSize: 13, color: 'var(--lp-muted)', lineHeight: 1.65, letterSpacing: '0.03em', marginBottom: 28 }}>
           Делай предсказания на матчи, набирай очки и попади в топ рейтинга для получения призов!
         </p>
 
@@ -69,7 +64,7 @@ export default function Registration() {
           onKeyDown={(e) => e.key === 'Enter' && isValid && handleSubmit()}
           style={{ marginBottom: 8 }}
         />
-        <p style={{ fontSize: 11, color: 'var(--lp-muted)', marginBottom: 22 }}>
+        <p className="oswald" style={{ fontSize: 11, color: 'var(--lp-muted)', marginBottom: 22, letterSpacing: '0.04em' }}>
           Укажите полное имя — оно будет видно в рейтинге
         </p>
 
